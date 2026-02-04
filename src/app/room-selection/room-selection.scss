@@ -1,0 +1,192 @@
+$background: rgb(122 122 255);
+$disabled-bg: #e0e0e0;
+
+
+.page {
+  max-width: 1050px;
+  margin: auto;
+  margin-top: 20px;
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  height: auto;
+  width: 100%;
+}
+
+.group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 50%;
+
+  &:nth-child(2) {
+    justify-content: end;
+  }
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-weight: 500 !important;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.header p {
+  margin: 4px 0 0;
+  color: #777;
+  font-size: 14px;
+}
+
+.back {
+  font-size: 22px;
+  cursor: pointer;
+}
+
+/* Layout */
+.content {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 32px;
+}
+
+/* Left */
+.left h2 {
+  margin-bottom: 16px;
+}
+
+.ticket-card {
+  display: flex;
+  justify-content: space-between;
+  background: #f2f2f2;
+  padding: 20px;
+  border-radius: 10px;
+  margin-top: 10px;
+  border: 2px solid transparent;
+}
+
+.ticket-card.active {
+  border-color: #ddd;
+}
+
+.ticket-info h3 {
+  margin: 0 0 6px;
+}
+
+.ticket-info p {
+  margin: 0;
+  font-size: 14px;
+  color: #555;
+}
+
+.ticket-info small {
+  display: block;
+  margin-top: 8px;
+  color: #777;
+}
+
+.price {
+  margin-top: 14px;
+  font-weight: 600;
+}
+
+.ticket-action {
+  text-align: right;
+}
+
+.qty {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff;
+  border-radius: 6px;
+  padding: 6px 10px;
+}
+
+.qty button {
+  border: none;
+  background: none;
+  font-size: 18px;
+  cursor: pointer;
+  width: 20px;
+}
+
+.spots {
+  display: block;
+  margin-top: 8px;
+  font-size: 13px;
+  color: #666;
+}
+
+/* Right */
+.summary-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.summary-card h3 {
+  margin-bottom: 16px;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.sub-row {
+  display: flex;
+  gap: 12px;
+  font-size: 14px;
+  color: #666;
+}
+
+.sub-row a {
+  color: #000;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.divider {
+  height: 1px;
+  background: #eee;
+  margin: 16px 0;
+}
+
+.total {
+  font-weight: 600;
+}
+
+.tax-note {
+  display: block;
+  text-align: right;
+  font-size: 12px;
+  color: #777;
+  margin-bottom: 16px;
+}
+
+.continue-btn {
+  width: 100%;
+  padding: 14px;
+  background: $background;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.4s;
+
+}
+
+.continue-btn:hover {
+  background: darken($background, 10%);
+}

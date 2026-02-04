@@ -1,0 +1,115 @@
+<div>
+  <h3 mat-dialog-title>Attendee Form</h3>
+
+  <mat-dialog-content>
+    <form [formGroup]="userForm!" class="form">
+
+      <mat-form-field appearance="outline">
+        <mat-label>First Name</mat-label>
+        <input matInput placeholder="First Name*" formControlName="firstName">
+
+        @if (userForm!.get('firstName')?.errors?.['required'] && userForm!.get('firstName')?.touched) {
+        <span class="error-msg">First Name is required.</span>
+        }
+        @if (userForm!.get('firstName')?.errors?.['minlength'] && userForm!.get('firstName')?.touched) {
+        <span class="error-msg">First Name must be at least 2 characters long.</span>
+        }
+
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Last Name</mat-label>
+        <input matInput placeholder="Last Name*" formControlName="lastName">
+
+        @if (userForm!.get('lastName')?.errors?.['required'] && userForm!.get('lastName')?.touched) {
+        <span class="error-msg">Last Name is required.</span>
+        }
+        @if (userForm!.get('lastName')?.errors?.['minlength'] && userForm!.get('lastName')?.touched) {
+        <span class="error-msg">Last Name must be at least 2 characters long.</span>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Company Name</mat-label>
+        <input type="text" placeholder="Pick one" aria-label="Number" matInput formControlName="organisation"
+          [matAutocomplete]="auto">
+
+        @if (userForm!.get('organisation')?.errors?.['required'] && userForm!.get('organisation')?.touched) {
+        <span class="error-msg">Company Name is required.</span>
+        }
+        @if (userForm!.get('organisation')?.errors?.['minlength'] && userForm!.get('organisation')?.touched) {
+        <span class="error-msg">Company Name must be at least 2 characters long.</span>
+        }
+        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayCompany" (optionSelected)="setGst($event)">
+
+          @for (company of filteredOptions | async; track company) {
+          <mat-option [value]="company">
+            {{ company.name }}
+          </mat-option>
+          }
+
+        </mat-autocomplete>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>GST</mat-label>
+        <input type="text" placeholder="GST*" aria-label="Number" matInput formControlName="gst">
+
+        @if (userForm!.get('gst')?.errors?.['required'] && userForm!.get('gst')?.touched) {
+        <span class="error-msg">GST is required.</span>
+        }
+        @if (userForm!.get('gst')?.errors?.['pattern'] && userForm!.get('gst')?.touched) {
+        <span class="error-msg">Invalid GST number.</span>
+        }
+        <!-- <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayCompany">
+
+          @for (company of filteredOptions | async; track company) {
+          <mat-option [value]="company">
+            {{ company.name }}
+          </mat-option>
+          }
+
+        </mat-autocomplete> -->
+      </mat-form-field>
+
+
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput placeholder="Email*" formControlName="email">
+
+        @if (userForm!.get('email')?.errors?.['required'] && userForm!.get('email')?.touched) {
+        <span class="error-msg">Email is required.</span>
+        }
+        @if (userForm!.get('email')?.errors?.['duplicate'] && userForm!.get('email')?.touched) {
+        <span class="error-msg">Email is already registered.</span>
+        }
+        @if (userForm!.get('email')?.errors?.['pattern'] && userForm!.get('email')?.touched) {
+        <span class="error-msg">Invalid email address.</span>
+        }
+
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Phone</mat-label>
+        <input matInput placeholder="Phone*" formControlName="phone">
+
+        @if (userForm!.get('phone')?.errors?.['required'] && userForm!.get('phone')?.touched) {
+        <span class="error-msg">Phone is required.</span>
+        }
+        @if (userForm!.get('phone')?.errors?.['duplicate'] && userForm!.get('phone')?.touched) {
+        <span class="error-msg">Phone number is already registered.</span>
+        }
+        @if (userForm!.get('phone')?.errors?.['pattern'] && userForm!.get('phone')?.touched) {
+        <span class="error-msg">Invalid phone number.</span>
+        }
+
+      </mat-form-field>
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="close()">Close</button>
+    <button mat-button [disabled]="userForm!.invalid" (click)="save()">Add Guest</button>
+  </mat-dialog-actions>
+
+</div>

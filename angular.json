@@ -23,6 +23,11 @@
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "public/scss"
+              ]
+            },
             "assets": [
               {
                 "glob": "**/*",
@@ -30,7 +35,8 @@
               }
             ],
             "styles": [
-              "src/styles.scss"
+              "src/styles.scss",
+              "public/scss/variables.scss"
             ]
           },
           "configurations": {

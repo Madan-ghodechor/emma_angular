@@ -1,0 +1,96 @@
+<div class="container">
+    <div class="banner-card color-properties">
+        <div class="bannerimage">
+            <img src="images/banner.jpeg" alt="" class="banner">
+        </div>
+        <div class="event_and_share">
+            <div class="heading">
+                <div class="event-name">
+                    <h1>EEMA South Factor 2026</h1>
+                </div>
+                <div class="share-btn">
+                    <img src="icons/share.svg" alt="share icon">
+                </div>
+            </div>
+
+            <div class="time_and_resort">
+                <div class="cards">
+                    <div class="content">
+                        <div class="day">
+                            <div class="group">
+                                <div class="top"> Mar </div>
+                                <div class="bottom"> 24 </div>
+                            </div>
+                        </div>
+                        <div class="dates">
+                            <div class="start">
+                                <p class="tag">Start Date</p>
+                                <h2 class="date">24 Mar, 2026</h2>
+                                <p class="time">09:00 AM</p>
+                            </div>
+                            <div class="end">
+                                <p class="tag">Start Date</p>
+                                <h2 class="date">24 Mar, 2026</h2>
+                                <p class="time">09:00 AM</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="cards">
+                    <div class="content">
+                        <div class="day">
+                            <div class="group" style="display: flex; justify-content: center; align-items: center;">
+                                <img src="icons/location-light.svg" alt="share icon">
+                            </div>
+                        </div>
+                        <div class="dates">
+                            <div class="start" style="border: none;">
+                                <h3 style="color: rgb(61, 61, 61); font-weight: 600;">Pragati Resort</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="details-section">
+        <div class="registration_and_discription color-properties">
+            <div class="Registration">
+                <h1>Registration</h1>
+                <p>Welcome! Multiple ticket options are available for this event. Please choose your desired option.</p>
+
+                <div class="select_options">
+                    <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group"
+                        [(ngModel)]="favoriteSeason">
+                        @for (season of seasons; track season) {
+                        <div class="option" [class.active]="favoriteSeason === season"
+                            (click)="favoriteSeason = season">
+                            <mat-radio-button class="example-radio-button"
+                                [value]="season">{{season}}</mat-radio-button>
+                        </div>
+                        }
+                    </mat-radio-group>
+                </div>
+            </div>
+            <div class="discription">
+                Discription
+            </div>
+        </div>
+        <div class="supporting-details color-properties">
+            <div class="contact-support">
+                a
+            </div>
+            <div class="host">
+
+            </div>
+            <div class="location">
+
+            </div>
+        </div>
+    </div>
+
+    <div class="register-btn">
+        <button>Register</button>
+    </div>
+</div>

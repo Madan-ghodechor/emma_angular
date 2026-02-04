@@ -1,0 +1,47 @@
+/* Header */
+.content {
+  max-width: 1050px;
+  margin: auto;
+  margin-top: 20px; 
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-weight: 500 !important;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  height: auto;
+  width: 100%;
+}
+
+.group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 50%;
+
+  &:nth-child(2) {
+    justify-content: end;
+  }
+}
+
+.header p {
+  margin: 4px 0 0;
+  color: #777;
+  font-size: 14px;
+}
+
+.back {
+  font-size: 22px;
+  cursor: pointer;
+}

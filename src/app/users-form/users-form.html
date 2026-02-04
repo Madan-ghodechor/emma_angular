@@ -1,0 +1,192 @@
+<div class="page">
+
+    <div class="content">
+
+        <div class="left">
+            <div class="room-tabs">
+                @if (booking.singleRooms()>0) {
+                <div class="room" [class.active]="activeRoomType() === 'single'"
+                    (click)="activeRoomType.set('single'); onRoomTypeChange('single')">
+                    Single Occupancy ({{ booking.singleRooms() }}) </div>
+                }
+
+                @if (booking.doubleRooms()>0) {
+                <div class="room" [class.active]="activeRoomType() === 'double'"
+                    (click)="activeRoomType.set('double'); onRoomTypeChange('double')">
+                    Double Occupancy ({{ booking.doubleRooms() }}) </div>
+                }
+
+                @if (booking.tripleRooms()>0) {
+                <div class="room" [class.active]="activeRoomType() === 'triple'"
+                    (click)="activeRoomType.set('triple'); onRoomTypeChange('triple')">
+                    Triple Occupancy ({{ booking.tripleRooms() }}) </div>
+                }
+            </div>
+
+            <div class="hr-line"></div>
+            <br>
+
+            <div class="accordion">
+                <mat-accordion class="accordion">
+
+                    <mat-expansion-panel *ngFor="let room of filteredRooms(); let i = index;"
+                        [expanded]="isOpen(room.roomId)" (opened)="open(room.roomId)">
+
+                        <!-- HEADER -->
+                        <mat-expansion-panel-header>
+                            <mat-panel-title>
+                                Room {{ i + 1 }}
+                            </mat-panel-title>
+
+                            @if (isRoomCompleted(room)) {
+                            <span class="count colorGreen">
+                                {{ room.attendees.length }} /
+                                {{ roomCapacity[room.roomtype] }}
+                            </span>
+                            &nbsp;&nbsp;
+                            <span class="completed-badge colorGreen">
+                                Completed
+                            </span>
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+
+                            } @else {
+                            <span class="count colorRed">
+                                {{ room.attendees.length }} /
+                                {{ roomCapacity[room.roomtype] }}
+                            </span>
+                            &nbsp;&nbsp;
+                            <span class="completed-badge">
+                                Add Attendees
+                            </span>
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            }
+
+                        </mat-expansion-panel-header>
+
+                        <!-- ATTENDEES LIST -->
+                        <div class="attendees">
+                            <div class="room-dates">
+                                <div class="check-in-date">
+                                    <label for="">CheckIn</label>
+                                    <input matInput [matDatepicker]="checkInPicker"
+                                        [value]="room.checkIn ? (room.checkIn | date : 'yyyy-MM-dd') : null"
+                                        (dateChange)="setCheckIn(room.roomId, $event.value)" readonly />
+                                    <mat-datepicker-toggle matSuffix [for]="checkInPicker"></mat-datepicker-toggle>
+                                    <mat-datepicker #checkInPicker></mat-datepicker>
+                                </div>
+
+                                <div class="check-in-date">
+                                    <label for="">CheckOut</label>
+                                    <input matInput [matDatepicker]="checkOutPicker" [disabled]="!room.checkIn"
+                                        [min]="room.checkIn ? getMinCheckoutDate(room.checkIn) : null"
+                                        [value]="room.checkOut ? (room.checkOut | date : 'yyyy-MM-dd') : null"
+                                        (dateChange)="setCheckOut(room.roomId, $event.value)" />
+                                    <mat-datepicker-toggle matSuffix [for]="checkOutPicker"></mat-datepicker-toggle>
+                                    <mat-datepicker #checkOutPicker></mat-datepicker>
+                                </div>
+                            </div>
+                            <br>
+                            <hr>
+                            <br>
+
+                            <div class="room-actions">
+                                <!-- {{ !hasPrimaryUser() }} -->
+                                @if (!hasPrimaryUser()) {
+                                <button mat-stroked-button color="primary" class="checkout-wrapper"
+                                    [attr.data-note]="(!room.checkIn || !room.checkOut) ? 'Select check In/Out dates' : isRoomFull(room) ? 'Room is full' : 'Add primary guest'"
+                                    [disabled]="isRoomFull(room) || (!room.checkIn || !room.checkOut)"
+                                    (click)="addPrimaryUser(room.roomId)">
+                                    Add Primary Guest
+                                </button>
+                                &nbsp;
+                                }
+                                <button mat-stroked-button color="primary" class="checkout-wrapper"
+                                    [attr.data-note]="(!room.checkIn || !room.checkOut) ? 'Select check In/Out dates' : isRoomFull(room) ? 'Room is full' : 'Add new guest'"
+                                    [disabled]="isRoomFull(room) || (!room.checkIn || !room.checkOut)"
+                                    (click)="openDialog(room.roomId)">
+                                    Add Guests
+                                </button>
+                                <span class="capacity">
+                                    {{ room.attendees.length }} /
+                                    {{ roomCapacity[room.roomtype] }}
+                                </span>
+                            </div>
+                            <div class="attendee" *ngFor="let person of room.attendees">
+                                <mat-icon>person</mat-icon>
+                                <span>
+                                    {{ person.firstName }} {{ person.lastName }} | {{ person.email }} | {{ person.phone
+                                    }}
+                                </span>
+
+                                <div class="checkout-wrapper"
+                                    [attr.data-note]="person?.is_primary_user ? 'Primary guest cannot be edited' : 'Edit guest details'">
+                                    <button mat-icon-button (click)="openDialog(room.roomId, person)"
+                                        [disabled]="person?.is_primary_user">
+                                        <mat-icon>edit</mat-icon>
+                                    </button>
+                                </div>
+
+                                <div class="checkout-wrapper" [attr.data-note]="'Delete guest details'">
+                                    <button mat-icon-button (click)="deleteAttendee(room.roomId, person)">
+                                        <mat-icon>delete</mat-icon>
+                                    </button>
+                                </div>
+                            </div>
+
+
+                            <!-- EMPTY STATE -->
+                            <div class="empty" *ngIf="room.attendees.length === 0">
+                                No guests added yet
+                            </div>
+
+                        </div>
+
+                    </mat-expansion-panel>
+
+                </mat-accordion>
+            </div>
+
+
+
+        </div>
+
+        <div class="right">
+            <div class="summary-card">
+                <h3>Order Summary</h3>
+
+                <div class="row">
+                    <span>EEMA Members</span>
+                    <span>{{ totalPrice() | currency : "INR" }}</span>
+                </div>
+
+                <div class="sub-row" style="display: flex; align-items: center;">
+                    <span> <b>{{ booking.totalAttendees() }}</b> Guests</span>
+                    <div class="checkout-wrapper" data-note="All data will cleared">
+                        <a href="#"
+                            style="display: flex; align-items: center; background-color: rgba(255, 0, 0, 0); color: rgb(173, 5, 5);">
+                            Delete
+                        </a>
+                    </div>
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="row total">
+                    <span>Total</span>
+                    <span>{{ totalPrice() | currency : "INR" }}</span>
+                </div>
+
+                <small class="tax-note">*Excludes Tax</small>
+
+                <div class="checkout-wrapper"
+                    [attr.data-note]="isReadyToPayment() ? 'Click to proceed to payment' : 'All guests must be added including primary user to proceed to payment'">
+                    <button class="check-out-btn" (click)="savingChecks()" [disabled]="!isReadyToPayment()">
+                        Proceed to Payment
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
