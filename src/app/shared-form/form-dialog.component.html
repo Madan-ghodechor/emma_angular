@@ -1,7 +1,7 @@
 <div>
   <h3 mat-dialog-title>Attendee Form</h3>
 
-  <mat-dialog-content>
+  <mat-dialog-content  #scrollBox>
     <form [formGroup]="userForm!" class="form">
 
       <mat-form-field appearance="outline">
@@ -80,7 +80,7 @@
         @if (userForm!.get('email')?.errors?.['required'] && userForm!.get('email')?.touched) {
         <span class="error-msg">Email is required.</span>
         }
-        @if (userForm!.get('email')?.errors?.['duplicate'] && userForm!.get('email')?.touched) {
+        @if (userForm!.get('email')?.errors?.['duplicate']) {
         <span class="error-msg">Email is already registered.</span>
         }
         @if (userForm!.get('email')?.errors?.['pattern'] && userForm!.get('email')?.touched) {
@@ -89,7 +89,7 @@
 
       </mat-form-field>
 
-      <mat-form-field appearance="outline">
+      <!-- <mat-form-field appearance="outline">
         <mat-label>Phone</mat-label>
         <input matInput placeholder="Phone*" formControlName="phone">
 
@@ -103,7 +103,27 @@
         <span class="error-msg">Invalid phone number.</span>
         }
 
+      </mat-form-field> -->
+
+
+      <mat-form-field appearance="outline" class="w-100">
+        <!-- <mat-label>Mobile Number</mat-label> -->
+
+        <input matInput type="tel" #phoneInput formControlName="phone" placeholder="Mobile Number" />
+
+
+        @if (userForm!.get('phone')?.errors?.['required'] && userForm!.get('phone')?.touched) {
+        <span class="error-msg">Phone is required.</span>
+        }
+        @if (userForm!.get('phone')?.errors?.['duplicate']) {
+        <span class="error-msg">Phone number is already registered.</span>
+        }
+        @if (userForm!.get('phone')?.errors?.['pattern'] && userForm!.get('phone')?.touched) {
+        <span class="error-msg">Invalid phone number.</span>
+        }
       </mat-form-field>
+
+
     </form>
   </mat-dialog-content>
 

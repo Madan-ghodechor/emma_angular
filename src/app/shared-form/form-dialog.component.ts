@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, ElementRef, Inject, ViewChild } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogActions, MatDialogContent } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -10,6 +10,9 @@ import { SharedFiltering } from '../service/shared-filtering';
 import { map, Observable, startWith } from 'rxjs';
 import { Api } from '../service/api';
 import { State } from '../service/state';
+
+import intlTelInput from 'intl-tel-input';
+import { parsePhoneNumber } from 'libphonenumber-js';
 
 interface Company {
   _id: string;
@@ -35,6 +38,72 @@ interface Company {
   ]
 })
 export class FormDialogComponent {
+
+
+  @ViewChild('phoneInput') phoneInput!: ElementRef<HTMLInputElement>;
+
+  iti: any;
+  ngAfterViewInit() {
+    this.iti = intlTelInput(this.phoneInput.nativeElement, {
+      initialCountry: 'in',
+      separateDialCode: true,
+      allowDropdown: true,
+      countrySearch: false
+    });
+
+    // 👇 LISTEN TO COUNTRY CHANGE
+    this.phoneInput.nativeElement.addEventListener(
+      'countrychange',
+      this.onCountryChange.bind(this)
+    );
+  }
+  onCountryChange(): void {
+    const country = this.iti.getSelectedCountryData();
+    this.userForm.patchValue({ phone: '' });
+  }
+
+  getPhoneData() {
+    const number = this.phoneInput.nativeElement.value;
+
+    if (!this.iti.isValidNumber()) {
+      return null;
+    }
+
+    const phoneNumber = parsePhoneNumber(
+      this.iti.getNumber()
+    );
+
+    return {
+      international: phoneNumber.formatInternational(),
+      e164: phoneNumber.number,
+      country: phoneNumber.country,
+    };
+  }
+
+  syncPhoneToForm(): void {
+    if (!this.iti) return;
+
+    if (this.iti.isValidNumber()) {
+      this.userForm.patchValue({
+        phone: this.iti.getNumber() // +919876543210
+      });
+    } else {
+      this.userForm.patchValue({
+        phone: ''
+      });
+    }
+  }
+
+  @ViewChild('scrollBox') scrollBox!: ElementRef;
+
+  ngAfterViewChecked() {
+    const el = this.scrollBox.nativeElement;
+    el.scrollTop = el.scrollHeight;
+
+  }
+
+
+
 
   constructor(private dialogRef: MatDialogRef<FormDialogComponent>, private fb: FormBuilder, @Inject(MAT_DIALOG_DATA) public data: any, public sharedFiltering: SharedFiltering, private api: Api, private stateService: State) { }
 
@@ -83,7 +152,15 @@ export class FormDialogComponent {
       if (!value) return;
 
       const phone = value.trim();
-      const exists = this.stateService.phoneSet().has(phone);
+      const country = this.iti.getSelectedCountryData();
+      const phonepayload = {
+        dialCode: '+' + country.dialCode,
+        countryIso: country.iso2,
+        fullNumber: '+' + country.dialCode + this.phoneInput.nativeElement.value,
+        nationalNumber: this.phoneInput.nativeElement.value
+      };
+
+      const exists = this.stateService.phoneSet().has(phonepayload.fullNumber);
 
       if (exists) {
         console.log("duplicate")
@@ -130,11 +207,25 @@ export class FormDialogComponent {
   }
 
   save() {
+    const country = this.iti.getSelectedCountryData();
+    const phonepayload = {
+      dialCode: '+' + country.dialCode,
+      countryIso: country.iso2,
+      fullNumber: '+' + country.dialCode + this.phoneInput.nativeElement.value,
+      nationalNumber: this.phoneInput.nativeElement.value
+    };
+    this.userForm.patchValue({
+      phone: phonepayload.fullNumber
+    })
+
     const email = this.userForm?.value.email;
-    const phone = this.userForm?.value.phone;
+    const phone = phonepayload.fullNumber;
 
     this.stateService.emailSet.update(list => new Set([...list, email]));
     this.stateService.phoneSet.update(list => new Set([...list, phone]));
+
+
+
 
     this.dialogRef.close(this.userForm?.value);
   }

@@ -272,7 +272,6 @@ export class UsersForm {
         if (room.roomId !== roomId || this.isRoomFull(room)) {
           return room;
         }
-
         return {
           ...room,
           attendees: [
@@ -287,6 +286,7 @@ export class UsersForm {
         };
       })
     );
+
   }
 
   updateAttendee(
@@ -307,6 +307,7 @@ export class UsersForm {
       )
     );
   }
+
   deleteAttendee(roomId: string, attendee: Attendee): void {
     this.rooms.update(rooms =>
       rooms.map(room =>
@@ -322,8 +323,10 @@ export class UsersForm {
 
   /* ---------------- Dialog ---------------- */
   openDialog(roomId: string, attendee?: Attendee): void {
+    console.log(this.rooms())
     const dialogRef = this.dialog.open(FormDialogComponent, {
       width: '500px',
+      // height: "900px",
       data: { roomId, attendee }
     });
 

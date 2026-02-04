@@ -82,7 +82,7 @@ export class State {
 
       const primaryUser = JSON.parse(localStorage.getItem('primaryUser') || '{}');
       const email = primaryUser.email;
-      const phone = primaryUser.phone;
+      const phone = primaryUser.full_phone;
 
       this.emailSet.update(list => new Set([...list, email]));
       this.phoneSet.update(list => new Set([...list, phone]));

@@ -15,7 +15,9 @@ export class Api {
   getCompanies() {
     return this.http.get(`${environment.apiBaseUrl}companies`);
   }
-
+  getUsers(){
+    return this.http.get(`${environment.apiBaseUrl}users`)
+  }
 
   /* ---------------------  Payment Methods  ----------------------- */
   createOrder(amount: number) {

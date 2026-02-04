@@ -56,7 +56,7 @@
                             </span>
                             &nbsp;&nbsp;
                             <span class="completed-badge">
-                                Add Attendees
+                                Add Guests
                             </span>
                             &nbsp;&nbsp;&nbsp;&nbsp;
                             }
@@ -70,6 +70,8 @@
                                     <label for="">CheckIn</label>
                                     <input matInput [matDatepicker]="checkInPicker"
                                         [value]="room.checkIn ? (room.checkIn | date : 'yyyy-MM-dd') : null"
+                                        min="2026-03-24"
+                                        max="2026-03-26"
                                         (dateChange)="setCheckIn(room.roomId, $event.value)" readonly />
                                     <mat-datepicker-toggle matSuffix [for]="checkInPicker"></mat-datepicker-toggle>
                                     <mat-datepicker #checkInPicker></mat-datepicker>
@@ -78,7 +80,8 @@
                                 <div class="check-in-date">
                                     <label for="">CheckOut</label>
                                     <input matInput [matDatepicker]="checkOutPicker" [disabled]="!room.checkIn"
-                                        [min]="room.checkIn ? getMinCheckoutDate(room.checkIn) : null"
+                                        [min]="room.checkIn ? getMinCheckoutDate(room.checkIn) : '2026-03-24'"
+                                        max="2026-03-27"
                                         [value]="room.checkOut ? (room.checkOut | date : 'yyyy-MM-dd') : null"
                                         (dateChange)="setCheckOut(room.roomId, $event.value)" />
                                     <mat-datepicker-toggle matSuffix [for]="checkOutPicker"></mat-datepicker-toggle>
@@ -96,7 +99,7 @@
                                     [attr.data-note]="(!room.checkIn || !room.checkOut) ? 'Select check In/Out dates' : isRoomFull(room) ? 'Room is full' : 'Add primary guest'"
                                     [disabled]="isRoomFull(room) || (!room.checkIn || !room.checkOut)"
                                     (click)="addPrimaryUser(room.roomId)">
-                                    Add Primary Guest
+                                    Add Primary Attendee
                                 </button>
                                 &nbsp;
                                 }
