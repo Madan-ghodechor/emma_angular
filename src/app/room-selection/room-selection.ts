@@ -16,7 +16,7 @@ export class RoomSelection {
   }
 
   navigate() {
-    const data = JSON.parse(localStorage.getItem('primaryUser') || '{}');
+    const data = JSON.parse(sessionStorage.getItem('primaryUser') || '{}');
     const email = data.email;
     const phone = data.phone;
 

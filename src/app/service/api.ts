@@ -44,6 +44,9 @@ export class Api {
   createBookingLog(payload: any) {
     return this.http.post(`${environment.apiBaseUrl}attempt`, payload)
   }
+  getBookingLogById(ID: string) {
+    return this.http.get(`${environment.apiBaseUrl}attempt?refID=${ID}`)
+  }
 
 
 }

@@ -143,7 +143,7 @@ export class UsersForm {
 
   }
   ngAfterViewInit() {
-    if (!localStorage.getItem('primaryUser'))
+    if (!sessionStorage.getItem('primaryUser'))
       this.router.navigate(['/'])
 
     const rooms = this.rooms() as Room[];
@@ -160,9 +160,9 @@ export class UsersForm {
   );
 
   readonly withGST = computed(() =>
-  ((this.booking.singlePrice() * this.singleRoomsNights()) +
-    (this.booking.doublePrice() * this.doubleRoomsNights()) +
-    (this.booking.triplePrice() * this.tripleRoomsNights())) * environment.gst
+    ((this.booking.singlePrice() * this.singleRoomsNights()) +
+      (this.booking.doublePrice() * this.doubleRoomsNights()) +
+      (this.booking.triplePrice() * this.tripleRoomsNights())) * environment.gst
   );
 
 
@@ -304,7 +304,7 @@ export class UsersForm {
 
   /* ---------------- Attendees ---------------- */
   addPrimaryUser(room: any): void {
-    const primaryUser = JSON.parse(localStorage.getItem('primaryUser') || '{}');
+    const primaryUser = JSON.parse(sessionStorage.getItem('primaryUser') || '{}');
     // console.log(primaryUser);
     this.addAttendee(
       room,
@@ -326,7 +326,7 @@ export class UsersForm {
     attendee: Omit<Attendee, 'id'>
   ): void {
 
-    const primaryUser = JSON.parse(localStorage.getItem('primaryUser') || '{}');
+    const primaryUser = JSON.parse(sessionStorage.getItem('primaryUser') || '{}');
 
     const isPrimaryUser = attendee.is_primary_user === true ? true : false;
 
@@ -620,6 +620,8 @@ export class UsersForm {
       description: 'Payment',
       order_id: order.id,
 
+      image: "https://play-lh.googleusercontent.com/-Gg0VKCGTW25SSQaFSh8ih6iKCbQs2myvuJCUzO1Rpd1lzeRpDmCFNpSzmddQ_QYgIo=w600-h300-pc0xffffff-pd",
+
       handler: (response: any) => {
         this.api.verifyPayment(response).subscribe({
           next: () => {
@@ -645,7 +647,7 @@ export class UsersForm {
 
     rzp.on('payment.failed', (response: any) => {
       console.error('Payment failed', response.error);
-      this.afterPaymentFailed(response.error, payload)
+      this.afterPaymentFailed(response.error, payload, order)
     });
 
     rzp.open();
@@ -670,8 +672,8 @@ export class UsersForm {
       }
     })
   }
-  afterPaymentFailed(error: any, payload: any) {
-    this.api.recordFailedPayment({ error, ...payload }).subscribe({
+  afterPaymentFailed(error: any, payload: any, order: any) {
+    this.api.recordFailedPayment({ error, ...payload, order}).subscribe({
       next: (res: any) => {
         console.log(res)
       }

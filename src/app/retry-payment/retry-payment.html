@@ -1,0 +1,233 @@
+<div class="page">
+    <div class="content">
+
+        @if (checkCard()==2) {
+        <div class="retry-card">
+
+            <!-- Failure Banner -->
+            <div class="status failed premium">
+                <div class="content">
+                    <h4>Payment Failed</h4>
+                    <p>Your booking is on hold. Please retry the payment to proceed.</p>
+                </div>
+            </div>
+
+
+
+            <!-- Amount Highlight -->
+            <div class="amount-box">
+                <span>Total Amount</span>
+                <h1>{{ (data.order.amount/100) | currency : 'INR' }}</h1>
+                <button class="pay-btn" (click)="retryPayment(data)">
+                    Pay Now
+                </button>
+            </div>
+
+            <!-- Booking Info -->
+            <div class="summary">
+                <div>
+                    <label>Booking Reference</label>
+                    <span>{{ data.bulkRefId }}</span>
+                </div>
+            </div>
+
+            <!-- Rooms -->
+            <div class="section">
+                <h3>Room Details</h3>
+
+                @for (room of data.userData; track room.roomtype) {
+                <div class="room-card">
+
+                    <!-- Room meta -->
+                    <div class="room-header">
+                        <div class="room-type">
+                            {{ room.roomtype | titlecase }} Room
+                        </div>
+
+                        <div class="dates">
+                            <div>
+                                <label>Check-in</label>
+                                <span>{{ room.checkIn | date }}</span>
+                            </div>
+                            <div>
+                                <label>Check-out</label>
+                                <span>{{ room.checkOut | date }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Attendees -->
+                    <div class="attendees">
+                        <h4>Guests</h4>
+
+                        @for (user of room.attendees; track user.id; let i = $index) {
+                        <div class="guest-row">
+                            <div class="guest-index">{{ i + 1 }}</div>
+
+                            <div class="guest-info">
+                                <div class="name">
+                                    {{ user.firstName }} {{ user.lastName }}
+                                </div>
+                                <div class="meta">
+                                    <span>{{ user.email }}</span>
+                                    <span>{{ user.phone }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        }
+                    </div>
+
+                </div>
+                }
+            </div>
+
+
+        </div>
+        }
+        @if (checkCard()==1) {
+        <div class="retry-card">
+
+            <!-- Failure Banner -->
+            <div class="status success premium">
+                <div class="content">
+                    <h4>Payment Already Done</h4>
+                    <p>Your booking confirmed.</p>
+                </div>
+            </div>
+
+            <!-- Booking Info -->
+            <div class="summary">
+                <div>
+                    <label>Booking Reference</label>
+                    <span>{{ data.bulkRefId }}</span>
+                </div>
+            </div>
+
+            <!-- Rooms -->
+            <div class="section">
+                <h3>Room Details</h3>
+
+                @for (room of data.userData; track room.roomtype) {
+                <div class="room-card">
+
+                    <!-- Room meta -->
+                    <div class="room-header">
+                        <div class="room-type">
+                            {{ room.roomtype | titlecase }} Room
+                        </div>
+
+                        <div class="dates">
+                            <div>
+                                <label>Check-in</label>
+                                <span>{{ room.checkIn | date }}</span>
+                            </div>
+                            <div>
+                                <label>Check-out</label>
+                                <span>{{ room.checkOut | date }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Attendees -->
+                    <div class="attendees">
+                        <h4>Guests</h4>
+
+                        @for (user of room.attendees; track user.id; let i = $index) {
+                        <div class="guest-row">
+                            <div class="guest-index">{{ i + 1 }}</div>
+
+                            <div class="guest-info">
+                                <div class="name">
+                                    {{ user.firstName }} {{ user.lastName }}
+                                </div>
+                                <div class="meta">
+                                    <span>{{ user.email }}</span>
+                                    <span>{{ user.phone }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        }
+                    </div>
+
+                </div>
+                }
+            </div>
+
+
+        </div>
+        }
+        @if (checkCard()==0) {
+        <div class="retry-card">
+
+            <!-- Failure Banner -->
+            <div class="status warn premium">
+                <div class="content">
+                    <h4>Make Payment </h4>
+                    <p>Your booking is almost done, make payment to confirm.</p>
+                </div>
+            </div>
+
+            <!-- Booking Info -->
+            <div class="summary">
+                <div>
+                    <label>Booking Reference</label>
+                    <span>{{ data.bulkRefId }}</span>
+                </div>
+            </div>
+
+            <!-- Rooms -->
+            <div class="section">
+                <h3>Room Details</h3>
+
+                @for (room of data.userData; track room.roomtype) {
+                <div class="room-card">
+
+                    <!-- Room meta -->
+                    <div class="room-header">
+                        <div class="room-type">
+                            {{ room.roomtype | titlecase }} Room
+                        </div>
+
+                        <div class="dates">
+                            <div>
+                                <label>Check-in</label>
+                                <span>{{ room.checkIn | date }}</span>
+                            </div>
+                            <div>
+                                <label>Check-out</label>
+                                <span>{{ room.checkOut | date }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Attendees -->
+                    <div class="attendees">
+                        <h4>Guests</h4>
+
+                        @for (user of room.attendees; track user.id; let i = $index) {
+                        <div class="guest-row">
+                            <div class="guest-index">{{ i + 1 }}</div>
+
+                            <div class="guest-info">
+                                <div class="name">
+                                    {{ user.firstName }} {{ user.lastName }}
+                                </div>
+                                <div class="meta">
+                                    <span>{{ user.email }}</span>
+                                    <span>{{ user.phone }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        }
+                    </div>
+
+                </div>
+                }
+            </div>
+
+
+        </div>
+        }
+
+    </div>
+</div>

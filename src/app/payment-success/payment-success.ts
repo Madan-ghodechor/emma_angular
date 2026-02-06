@@ -1,9 +1,11 @@
 import { CommonModule, TitleCasePipe } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 @Component({
   selector: 'app-payment-success',
@@ -75,9 +77,31 @@ export class PaymentSuccess {
     this.res = navigation?.extras.state?.['paymentResponse'];
   }
 
-  ngOnInit(){
-    localStorage.clear();
+  data:any;
+  ngOnInit() {
+    sessionStorage.clear();
+    this.data = this.res.data;
+    console.log(this.data)
   }
+
+  @ViewChild('receipt') receipt!: ElementRef;
+
+
+  downloadReceipt() {
+    const el = this.receipt.nativeElement;
+
+    html2canvas(el, { scale: 2 }).then(canvas => {
+      const img = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+
+      const width = 210;
+      const height = (canvas.height * width) / canvas.width;
+
+      pdf.addImage(img, 'PNG', 0, 0, width, height);
+      pdf.save(`receipt-${this.data .razorpay_payment_id}.pdf`);
+    });
+  }
+
   formatDate(date: string) {
     return new Date(date).toLocaleDateString('en-IN', {
       day: '2-digit',
@@ -86,3 +110,4 @@ export class PaymentSuccess {
     });
   }
 }
+

@@ -115,7 +115,7 @@ export class PrimaryUser implements OnInit {
   }
 
   ngOnInit(): void {
-    localStorage.clear();
+    sessionStorage.clear();
 
     this.userForm = this.fb.group({
       roomType: [],
@@ -264,7 +264,7 @@ export class PrimaryUser implements OnInit {
       primary_user_email: this.userForm.get('email')!.value
     };
 
-    localStorage.setItem('primaryUser', JSON.stringify(payload));
+    sessionStorage.setItem('primaryUser', JSON.stringify(payload));
     console.log(payload);
     this.router.navigate(['/members-selection']);
   }

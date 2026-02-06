@@ -1,111 +1,176 @@
 <div class="page">
 
-    <div class="content">
+  <div class="content">
 
-       <div class="success-wrapper" *ngIf="res">
+    <div class="success-wrapper" *ngIf="res">
 
-  <!-- HEADER -->
-  <div class="success-banner">
-    <mat-icon>check_circle</mat-icon>
-    <div>
-      <h2>Booking Confirmed</h2>
-      <p>Your room has been successfully reserved</p>
-    </div>
-  </div>
-
-  <!-- MAIN GRID -->
-  <div class="confirmation-grid">
-
-    <!-- LEFT SECTION -->
-    <div class="left-section">
-
-      <mat-card class="card">
-        <h3>Booking Information</h3>
-
-        <div class="info-row">
-          <span>Booking Reference</span>
-          <strong>{{ res.data.bulkRefId }}</strong>
+      <!-- HEADER -->
+      <div class="success-banner">
+        <mat-icon>check_circle</mat-icon>
+        <div>
+          <h2>Booking Confirmed</h2>
+          <p>Your room has been successfully reserved</p>
         </div>
-
-        <div class="info-row">
-          <span>Booked On</span>
-          <strong>{{ formatDate(res.data.createdAt) }}</strong>
-        </div>
-      </mat-card>
-
-      <mat-card
-        class="card"
-        *ngFor="let booking of res.data.bookings"
-      >
-        <h3>Room Details</h3>
-
-        <div class="info-row">
-          <span>Room</span>
-          <strong>{{ booking.roomId | uppercase }}</strong>
-        </div>
-
-        <div class="info-row">
-          <span>Room Type</span>
-          <strong>{{ booking.roomType | titlecase }}</strong>
-        </div>
-
-        <div class="info-row">
-          <span>Check-In</span>
-          <strong>{{ formatDate(booking.checkIn) }}</strong>
-        </div>
-
-        <div class="info-row">
-          <span>Check-Out</span>
-          <strong>{{ formatDate(booking.checkOut) }}</strong>
-        </div>
-
-        <div class="info-row">
-          <span>Guests</span>
-          <strong>{{ booking.attendees.length }}</strong>
-        </div>
-      </mat-card>
-
-    </div>
-
-    <!-- RIGHT SECTION -->
-    <div class="right-section stick">
-
-      <mat-card class="summary-card">
-
-        <h3>Payment Summary</h3>
-
-        <div class="amount">
-          {{ res.data.paymentAmount | currency : 'INR'}}
-        </div>
-
-        <div class="status success">
-          Payment Successful
-        </div>
-
-        <div class="divider"></div>
-
-        <div class="info-row small">
-          <span>Payment ID</span>
-          <strong>{{ res.data.razorpay_payment_id }}</strong>
-        </div>
-
-        <div class="info-row small">
-          <span>Order ID</span>
-          <strong>{{ res.data.razorpay_order_id }}</strong>
-        </div>
-
-      </mat-card>
-
-      <div class="action-buttons">
-
-        <!-- <button mat-stroked-button> Download Receipt</button> -->
       </div>
 
+      <!-- MAIN GRID -->
+      <div class="confirmation-grid">
+
+        <!-- LEFT SECTION -->
+        <div class="left-section">
+
+          <mat-card class="card">
+            <h3>Booking Information</h3>
+
+            <div class="info-row">
+              <span>Booking Reference</span>
+              <strong>{{ res.data.bulkRefId }}</strong>
+            </div>
+
+            <div class="info-row">
+              <span>Booked On</span>
+              <strong>{{ formatDate(res.data.createdAt) }}</strong>
+            </div>
+          </mat-card>
+
+          <mat-card class="card" *ngFor="let booking of res.data.bookings">
+            <h3>Room Details</h3>
+
+            <div class="info-row">
+              <span>Room</span>
+              <strong>{{ booking.roomId | uppercase }}</strong>
+            </div>
+
+            <div class="info-row">
+              <span>Room Type</span>
+              <strong>{{ booking.roomType | titlecase }}</strong>
+            </div>
+
+            <div class="info-row">
+              <span>Check-In</span>
+              <strong>{{ formatDate(booking.checkIn) }}</strong>
+            </div>
+
+            <div class="info-row">
+              <span>Check-Out</span>
+              <strong>{{ formatDate(booking.checkOut) }}</strong>
+            </div>
+
+            <div class="info-row">
+              <span>Guests</span>
+              <strong>{{ booking.attendees.length }}</strong>
+            </div>
+          </mat-card>
+
+        </div>
+
+        <!-- RIGHT SECTION -->
+        <div class="right-section stick">
+
+          <mat-card class="summary-card">
+
+            <h3>Payment Summary</h3>
+
+            <div class="amount">
+              {{ res.data.paymentAmount | currency : 'INR'}}
+            </div>
+
+            <div class="status success">
+              Payment Successful
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="info-row small">
+              <span>Payment ID</span>
+              <strong>{{ res.data.razorpay_payment_id }}</strong>
+            </div>
+
+            <div class="info-row small">
+              <span>Order ID</span>
+              <strong>{{ res.data.razorpay_order_id }}</strong>
+            </div>
+
+          </mat-card>
+
+          <div class="action-buttons">
+
+            <button mat-stroked-button (click)="downloadReceipt()"> Download Receipt</button>
+          </div>
+
+        </div>
+
+      </div>
     </div>
+
 
   </div>
 </div>
 
+<!-- Hidden Receipt -->
+<div
+  #receipt
+I
+  style="
+    position: fixed;
+    top: -10000px;
+    left: -10000px;
+    width: 800px;
+    background: #ffffff;
+    padding: 24px;
+    font-family: Arial, Helvetica, sans-serif;
+  "
+>
+  <h2>Payment Receipt</h2>
+  <p style="color: green; font-weight: bold;">Payment Successful</p>
 
-    </div>
+  <hr />
+
+  <table width="100%" cellpadding="6" cellspacing="0" border="1">
+    <tr>
+      <td><b>Payment ID</b></td>
+      <td>{{ data.razorpay_payment_id }}</td>
+    </tr>
+    <tr>
+      <td><b>Order ID</b></td>
+      <td>{{ data.razorpay_order_id }}</td>
+    </tr>
+    <tr>
+      <td><b>Amount Paid</b></td>
+      <td>{{ data.paymentAmount | currency : 'INR'}}</td>
+    </tr>
+    <tr>
+      <td><b>Bulk Ref ID</b></td>
+      <td>{{ data.bulkRefId }}</td>
+    </tr>
+  </table>
+
+  <hr />
+
+  <div *ngFor="let room of data.userData">
+    <h4>
+      Room: {{ room.roomtype }} ({{ room.roomId }})
+    </h4>
+    <p>{{ room.checkIn }} → {{ room.checkOut }}</p>
+
+    <table width="100%" cellpadding="6" cellspacing="0" border="1">
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone</th>
+      </tr>
+
+      <tr *ngFor="let a of room.attendees">
+        <td>{{ a.firstName }} {{ a.lastName }}</td>
+        <td>{{ a.email }}</td>
+        <td>{{ a.phone }}</td>
+      </tr>
+    </table>
+
+    <br />
+  </div>
+
+  <p style="font-size:12px;color:#666;text-align:center;">
+    This is a system-generated receipt.
+  </p>
 </div>

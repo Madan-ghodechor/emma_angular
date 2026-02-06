@@ -68,7 +68,7 @@ export class State {
         triple: this.tripleCount()
       };
 
-      localStorage.setItem(
+      sessionStorage.setItem(
         'booking_room_counts_v1',
         JSON.stringify(data)
       );
@@ -76,7 +76,7 @@ export class State {
   }
 
   public restore() {
-    const raw = localStorage.getItem('booking_room_counts_v1');
+    const raw = sessionStorage.getItem('booking_room_counts_v1');
     if (!raw) return;
 
     try {
@@ -85,14 +85,14 @@ export class State {
       this.doubleCount.set(parsed.double ?? 0);
       this.tripleCount.set(parsed.triple ?? 0);
 
-      const primaryUser = JSON.parse(localStorage.getItem('primaryUser') || '{}');
+      const primaryUser = JSON.parse(sessionStorage.getItem('primaryUser') || '{}');
       const email = primaryUser.email;
       const phone = primaryUser.phone;
       
       this.emailSet.set(new Set([email]));
       this.phoneSet.set(new Set([phone]));
     } catch {
-      localStorage.removeItem('booking_room_counts_v1');
+      sessionStorage.removeItem('booking_room_counts_v1');
     }
   }
 
@@ -101,7 +101,7 @@ export class State {
     this.singleCount.set(0);
     this.doubleCount.set(0);
     this.tripleCount.set(0);
-    localStorage.removeItem('booking_room_counts_v1');
+    sessionStorage.removeItem('booking_room_counts_v1');
   }
 
 

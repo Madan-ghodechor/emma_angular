@@ -3,5 +3,6 @@ export const environment = {
   apiBaseUrl: 'http://localhost:3000/api/',
   enableLogs: true,
   razorpayKey: 'rzp_test_SBBuzLPhx0DMgs',
-  gst : 1.18
+  gst: 1.18
 };
+
