@@ -70,7 +70,7 @@
                                     <label for="">CheckIn</label>
                                     <input matInput [matDatepicker]="checkInPicker"
                                         [value]="room.checkIn ? (room.checkIn | date : 'yyyy-MM-dd') : null"
-                                        min="2026-03-24"
+                                        min="2026-03-23"
                                         max="2026-03-26"
                                         (dateChange)="setCheckIn(room.roomId, $event.value)" readonly />
                                     <mat-datepicker-toggle matSuffix [for]="checkInPicker"></mat-datepicker-toggle>
@@ -96,18 +96,18 @@
                                 <!-- {{ !hasPrimaryUser() }} -->
                                 @if (!hasPrimaryUser()) {
                                 <button mat-stroked-button color="primary" class="checkout-wrapper"
-                                    [attr.data-note]="(!room.checkIn || !room.checkOut) ? 'Select check In/Out dates' : isRoomFull(room) ? 'Room is full' : 'Add primary guest'"
+                                    [attr.data-note]="(!room.checkIn || !room.checkOut) ? 'Select check In/Out dates' : isRoomFull(room) ? 'Room is full' : 'Add primary attendee'"
                                     [disabled]="isRoomFull(room) || (!room.checkIn || !room.checkOut)"
-                                    (click)="addPrimaryUser(room.roomId)">
+                                    (click)="addPrimaryUser(room)">
                                     Add Primary Attendee
                                 </button>
                                 &nbsp;
                                 }
                                 <button mat-stroked-button color="primary" class="checkout-wrapper"
-                                    [attr.data-note]="(!room.checkIn || !room.checkOut) ? 'Select check In/Out dates' : isRoomFull(room) ? 'Room is full' : 'Add new guest'"
+                                    [attr.data-note]="(!room.checkIn || !room.checkOut) ? 'Select check In/Out dates' : isRoomFull(room) ? 'Room is full' : 'Add secondary attendees'"
                                     [disabled]="isRoomFull(room) || (!room.checkIn || !room.checkOut)"
-                                    (click)="openDialog(room.roomId)">
-                                    Add Guests
+                                    (click)="openDialog(room)">
+                                    Add Secondary Attendee
                                 </button>
                                 <span class="capacity">
                                     {{ room.attendees.length }} /
@@ -161,6 +161,10 @@
                     <span>EEMA Members</span>
                     <span>{{ totalPrice() | currency : "INR" }}</span>
                 </div>
+                <div class="row">
+                    <span></span>
+                    <span>+ 18% GST</span>
+                </div>
 
                 <div class="sub-row" style="display: flex; align-items: center;">
                     <span> <b>{{ booking.totalAttendees() }}</b> Guests</span>
@@ -176,7 +180,7 @@
 
                 <div class="row total">
                     <span>Total</span>
-                    <span>{{ totalPrice() | currency : "INR" }}</span>
+                    <span>{{ withGST() | currency : "INR" }}</span>
                 </div>
 
                 <small class="tax-note">*Excludes Tax</small>

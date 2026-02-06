@@ -1,0 +1,111 @@
+<div class="page">
+
+    <div class="content">
+
+       <div class="success-wrapper" *ngIf="res">
+
+  <!-- HEADER -->
+  <div class="success-banner">
+    <mat-icon>check_circle</mat-icon>
+    <div>
+      <h2>Booking Confirmed</h2>
+      <p>Your room has been successfully reserved</p>
+    </div>
+  </div>
+
+  <!-- MAIN GRID -->
+  <div class="confirmation-grid">
+
+    <!-- LEFT SECTION -->
+    <div class="left-section">
+
+      <mat-card class="card">
+        <h3>Booking Information</h3>
+
+        <div class="info-row">
+          <span>Booking Reference</span>
+          <strong>{{ res.data.bulkRefId }}</strong>
+        </div>
+
+        <div class="info-row">
+          <span>Booked On</span>
+          <strong>{{ formatDate(res.data.createdAt) }}</strong>
+        </div>
+      </mat-card>
+
+      <mat-card
+        class="card"
+        *ngFor="let booking of res.data.bookings"
+      >
+        <h3>Room Details</h3>
+
+        <div class="info-row">
+          <span>Room</span>
+          <strong>{{ booking.roomId | uppercase }}</strong>
+        </div>
+
+        <div class="info-row">
+          <span>Room Type</span>
+          <strong>{{ booking.roomType | titlecase }}</strong>
+        </div>
+
+        <div class="info-row">
+          <span>Check-In</span>
+          <strong>{{ formatDate(booking.checkIn) }}</strong>
+        </div>
+
+        <div class="info-row">
+          <span>Check-Out</span>
+          <strong>{{ formatDate(booking.checkOut) }}</strong>
+        </div>
+
+        <div class="info-row">
+          <span>Guests</span>
+          <strong>{{ booking.attendees.length }}</strong>
+        </div>
+      </mat-card>
+
+    </div>
+
+    <!-- RIGHT SECTION -->
+    <div class="right-section stick">
+
+      <mat-card class="summary-card">
+
+        <h3>Payment Summary</h3>
+
+        <div class="amount">
+          {{ res.data.paymentAmount | currency : 'INR'}}
+        </div>
+
+        <div class="status success">
+          Payment Successful
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="info-row small">
+          <span>Payment ID</span>
+          <strong>{{ res.data.razorpay_payment_id }}</strong>
+        </div>
+
+        <div class="info-row small">
+          <span>Order ID</span>
+          <strong>{{ res.data.razorpay_order_id }}</strong>
+        </div>
+
+      </mat-card>
+
+      <div class="action-buttons">
+
+        <!-- <button mat-stroked-button> Download Receipt</button> -->
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+
+    </div>
+</div>

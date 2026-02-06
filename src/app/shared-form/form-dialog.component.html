@@ -1,7 +1,10 @@
 <div>
-  <h3 mat-dialog-title>Attendee Form</h3>
+  <div class="dialog-header">
+    <h3 mat-dialog-title>{{ formNumber }} Attendee Form</h3>
+    @if(primaryAdded){<button (click)="addPrimaryUser()">Add Primary Attendee</button>}
+  </div>
 
-  <mat-dialog-content  #scrollBox>
+  <mat-dialog-content #scrollBox>
     <form [formGroup]="userForm!" class="form">
 
       <mat-form-field appearance="outline">
@@ -53,7 +56,7 @@
 
       <mat-form-field appearance="outline">
         <mat-label>GST</mat-label>
-        <input type="text" placeholder="GST*" aria-label="Number" matInput formControlName="gst">
+        <input type="text" placeholder="GST" aria-label="Number" matInput formControlName="gst">
 
         @if (userForm!.get('gst')?.errors?.['required'] && userForm!.get('gst')?.touched) {
         <span class="error-msg">GST is required.</span>
@@ -129,7 +132,7 @@
 
   <mat-dialog-actions align="end">
     <button mat-button (click)="close()">Close</button>
-    <button mat-button [disabled]="userForm!.invalid" (click)="save()">Add Guest</button>
+    <button mat-button [disabled]="userForm!.invalid" (click)="save()">Save and Add Next</button>
   </mat-dialog-actions>
 
 </div>

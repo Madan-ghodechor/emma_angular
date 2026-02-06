@@ -1,10 +1,17 @@
 $background: rgb(122 122 255);
 $disabled-bg: #e0e0e0;
  
-
+.dialog-header{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+}
 
 div {
-  padding: 20px
+  padding: 20px;
+  padding-bottom: 0px;
 }
 
 button {

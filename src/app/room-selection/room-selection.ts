@@ -12,7 +12,8 @@ import { Location } from '@angular/common';
 })
 export class RoomSelection {
 
-  constructor(public booking: State, private router: Router, private location: Location, private stateService: State) { }
+  constructor(public booking: State, private router: Router, private location: Location, private stateService: State) {
+  }
 
   navigate() {
     const data = JSON.parse(localStorage.getItem('primaryUser') || '{}');
@@ -23,6 +24,9 @@ export class RoomSelection {
     this.stateService.phoneSet.update(list => new Set([...list, phone]));
 
     this.router.navigate(['/register'])
+  }
+  ngOnInit() {
+    this.stateService.restore()
   }
   goBack() {
     this.location.back();

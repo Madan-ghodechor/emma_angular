@@ -31,6 +31,11 @@ export class State {
     this.doubleRooms() * this.doublePrice() +
     this.tripleRooms() * this.triplePrice()
   );
+  readonly totalPricewithGST = computed(() =>
+  (this.singleRooms() * this.singlePrice() +
+    this.doubleRooms() * this.doublePrice() +
+    this.tripleRooms() * this.triplePrice()) *1.18
+  );
 
   constructor() {
     this.restore();
@@ -70,7 +75,7 @@ export class State {
     });
   }
 
-  private restore() {
+  public restore() {
     const raw = localStorage.getItem('booking_room_counts_v1');
     if (!raw) return;
 
@@ -82,10 +87,10 @@ export class State {
 
       const primaryUser = JSON.parse(localStorage.getItem('primaryUser') || '{}');
       const email = primaryUser.email;
-      const phone = primaryUser.full_phone;
-
-      this.emailSet.update(list => new Set([...list, email]));
-      this.phoneSet.update(list => new Set([...list, phone]));
+      const phone = primaryUser.phone;
+      
+      this.emailSet.set(new Set([email]));
+      this.phoneSet.set(new Set([phone]));
     } catch {
       localStorage.removeItem('booking_room_counts_v1');
     }
@@ -98,8 +103,6 @@ export class State {
     this.tripleCount.set(0);
     localStorage.removeItem('booking_room_counts_v1');
   }
-
-
 
 
 

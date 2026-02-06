@@ -1,7 +1,10 @@
 <div class="container">
     <div class="form-section">
         <div>
-            <h2 mat-dialog-title> <mat-icon>person</mat-icon> Attendee</h2>
+            <h2 mat-dialog-title> <mat-icon>person</mat-icon> Primary Guest <p
+                    style="font-size: 12px; font-weight: 500;">(The bill will be raised in the name of primary guest)
+                </p>
+            </h2>
 
             <form [formGroup]="userForm!" class="form">
 
@@ -28,7 +31,7 @@
                     <input type="text" placeholder="Pick one" aria-label="Number" matInput
                         formControlName="organisation" [matAutocomplete]="auto">
                     @if (userForm!.get('organisation')?.invalid && userForm!.get('organisation')?.touched) {
-                    <span class="error-msg">Organisation is required.</span>
+                    <span class="error-msg">Company name is required.</span>
                     }
                     <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayCompany"
                         (optionSelected)="setGst($event)">

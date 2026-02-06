@@ -34,6 +34,9 @@ export class Api {
   recordPaymentSuccess(data: any) {
     return this.http.post(`${environment.apiBaseUrl}record-payment`, data);
   }
+  recordFailedPayment(data: any){
+    return this.http.post(`${environment.apiBaseUrl}record-payment/failed`, data);
+  }
 
 
 

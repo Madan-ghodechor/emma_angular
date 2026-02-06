@@ -102,9 +102,6 @@ export class FormDialogComponent {
 
   }
 
-
-
-
   constructor(private dialogRef: MatDialogRef<FormDialogComponent>, private fb: FormBuilder, @Inject(MAT_DIALOG_DATA) public data: any, public sharedFiltering: SharedFiltering, private api: Api, private stateService: State) { }
 
   roomType: string = '';
@@ -112,20 +109,56 @@ export class FormDialogComponent {
   filteredOptions!: Observable<any[]>;
 
   gstPattern = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/;
+  primaryAdded = false;
+  formNumber = ''
 
   ngOnInit() {
+    this.primaryAdded = this.data.primaryAdded;
+
+    if (typeof (this.data.roomId) == 'object') {
+      this.formNumber = this.data.roomId.attendees.length == 0 ? '1st' : this.data.roomId.attendees.length == 1 ? '2nd' : '3rd';
+    } else {
+      this.formNumber = 'Edit'
+    }
+
 
     this.userForm = this.fb.group({
       roomType: [this.data.roomType],
       id: crypto.randomUUID(),
-
       firstName: ['', [Validators.required, Validators.minLength(2)]],
       lastName: ['', [Validators.required, Validators.minLength(2)]],
       organisation: ['', [Validators.required, Validators.minLength(2)]],
+      gst: ['', [Validators.pattern(this.gstPattern)]],
       email: ['', [Validators.required, Validators.email]],
       phone: ['', [Validators.required, Validators.pattern(/^[0-9]{10}$/)]],
-      gst: ['', [Validators.required, Validators.pattern(this.gstPattern)]],
     });
+
+    const attendeeData = this.data.attendee;
+    if (attendeeData) {
+
+      this.stateService.emailSet.update(list => {
+        const newSet = new Set(list);
+        newSet.delete(attendeeData.email);
+        return newSet;
+      });
+
+      this.stateService.phoneSet.update(list => {
+        const newSet = new Set(list);
+        newSet.delete(attendeeData.phone);
+        return newSet;
+      });
+
+      this.userForm.patchValue({
+        roomType: attendeeData?.roomType,
+        id: attendeeData?.id,
+        firstName: attendeeData?.firstName,
+        lastName: attendeeData?.lastName,
+        organisation: attendeeData?.organisation,
+        email: attendeeData?.email,
+        phone: attendeeData?.phone,
+        gst: attendeeData?.gst,
+      })
+    }
 
     /* ---------- EMAIL CHECK ---------- */
     this.userForm.get('email')!.valueChanges.subscribe(value => {
@@ -188,6 +221,18 @@ export class FormDialogComponent {
         startWith(''),
         map(value => this.sharedFiltering.filterCompanies(value))
       );
+
+    if (typeof (this.data.roomId) == 'object')
+      if (this.data.roomId.attendees.length > 0) {
+        setTimeout(() => {
+
+          const defaultCompany = this.sharedFiltering.companies.find(u => u.name === this.data.roomId.attendees[0].organisation.name);
+
+          this.userForm.get('organisation')?.setValue(defaultCompany || '')
+          // this.userForm.get('gst')?.setValue(this.data.roomId.attendees[0].gst)
+        }, 100);
+      }
+
   }
 
 
@@ -204,6 +249,9 @@ export class FormDialogComponent {
   }
   closeWithData(formValue: any) {
     this.dialogRef.close(formValue);
+  }
+  addPrimaryUser() {
+    this.dialogRef.close('triggerButton');
   }
 
   save() {
@@ -228,5 +276,36 @@ export class FormDialogComponent {
 
 
     this.dialogRef.close(this.userForm?.value);
+  }
+
+  ngOnDestroy() {
+    console.log("component destroyed")
+    const attendeeData = this.data.attendee;
+    if (attendeeData) {
+
+      const country = this.iti.getSelectedCountryData();
+
+      const phonepayload = {
+        dialCode: '+' + country.dialCode,
+        countryIso: country.iso2,
+        fullNumber: '+' + country.dialCode + this.phoneInput.nativeElement.value,
+        nationalNumber: this.phoneInput.nativeElement.value
+      };
+
+
+      const email = this.userForm?.value.email;
+      const phone = phonepayload.fullNumber;
+
+      if (email == attendeeData.email) {
+        this.stateService.emailSet.update(list => new Set([...list, email]));
+      }
+      if (phone == this.userForm?.value.phone) {
+        this.stateService.phoneSet.update(list => new Set([...list, phone]));
+      }
+
+    }
+
+
+
   }
 }

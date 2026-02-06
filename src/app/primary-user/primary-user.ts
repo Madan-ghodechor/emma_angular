@@ -94,7 +94,6 @@ export class PrimaryUser implements OnInit {
     public sharedFiltering: SharedFiltering,
     private stateService: State
   ) {
-    localStorage.clear();
     this.api.getUsers()
       .pipe(
         map((res: any) =>
@@ -116,17 +115,18 @@ export class PrimaryUser implements OnInit {
   }
 
   ngOnInit(): void {
+    localStorage.clear();
 
     this.userForm = this.fb.group({
       roomType: [],
 
       id: [{ value: crypto.randomUUID(), disabled: true }],
 
-      firstName: ['Madan', [Validators.required, Validators.minLength(2)]],
-      lastName: ['Ghodechor', [Validators.required, Validators.minLength(2)]],
-      organisation: ['Emma Pvt Ltd', [Validators.required, Validators.minLength(2)]],
-      email: ['madan.ghodechor@cotrav.co', [Validators.required, Validators.email]],
-      phone: ['9309804106', [Validators.required, Validators.pattern(/^[0-9]{10}$/)]],
+      firstName: ['', [Validators.required, Validators.minLength(2)]],
+      lastName: ['', [Validators.required, Validators.minLength(2)]],
+      organisation: ['', [Validators.required, Validators.minLength(2)]],
+      email: ['', [Validators.required, Validators.email]],
+      phone: ['', [Validators.required, Validators.pattern(/^[0-9]{10}$/)]],
       gst: ['', [Validators.required, Validators.pattern(this.gstPattern)]],
       is_primary_user: [true],
       primary_user_email: this.userForm?.get('email')?.value,
@@ -256,8 +256,10 @@ export class PrimaryUser implements OnInit {
       nationalNumber: this.phoneInput.nativeElement.value
     };
 
+    const organisation = this.userForm.getRawValue().organisation.name ? this.userForm.getRawValue().organisation.name : this.userForm.getRawValue().organisation 
     const payload = {
       ...this.userForm.getRawValue(),
+      organisation : organisation,
       phone: phonepayload.fullNumber,
       primary_user_email: this.userForm.get('email')!.value
     };

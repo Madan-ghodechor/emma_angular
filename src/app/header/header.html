@@ -3,7 +3,9 @@
 
     <div class="header">
         <div class="group">
-            <div class="back" (click)="goBack()"> <img src="icons/left-arrow.svg" alt=""> </div>
+            @if (home!='/primary-pax') {
+                <div class="back" (click)="goBack()"> <img src="icons/left-arrow.svg" alt=""> </div>
+            }
             <div>
                 <h1>EEMA South Factor 2026</h1>
                 <p>24 Mar, 2026 - 09:00 AM - 26 Mar, 2026 - 12:00 PM | Pragati Resorts</p>
