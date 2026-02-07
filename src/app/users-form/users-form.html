@@ -96,18 +96,18 @@
                                 <!-- {{ !hasPrimaryUser() }} -->
                                 @if (!hasPrimaryUser()) {
                                 <button mat-stroked-button color="primary" class="checkout-wrapper"
-                                    [attr.data-note]="(!room.checkIn || !room.checkOut) ? 'Select check In/Out dates' : isRoomFull(room) ? 'Room is full' : 'Add primary attendee'"
+                                    [attr.data-note]="(!room.checkIn || !room.checkOut) ? 'Select check In/Out dates' : isRoomFull(room) ? 'Room is full' : 'Add primary guest'"
                                     [disabled]="isRoomFull(room) || (!room.checkIn || !room.checkOut)"
                                     (click)="addPrimaryUser(room)">
-                                    Add Primary Attendee
+                                    Add Primary Guest
                                 </button>
                                 &nbsp;
                                 }
                                 <button mat-stroked-button color="primary" class="checkout-wrapper"
-                                    [attr.data-note]="(!room.checkIn || !room.checkOut) ? 'Select check In/Out dates' : isRoomFull(room) ? 'Room is full' : 'Add secondary attendees'"
+                                    [attr.data-note]="(!room.checkIn || !room.checkOut) ? 'Select check In/Out dates' : isRoomFull(room) ? 'Room is full' : 'Add secondary guest'"
                                     [disabled]="isRoomFull(room) || (!room.checkIn || !room.checkOut)"
                                     (click)="openDialog(room)">
-                                    Add Secondary Attendee
+                                    Add Secondary Guest
                                 </button>
                                 <span class="capacity">
                                     {{ room.attendees.length }} /
@@ -163,7 +163,7 @@
                 </div>
                 <div class="row">
                     <span></span>
-                    <span>+ 18% GST</span>
+                    <!-- <span>+ 18% GST</span> -->
                 </div>
 
                 <div class="sub-row" style="display: flex; align-items: center;">
@@ -183,7 +183,7 @@
                     <span>{{ withGST() | currency : "INR" }}</span>
                 </div>
 
-                <small class="tax-note">*Excludes Tax</small>
+                <!-- <small class="tax-note">*Excludes Tax</small> -->
 
                 <div class="checkout-wrapper"
                     [attr.data-note]="isReadyToPayment() ? 'Click to proceed to payment' : 'All guests must be added including primary user to proceed to payment'">

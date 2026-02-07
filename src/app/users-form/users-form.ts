@@ -263,7 +263,12 @@ export class UsersForm {
       this.expandedRoomId.set(expansion);
 
       if (isLastRoom) {
-        (Room[0].roomtype == 'single') ? this.onRoomTypeChange('double') : this.onRoomTypeChange('triple')
+        const ro = Room[0].roomtype == 'single' ? 'double' : 'triple';
+        const room_check = this.rooms().some(res => res.roomtype === ro);
+
+        if(room_check){
+          (Room[0].roomtype == 'single') ? this.onRoomTypeChange('double') : (Room[0].roomtype == 'double') ? this.onRoomTypeChange('triple') : ''
+        }
       }
     } else {
       setTimeout(() => {
@@ -673,7 +678,7 @@ export class UsersForm {
     })
   }
   afterPaymentFailed(error: any, payload: any, order: any) {
-    this.api.recordFailedPayment({ error, ...payload, order}).subscribe({
+    this.api.recordFailedPayment({ error, ...payload, order }).subscribe({
       next: (res: any) => {
         console.log(res)
       }

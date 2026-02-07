@@ -1,7 +1,7 @@
 <div>
   <div class="dialog-header">
-    <h3 mat-dialog-title>{{ formNumber }} Attendee Form</h3>
-    @if(primaryAdded){<button (click)="addPrimaryUser()">Add Primary Attendee</button>}
+    <h3 mat-dialog-title>{{ formNumber }} Guest Form</h3>
+    @if(primaryAdded && formNumber!='Edit'){<button (click)="addPrimaryUser()">Add Primary Guest</button>}
   </div>
 
   <mat-dialog-content #scrollBox>
