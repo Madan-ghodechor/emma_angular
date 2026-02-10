@@ -124,7 +124,7 @@ export class FormDialogComponent {
 
     this.userForm = this.fb.group({
       roomType: [this.data.roomType],
-      id: crypto.randomUUID(),
+      id: this.stateService.generateUUID(),
       firstName: ['', [Validators.required, Validators.minLength(2)]],
       lastName: ['', [Validators.required, Validators.minLength(2)]],
       organisation: ['', [Validators.required, Validators.minLength(2)]],
@@ -222,16 +222,16 @@ export class FormDialogComponent {
         map(value => this.sharedFiltering.filterCompanies(value))
       );
 
-    if (typeof (this.data.roomId) == 'object')
-      if (this.data.roomId.attendees.length > 0) {
-        setTimeout(() => {
+    // if (typeof (this.data.roomId) == 'object')
+    //   if (this.data.roomId.attendees.length > 0) {
+    //     setTimeout(() => {
 
-          const defaultCompany = this.sharedFiltering.companies.find(u => u.name === this.data.roomId.attendees[0].organisation.name);
+    //       const defaultCompany = this.sharedFiltering.companies.find(u => u.name === this.data.roomId.attendees[0].organisation.name);
 
-          this.userForm.get('organisation')?.setValue(defaultCompany || '')
-          // this.userForm.get('gst')?.setValue(this.data.roomId.attendees[0].gst)
-        }, 100);
-      }
+    //       this.userForm.get('organisation')?.setValue(defaultCompany || '')
+    //       // this.userForm.get('gst')?.setValue(this.data.roomId.attendees[0].gst)
+    //     }, 100);
+    //   }
 
   }
 
@@ -273,9 +273,12 @@ export class FormDialogComponent {
     this.stateService.phoneSet.update(list => new Set([...list, phone]));
 
 
+    let obj = {
+      ...this.userForm?.value,
+      organisation : this.userForm?.value?.organisation?.name ? this.userForm?.value?.organisation?.name : this.userForm?.value?.organisation
+    }
 
-
-    this.dialogRef.close(this.userForm?.value);
+    this.dialogRef.close(obj);
   }
 
   ngOnDestroy() {

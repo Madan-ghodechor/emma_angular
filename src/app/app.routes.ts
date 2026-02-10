@@ -8,11 +8,8 @@ import { RetryPayment } from './retry-payment/retry-payment';
 export const routes: Routes = [
   { path: '', redirectTo: 'primary-pax', pathMatch: 'full' },
   { path: 'primary-pax', component: PrimaryUser },
-  // { path: '', redirectTo: 'members-selection', pathMatch: 'full' },
   { path: 'members-selection', component: RoomSelection },
   { path: 'register', component: UsersForm },
   { path: 'payment-success', component: PaymentSuccess },
   { path: 'retry-payment', component: RetryPayment }
-  // { path: 'register', component: NewReg },
-  //   { path: '', component: Registration },
 ];

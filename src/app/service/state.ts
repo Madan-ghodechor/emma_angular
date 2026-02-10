@@ -6,14 +6,14 @@ type RoomType = 'single' | 'double' | 'triple';
 export class State {
 
   /* ---------------- Prices ---------------- */
-  readonly singlePrice = signal(9700);
+  readonly singlePrice = signal(9500);
   readonly doublePrice = signal(10000);
   readonly triplePrice = signal(12750);
 
   /* ---------------- Room counts ---------------- */
-  private readonly singleCount = signal(0);
-  private readonly doubleCount = signal(0);
-  private readonly tripleCount = signal(0);
+  public readonly singleCount = signal(0);
+  public readonly doubleCount = signal(0);
+  public readonly tripleCount = signal(0);
 
   readonly singleRooms = this.singleCount.asReadonly();
   readonly doubleRooms = this.doubleCount.asReadonly();
@@ -114,5 +114,20 @@ export class State {
   /* ---------------- For Testing ---------------- */
   emailSet = signal<Set<string>>(new Set());
   phoneSet = signal<Set<string>>(new Set());
+
+
+  generateUUID(): string {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+
+  // fallback
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    const r = Math.random() * 16 | 0;
+    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+
 
 }

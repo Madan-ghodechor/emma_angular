@@ -16,7 +16,7 @@
                     <small>Please note: Room booking link will be sent post Registration.</small>
 
                     <div class="price">
-                        {{ booking.singlePrice() | currency : 'INR' }} <span style="font-weight: 400; font-size: 12px;">+ 18% GST /- Night</span>
+                        {{ booking.singlePrice() | currency : 'INR' }}  /- Night <span style="font-weight: 400; font-size: 12px;">(Incl. Tax)</span>
                     </div>
                 </div>
 
@@ -40,7 +40,7 @@
                     <small>Please note: Room booking link will be sent post Registration.</small>
 
                     <div class="price">
-                        {{ booking.doublePrice() | currency : 'INR' }} <span style="font-weight: 400; font-size: 12px;">+ 18% GST /- Night</span>
+                        {{ booking.doublePrice() | currency : 'INR' }} /- Night <span style="font-weight: 400; font-size: 12px;">(Incl. Tax)</span>
                     </div>
                 </div>
 
@@ -64,7 +64,7 @@
                     <small>Please note: Room booking link will be sent post Registration.</small>
 
                     <div class="price">
-                        {{ booking.triplePrice() | currency : 'INR' }} <span style="font-weight: 400; font-size: 12px;">+ 18% GST /- Night</span>
+                        {{ booking.triplePrice() | currency : 'INR' }} /- Night <span style="font-weight: 400; font-size: 12px;">( Incl. Tax )</span>
                     </div>
                 </div>
 
@@ -97,7 +97,7 @@
                 </div>
                 <div class="row">
                     <span></span>
-                    <span> + 18% GST</span>
+                    <!-- <span> + 18% GST</span> -->
                 </div>
 
                 <div class="sub-row" style="display: flex; align-items: center;">
@@ -114,7 +114,7 @@
 
                 <div class="row total">
                     <span>Total</span>
-                    <span>{{ booking.totalPricewithGST() | currency : "INR" }}</span>
+                    <span>{{ booking.totalPrice() | currency : "INR" }}</span>
                 </div>
 
                 <!-- <small class="tax-note">*Excludes Tax</small> -->
@@ -125,7 +125,7 @@
                         Proceed to Payment
                     </button> -->
 
-                    <button class="continue-btn" (click)="navigate()">Continue</button>
+                    <button class="continue-btn" [disabled]="(booking.singleRooms()+booking.doubleRooms()+booking.tripleRooms())==0" (click)="navigate()">Continue</button>
 
 
                 </div>
