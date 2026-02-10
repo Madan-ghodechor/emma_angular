@@ -15,7 +15,7 @@ export class Api {
   getCompanies() {
     return this.http.get(`${environment.apiBaseUrl}companies`);
   }
-  getUsers(){
+  getUsers() {
     return this.http.get(`${environment.apiBaseUrl}users`)
   }
 
@@ -34,7 +34,7 @@ export class Api {
   recordPaymentSuccess(data: any) {
     return this.http.post(`${environment.apiBaseUrl}record-payment`, data);
   }
-  recordFailedPayment(data: any){
+  recordFailedPayment(data: any) {
     return this.http.post(`${environment.apiBaseUrl}record-payment/failed`, data);
   }
 
@@ -46,6 +46,11 @@ export class Api {
   }
   getBookingLogById(ID: string) {
     return this.http.get(`${environment.apiBaseUrl}attempt?refID=${ID}`)
+  }
+
+
+  getBookingRecord(ID: String) {
+    return this.http.get(`${environment.apiBaseUrl}record-payment?refID=${ID}`)
   }
 
 

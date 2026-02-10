@@ -121,6 +121,7 @@ export class UsersForm {
     private _snackBar: MatSnackBar,
     private router: Router
   ) {
+
     effect(() => {
       const single = this.booking.singleRooms();
       const double = this.booking.doubleRooms();
@@ -145,6 +146,10 @@ export class UsersForm {
   ngAfterViewInit() {
     if (!sessionStorage.getItem('primaryUser'))
       this.router.navigate(['/'])
+
+    const roomsProceed: any = sessionStorage.getItem('rooms');
+    if (roomsProceed)
+      this.rooms.set(JSON.parse(roomsProceed))
 
     const rooms = this.rooms() as Room[];
 
@@ -241,6 +246,7 @@ export class UsersForm {
   changeTabsAndExpansion(roomObj: any) {
     const room = Array.isArray(roomObj) ? roomObj[0] : roomObj;
     console.log(room)
+
     this.openSnackBar()
 
     const [type, currentRoomNumber] = room.roomId.split('-');
@@ -266,7 +272,7 @@ export class UsersForm {
         const ro = Room[0].roomtype == 'single' ? 'double' : 'triple';
         const room_check = this.rooms().some(res => res.roomtype === ro);
 
-        if(room_check){
+        if (room_check) {
           (Room[0].roomtype == 'single') ? this.onRoomTypeChange('double') : (Room[0].roomtype == 'double') ? this.onRoomTypeChange('triple') : ''
         }
       }
@@ -345,7 +351,7 @@ export class UsersForm {
           attendees: [
             ...room.attendees,
             {
-              id: crypto.randomUUID(),
+              id: this.booking.generateUUID(),
               ...attendee,
               is_primary_user: isPrimaryUser,
               primary_user_email: primaryUser.email
@@ -356,6 +362,23 @@ export class UsersForm {
     );
 
     this.changeTabsAndExpansion(Atroom)
+
+
+    const singleroom = this.booking.singleRooms();
+    const doubleroom = this.booking.doubleRooms();
+    const tripleroom = this.booking.tripleRooms();
+
+    const bkgRefInLocal = localStorage.getItem('bkgRef');
+
+    const logPayload = {
+      "bulkRefId": bkgRefInLocal,
+      "stage": 3,
+      singleroom,
+      doubleroom,
+      tripleroom,
+      "userdata": this.rooms()
+    }
+    this.api.createBookingLog(logPayload).subscribe();
   }
 
   updateAttendee(
@@ -576,7 +599,15 @@ export class UsersForm {
           this.openDuplicateDialog(duplicate)
         } else {
 
-          this.api.createBookingLog(rooms).subscribe((res: any) => {
+          const bkgRefInLocal = localStorage.getItem('bkgRef');
+
+          const logPayload = {
+            "bulkRefId": bkgRefInLocal,
+            "stage": 4,
+            "userdata": this.rooms()
+          }
+
+          this.api.createBookingLog(logPayload).subscribe((res: any) => {
             if (res.success) {
               const payload = {
                 userData: rooms,
@@ -677,12 +708,17 @@ export class UsersForm {
       }
     })
   }
+
+  private paymentFailTimer: any;
+
   afterPaymentFailed(error: any, payload: any, order: any) {
-    this.api.recordFailedPayment({ error, ...payload, order }).subscribe({
-      next: (res: any) => {
-        console.log(res)
-      }
-    })
+    clearTimeout(this.paymentFailTimer);
+
+    this.paymentFailTimer = setTimeout(() => {
+      this.api.recordFailedPayment({ error, ...payload, order }).subscribe({
+        next: (res: any) => console.log(res)
+      });
+    }, 1000);
   }
 
 }

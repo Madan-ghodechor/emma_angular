@@ -10,9 +10,12 @@ import { Api } from '../service/api';
 import { Router } from '@angular/router';
 import { SharedFiltering } from '../service/shared-filtering';
 
+import { pendingDetailsComponent } from './pending_Details';
+
 import intlTelInput from 'intl-tel-input';
 import { parsePhoneNumber } from 'libphonenumber-js';
 import { State } from '../service/state';
+import { MatDialog } from '@angular/material/dialog';
 
 interface Company {
   _id: string;
@@ -92,7 +95,8 @@ export class PrimaryUser implements OnInit {
     private api: Api,
     private router: Router,
     public sharedFiltering: SharedFiltering,
-    private stateService: State
+    private stateService: State,
+    private dialog: MatDialog,
   ) {
     this.api.getUsers()
       .pipe(
@@ -105,7 +109,7 @@ export class PrimaryUser implements OnInit {
       )
       .subscribe({
         next: result => {
-          for(let da of result){ 
+          for (let da of result) {
             this.stateService.emailSet.update(list => new Set([...list, da?.email]));
             this.stateService.phoneSet.update(list => new Set([...list, da?.phone]));
           }
@@ -117,10 +121,18 @@ export class PrimaryUser implements OnInit {
   ngOnInit(): void {
     sessionStorage.clear();
 
+    const bgbulkRefId = localStorage.getItem('bkgRef');
+    if (bgbulkRefId) {
+      this.api.getBookingLogById(bgbulkRefId).subscribe((res: any) => {
+        if (res.data.length > 0)
+          this.openDialog(bgbulkRefId, res)
+      })
+    }
+
     this.userForm = this.fb.group({
       roomType: [],
 
-      id: [{ value: crypto.randomUUID(), disabled: true }],
+      id: [{ value: this.stateService.generateUUID(), disabled: true }],
 
       firstName: ['', [Validators.required, Validators.minLength(2)]],
       lastName: ['', [Validators.required, Validators.minLength(2)]],
@@ -131,20 +143,6 @@ export class PrimaryUser implements OnInit {
       is_primary_user: [true],
       primary_user_email: this.userForm?.get('email')?.value,
     });
-
-
-    // this.userForm = this.fb.group({
-    //   roomType: [],
-
-    //   id: [{ value: crypto.randomUUID(), disabled: true }],
-
-    //   firstName: ['', [Validators.required, Validators.minLength(2)]],
-    //   lastName: ['', [Validators.required, Validators.minLength(2)]],
-    //   organisation: ['', [Validators.required, Validators.minLength(2)]],
-    //   email: ['', [Validators.required, Validators.email]],
-    //   phone: ['', [Validators.required, Validators.pattern(/^[0-9]{10}$/)]],
-    //   gst: ['', [Validators.required, Validators.pattern(this.gstPattern)]],
-    // });
 
 
 
@@ -213,6 +211,70 @@ export class PrimaryUser implements OnInit {
 
   }
 
+  openDialog(bgbulkRefId: any, res:any): void {
+
+    const dialogRef = this.dialog.open(pendingDetailsComponent, {
+      width: '500px',
+      data : {
+        res
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (!result) return;
+
+      if (result === 'startNew') {
+        // wipe data, reset forms, clear storage etc
+        console.log('User wants fresh booking');
+      }
+
+      if (result === 'continue') {
+        this.api.getBookingLogById(bgbulkRefId).subscribe((res: any) => {
+
+          const da = res.data[0];
+
+          sessionStorage.setItem('primaryUser', JSON.stringify(da?.primaryUser));
+
+          if (da.stage == 1) {
+
+            const selectedCompany = this.sharedFiltering.companies.find(
+              c => c.name === da?.primaryUser?.organisation
+            ) || { id: null, name: da?.primaryUser?.organisation };
+
+            this.userForm.patchValue({
+              roomType: da?.primaryUser?.roomType,
+
+              id: da?.primaryUser?.id,
+
+              firstName: da?.primaryUser?.firstName,
+              lastName: da?.primaryUser?.lastName,
+              organisation: selectedCompany,
+              email: da?.primaryUser?.email,
+              // phone: da?.primaryUser?.phone,
+              gst: da?.primaryUser?.gst,
+              is_primary_user: true,
+              primary_user_email: da?.primaryUser?.primary_user_email,
+            })
+          }
+          if (da.stage == 2) {
+            this.router.navigate(['/members-selection'])
+          }
+          if (da.stage == 3 || da.stage == 4) {
+            this.stateService.singleCount.set(da?.singleroom);
+            this.stateService.doubleCount.set(da?.doubleroom);
+            this.stateService.tripleCount.set(da?.tripleroom);
+
+            sessionStorage.setItem('rooms', JSON.stringify(da?.payload))
+            setTimeout(() => {
+              this.router.navigate(['/register'])
+            }, 10);
+
+          }
+        });
+      }
+    });
+  }
+
 
   displayCompany(company: Company): string {
     return company ? company.name : '';
@@ -223,7 +285,7 @@ export class PrimaryUser implements OnInit {
 
     if (this.iti.isValidNumber()) {
       this.userForm.patchValue({
-        phone: this.iti.getNumber() // +919876543210
+        phone: this.iti.getNumber()
       });
     } else {
       this.userForm.patchValue({
@@ -256,16 +318,46 @@ export class PrimaryUser implements OnInit {
       nationalNumber: this.phoneInput.nativeElement.value
     };
 
-    const organisation = this.userForm.getRawValue().organisation.name ? this.userForm.getRawValue().organisation.name : this.userForm.getRawValue().organisation 
+    const organisation = this.userForm.getRawValue().organisation.name ? this.userForm.getRawValue().organisation.name : this.userForm.getRawValue().organisation
     const payload = {
       ...this.userForm.getRawValue(),
-      organisation : organisation,
+      organisation: organisation,
       phone: phonepayload.fullNumber,
       primary_user_email: this.userForm.get('email')!.value
     };
 
     sessionStorage.setItem('primaryUser', JSON.stringify(payload));
     console.log(payload);
+    const bkgRefInLocal = localStorage.getItem('bkgRef');
+
+    let logPayload;
+
+    if (!bkgRefInLocal) {
+      logPayload = {
+        "stage": 1,
+        "primary_user": {
+          ...payload
+        },
+        "userdata": [
+        ]
+      }
+    } else {
+      logPayload = {
+        "bulkRefId": bkgRefInLocal,
+        "stage": 1,
+        "primary_user": {
+          ...payload
+        },
+        "userdata": [
+        ]
+      }
+    }
+
+    this.api.createBookingLog(logPayload).subscribe((res: any) => {
+      localStorage.setItem('bkgRef', res.data.bulkRefId)
+    });
+
+
     this.router.navigate(['/members-selection']);
   }
 }

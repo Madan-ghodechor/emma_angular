@@ -125,7 +125,7 @@
                         Proceed to Payment
                     </button> -->
 
-                    <button class="continue-btn" (click)="navigate()">Continue</button>
+                    <button class="continue-btn" [disabled]="(booking.singleRooms()+booking.doubleRooms()+booking.tripleRooms())==0" (click)="navigate()">Continue</button>
 
 
                 </div>

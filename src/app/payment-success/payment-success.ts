@@ -6,6 +6,7 @@ import { MatIcon } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import { Api } from '../service/api';
 
 @Component({
   selector: 'app-payment-success',
@@ -72,35 +73,82 @@ export class PaymentSuccess {
   // };
 
   res: any;
-  constructor(private router: Router) {
+  constructor(private router: Router, private api: Api) {
     const navigation = this.router.getCurrentNavigation();
     this.res = navigation?.extras.state?.['paymentResponse'];
   }
 
-  data:any;
+  data: any;
   ngOnInit() {
     sessionStorage.clear();
+    localStorage.clear();
     this.data = this.res.data;
     console.log(this.data)
+
+    this.api.getBookingRecord(this.res.data.bulkRefId).subscribe({
+      next: (res: any) => {
+        this.res = res.data.userData
+      }
+    })
   }
 
   @ViewChild('receipt') receipt!: ElementRef;
 
-
   downloadReceipt() {
-    const el = this.receipt.nativeElement;
+    const element = this.receipt.nativeElement;
 
-    html2canvas(el, { scale: 2 }).then(canvas => {
-      const img = canvas.toDataURL('image/png');
+    html2canvas(element, { scale: 3, useCORS: true }).then(canvas => {
+      const imgData = canvas.toDataURL('image/png');
+
       const pdf = new jsPDF('p', 'mm', 'a4');
 
-      const width = 210;
-      const height = (canvas.height * width) / canvas.width;
+      const pageWidth = 210;
+      const pageHeight = 297;
 
-      pdf.addImage(img, 'PNG', 0, 0, width, height);
-      pdf.save(`receipt-${this.data .razorpay_payment_id}.pdf`);
+      const headerHeight = 20;
+      const footerHeight = 15;
+
+      const contentHeight = pageHeight - headerHeight - footerHeight;
+
+      const imgWidth = pageWidth;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+      let heightLeft = imgHeight;
+      let position = 0;
+      let page = 1;
+
+      while (heightLeft > 0) {
+        if (page > 1) pdf.addPage();
+
+        // HEADER
+        pdf.setFontSize(12);
+        pdf.text('Booking Voucher', 10, 10);
+        pdf.text(`Payment: ${this.data.razorpay_payment_id}`, 150, 10);
+
+        // BODY IMAGE
+        pdf.addImage(
+          imgData,
+          'PNG',
+          0,
+          headerHeight,
+          imgWidth,
+          imgHeight
+        );
+
+        // FOOTER
+        pdf.setFontSize(10);
+        pdf.text(`Page ${page}`, 100, 290);
+
+        heightLeft -= contentHeight;
+        position -= contentHeight;
+        page++;
+      }
+
+      pdf.save(`voucher-${this.data.razorpay_payment_id}.pdf`);
     });
   }
+
+
 
   formatDate(date: string) {
     return new Date(date).toLocaleDateString('en-IN', {

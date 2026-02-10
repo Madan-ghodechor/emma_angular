@@ -58,11 +58,11 @@ export class RetryPayment implements OnInit {
       this.api.getBookingLogById(this.data.bulkRefId).subscribe({
         next: (res: any) => {
           console.log(res)
-          if (res.data[0].payment==2)
+          if (res.data[0].payment == 2)
             this.checkCard.set(2)
-          if (res.data[0].payment==1)
+          if (res.data[0].payment == 1)
             this.checkCard.set(1)
-      
+
         }
       })
 
@@ -75,7 +75,7 @@ export class RetryPayment implements OnInit {
       userData: this.data.userData,
       bulkRefId: this.data.bulkRefId,
       logId: this.data.logId,
-      amount: this.data.order.amount
+      amount: this.data.order.amount / 100
     }
     this.pay(payload.amount, payload, this.data.order);
 
@@ -96,8 +96,12 @@ export class RetryPayment implements OnInit {
 
   openRazorpay(order: any, payload: any) {
 
+    console.log(order.amount / 100);
+    console.log(order.amount);
+
     const options = {
       key: environment.razorpayKey,
+      amount: order.amount / 100,
       currency: 'INR',
       name: 'COTRAV',
       description: 'Payment',
@@ -138,6 +142,8 @@ export class RetryPayment implements OnInit {
 
   afterPaymentSuccess(razorpayRes: any, prevData: any) {
 
+    console.log(razorpayRes)
+
     console.log("after Payment success called")
     const payload = {
       ...razorpayRes,
@@ -155,11 +161,15 @@ export class RetryPayment implements OnInit {
       }
     })
   }
+  private paymentFailTimer: any;
+
   afterPaymentFailed(error: any, payload: any, order: any) {
-    this.api.recordFailedPayment({ error, ...payload, order }).subscribe({
-      next: (res: any) => {
-        console.log(res)
-      }
-    })
+    clearTimeout(this.paymentFailTimer);
+
+    this.paymentFailTimer = setTimeout(() => {
+      this.api.recordFailedPayment({ error, ...payload, order }).subscribe({
+        next: (res: any) => console.log(res)
+      });
+    }, 1000);
   }
 }

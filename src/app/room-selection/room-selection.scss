@@ -190,3 +190,7 @@ h4 {
 .continue-btn:hover {
   background: darken($background, 10%);
 }
+.continue-btn:disabled {
+  background: $disabled-bg;
+  cursor: not-allowed;
+}
