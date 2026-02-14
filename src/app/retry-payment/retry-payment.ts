@@ -5,6 +5,7 @@ import { environment } from '../../environments/environment';
 import { map } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
 import { CurrencyPipe, DatePipe, TitleCasePipe } from '@angular/common';
+import { LoggerService } from '../service/logger.service';
 
 interface RetryToken {
   order: any;
@@ -37,7 +38,8 @@ export class RetryPayment implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private api: Api
+    private api: Api,
+    private logger:LoggerService
   ) { }
 
   ngOnInit(): void {
@@ -52,12 +54,12 @@ export class RetryPayment implements OnInit {
       this.token = token;
       this.data = jwtDecode<RetryToken>(this.token);
 
-      console.log(this.data)
+      this.logger.log(this.data)
 
 
       this.api.getBookingLogById(this.data.bulkRefId).subscribe({
         next: (res: any) => {
-          console.log(res)
+          this.logger.log(res)
           if (res.data[0].payment == 2)
             this.checkCard.set(2)
           if (res.data[0].payment == 1)
@@ -88,7 +90,7 @@ export class RetryPayment implements OnInit {
   pay(amount: number, payload: any, order: any) {
 
     if (!order?.id) {
-      console.error('Invalid order object', order);
+      this.logger.error('Invalid order object', order);
       return;
     }
     this.openRazorpay(order, payload);
@@ -96,8 +98,8 @@ export class RetryPayment implements OnInit {
 
   openRazorpay(order: any, payload: any) {
 
-    console.log(order.amount / 100);
-    console.log(order.amount);
+    this.logger.log(order.amount / 100);
+    this.logger.log(order.amount);
 
     const options = {
       key: environment.razorpayKey,
@@ -112,17 +114,17 @@ export class RetryPayment implements OnInit {
       handler: (response: any) => {
         this.api.verifyPayment(response).subscribe({
           next: () => {
-            console.log(response)
+            this.logger.log(response)
             this.afterPaymentSuccess(response, payload)
           },
           error: () => {
-            console.log(response)
+            this.logger.log(response)
           }
         });
       },
 
       modal: {
-        ondismiss: () => console.log('Payment popup closed')
+        ondismiss: () => this.logger.log('Payment popup closed')
       },
 
       theme: {
@@ -133,7 +135,7 @@ export class RetryPayment implements OnInit {
     const rzp = new (window as any).Razorpay(options);
 
     rzp.on('payment.failed', (response: any) => {
-      console.error('Payment failed', response.error);
+      this.logger.error('Payment failed', response.error);
       this.afterPaymentFailed(response.error, payload, order)
     });
 
@@ -142,16 +144,16 @@ export class RetryPayment implements OnInit {
 
   afterPaymentSuccess(razorpayRes: any, prevData: any) {
 
-    console.log(razorpayRes)
+    this.logger.log(razorpayRes)
 
-    console.log("after Payment success called")
+    this.logger.log("after Payment success called")
     const payload = {
       ...razorpayRes,
       ...prevData
     }
     this.api.recordPaymentSuccess(payload).subscribe({
       next: (res) => {
-        console.log(res);
+        this.logger.log(res);
         this.router.navigate(['/payment-success'], {
           state: { paymentResponse: res }
         });
@@ -168,7 +170,7 @@ export class RetryPayment implements OnInit {
 
     this.paymentFailTimer = setTimeout(() => {
       this.api.recordFailedPayment({ error, ...payload, order }).subscribe({
-        next: (res: any) => console.log(res)
+        next: (res: any) => this.logger.log(res)
       });
     }, 1000);
   }

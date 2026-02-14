@@ -54,4 +54,14 @@ export class Api {
   }
 
 
+
+  /* ---------------------  Helpers API Methods  ----------------------- */
+  
+  generateVoucher(payload: any) {
+    return this.http.post(`${environment.apiBaseUrl}voucher`, payload, { responseType: 'blob' })
+  }
+  getRoomCount() {
+    return this.http.get(`${environment.apiBaseUrl}rooms/count`)
+  }
+
 }

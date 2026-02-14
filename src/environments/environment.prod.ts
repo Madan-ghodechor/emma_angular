@@ -3,5 +3,6 @@ export const environment = {
   apiBaseUrl: 'https://cotrav.in/api/api/',
   enableLogs: false,
   razorpayKey: 'rzp_live_pI1GHoayLTp31R',
-  gst: 1
+  gst: 1,
+  total_rooms : 90
 };

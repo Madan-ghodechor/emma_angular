@@ -13,6 +13,7 @@ import { State } from '../service/state';
 
 import intlTelInput from 'intl-tel-input';
 import { parsePhoneNumber } from 'libphonenumber-js';
+import { LoggerService } from '../service/logger.service';
 
 interface Company {
   _id: string;
@@ -102,7 +103,7 @@ export class FormDialogComponent {
 
   }
 
-  constructor(private dialogRef: MatDialogRef<FormDialogComponent>, private fb: FormBuilder, @Inject(MAT_DIALOG_DATA) public data: any, public sharedFiltering: SharedFiltering, private api: Api, private stateService: State) { }
+  constructor(private dialogRef: MatDialogRef<FormDialogComponent>, private fb: FormBuilder, @Inject(MAT_DIALOG_DATA) public data: any, public sharedFiltering: SharedFiltering, private api: Api, private stateService: State, private logger: LoggerService) { }
 
   roomType: string = '';
   userForm!: FormGroup;
@@ -113,6 +114,8 @@ export class FormDialogComponent {
   formNumber = ''
 
   ngOnInit() {
+
+
     this.primaryAdded = this.data.primaryAdded;
 
     if (typeof (this.data.roomId) == 'object') {
@@ -196,7 +199,7 @@ export class FormDialogComponent {
       const exists = this.stateService.phoneSet().has(phonepayload.fullNumber);
 
       if (exists) {
-        console.log("duplicate")
+        this.logger.log("duplicate")
         this.userForm?.get('phone')!.setErrors({ duplicate: true });
       } else {
         const errors = this.userForm?.get('phone')!.errors;
@@ -275,14 +278,14 @@ export class FormDialogComponent {
 
     let obj = {
       ...this.userForm?.value,
-      organisation : this.userForm?.value?.organisation?.name ? this.userForm?.value?.organisation?.name : this.userForm?.value?.organisation
+      organisation: this.userForm?.value?.organisation?.name ? this.userForm?.value?.organisation?.name : this.userForm?.value?.organisation
     }
 
     this.dialogRef.close(obj);
   }
 
   ngOnDestroy() {
-    console.log("component destroyed")
+    this.logger.log("component destroyed")
     const attendeeData = this.data.attendee;
     if (attendeeData) {
 

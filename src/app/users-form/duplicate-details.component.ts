@@ -3,6 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA, MatDialogActions, MatDialogContent } fro
 import { AsyncPipe, JsonPipe } from '@angular/common';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatIconModule } from '@angular/material/icon';
+import { LoggerService } from '../service/logger.service';
 
 
 @Component({
@@ -80,11 +81,11 @@ import { MatIconModule } from '@angular/material/icon';
 })
 export class DuplicateDialogComponent {
 
-    constructor(private dialogRef: MatDialogRef<DuplicateDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any) { }
+    constructor(private dialogRef: MatDialogRef<DuplicateDialogComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private logger:LoggerService) { }
 
 
     ngOnInit() {
-        console.log(this.data)
+        this.logger.log(this.data)
     }
 
     close() {

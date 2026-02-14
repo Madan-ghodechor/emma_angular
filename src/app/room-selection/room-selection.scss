@@ -1,196 +1,392 @@
-$background: rgb(122 122 255);
+/* ==============================
+   VARIABLES
+============================== */
+$primary: rgb(122 122 255);
+$primary-dark: rgb(95 95 240);
+$primary-soft: rgba(122, 122, 255, 0.12);
 $disabled-bg: #e0e0e0;
+$text: #111827;
+$muted: #6b7280;
+$border: #e6e8ef;
+$bg: #f4f6fb;
 
-
-.page {
-  max-width: 1050px;
-  margin: auto;
-  margin-top: 20px;
+/* ==============================
+   BASE
+============================== */
+* {
+  box-sizing: border-box;
 }
 
-/* Header */
-.header {
-  display: flex;
-  align-items: center;
-  height: auto;
-  width: 100%;
-}
-
-.group {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  width: 50%;
-
-  &:nth-child(2) {
-    justify-content: end;
-  }
-}
 
 h1,
 h2,
 h3,
 h4 {
-  font-weight: 500 !important;
-}
-
-.header h1 {
   margin: 0;
-  font-size: 22px;
+  font-weight: 600;
 }
 
-.header p {
-  margin: 4px 0 0;
-  color: #777;
-  font-size: 14px;
+h2 {
+  margin-bottom: 14px;
+  font-size: 18px;
 }
 
-.back {
-  font-size: 22px;
-  cursor: pointer;
+/* ==============================
+   PAGE
+============================== */
+.page {
+  max-width: 1150px;
+  margin: 24px auto;
+  padding: 0px 50px;
 }
 
-/* Layout */
+/* ==============================
+   LAYOUT
+============================== */
 .content {
   display: grid;
-  grid-template-columns: 1fr 360px;
-  gap: 32px;
+  grid-template-columns: 1fr;
+  gap: 26px;
 }
 
-/* Left */
-.left h2 {
-  margin-bottom: 16px;
+@media (max-width: 900px) {
+  .content {
+    grid-template-columns: 1fr;
+  }
 }
 
-.ticket-card {
-  display: flex;
-  justify-content: space-between;
-  background: #f2f2f2;
+/* ==============================
+   DATE PICKERS
+============================== */
+.room-dates {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 22px;
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+
+  .check-in-date {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    label {
+      font-size: 12px;
+      font-weight: 600;
+      color: $muted;
+    }
+
+    input {
+      height: 46px;
+      padding: 0 14px;
+      border-radius: 12px;
+      border: 1px solid $border;
+      background: white;
+      font-size: 14px;
+      transition: all 0.2s ease;
+    }
+
+    input:hover {
+      border-color: darken($border, 10%);
+    }
+
+    input:focus {
+      border-color: $primary;
+      box-shadow: 0 0 0 4px $primary-soft;
+      outline: none;
+    }
+  }
+}
+
+/* ==============================
+   ROOM SECTION
+============================== */
+.room {
+  background: white;
+  border-radius: 16px;
   padding: 20px;
-  border-radius: 10px;
-  margin-top: 10px;
-  border: 2px solid transparent;
+  border: 1px solid $border;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
 }
 
-.ticket-card.active {
-  border-color: #ddd;
-}
-
-.ticket-info h3 {
-  margin: 0 0 6px;
-}
-
-.ticket-info p {
-  margin: 0;
-  font-size: 14px;
-  color: #555;
-}
-
-.ticket-info small {
-  display: block;
-  margin-top: 8px;
-  color: #777;
-}
-
-.price {
+.room .box {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
   margin-top: 14px;
-  font-weight: 600;
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+
+  .radio {
+    border-radius: 14px;
+    padding: 18px;
+    cursor: pointer;
+    background: white;
+    border: 1px solid $border;
+    transition: all 0.25s ease;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .radio:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+    border-color: $primary;
+  }
+
+  /* ⭐ ACTIVE */
+  .radio.active {
+    border: 2px solid $primary;
+    background: linear-gradient(0deg, $primary-soft, white);
+    box-shadow: 0 10px 25px rgba(122, 122, 255, 0.25);
+  }
+
+  .ticket-info {
+    h3 {
+      font-size: 15px;
+      margin-bottom: 8px;
+    }
+
+    .price {
+      font-size: 18px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    span {
+      font-size: 12px;
+      color: $muted;
+    }
+  }
 }
 
-.ticket-action {
-  text-align: right;
-}
-
-.qty {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: #fff;
-  border-radius: 6px;
-  padding: 6px 10px;
-}
-
-.qty button {
-  border: none;
-  background: none;
-  font-size: 18px;
-  cursor: pointer;
-  width: 20px;
-}
-
-.spots {
-  display: block;
-  margin-top: 8px;
-  font-size: 13px;
-  color: #666;
-}
-
-/* Right */
+/* ==============================
+   SUMMARY
+============================== */
 .summary-card {
-  background: #fff;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  background: white;
+  border-radius: 16px;
+  padding: 22px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+  position: sticky;
+  top: 20px;
+  border: 1px solid $border;
+
+  h3 {
+    margin-bottom: 18px;
+    font-size: 17px;
+  }
+
+  .row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    font-size: 14px;
+  }
+
+  .sub-row {
+    font-size: 13px;
+    color: $muted;
+  }
+
+  .divider {
+    height: 1px;
+    background: $border;
+    margin: 18px 0;
+  }
+
+  .total {
+    font-size: 18px;
+    font-weight: 800;
+  }
 }
 
-.summary-card h3 {
-  margin-bottom: 16px;
+@media (max-width: 900px) {
+  .summary-card {
+    position: static;
+  }
 }
 
-.row {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 6px;
-}
-
-.sub-row {
-  display: flex;
-  gap: 12px;
-  font-size: 14px;
-  color: #666;
-}
-
-.sub-row a {
-  color: #000;
-  text-decoration: underline;
-  cursor: pointer;
-}
-
-.divider {
-  height: 1px;
-  background: #eee;
-  margin: 16px 0;
-}
-
-.total {
-  font-weight: 600;
-}
-
-.tax-note {
-  display: block;
-  text-align: right;
-  font-size: 12px;
-  color: #777;
-  margin-bottom: 16px;
-}
-
+/* ==============================
+   CTA BUTTON
+============================== */
 .continue-btn {
   width: 100%;
-  padding: 14px;
-  background: $background;
-  color: #fff;
+  padding: 15px;
+  margin-top: 16px;
+  border-radius: 12px;
   border: none;
-  border-radius: 8px;
+  background: linear-gradient(135deg, $primary, $primary-dark);
+  color: white;
   font-size: 16px;
+  font-weight: 700;
   cursor: pointer;
-  transition: 0.4s;
-
+  transition: all 0.25s ease;
 }
 
 .continue-btn:hover {
-  background: darken($background, 10%);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
 }
+
 .continue-btn:disabled {
   background: $disabled-bg;
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+
+.room-dates {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  margin-bottom: -10px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ================= CARD ================= */
+.check-in-date {
+  position: relative;
+  padding: 18px 20px;
+  border-radius: 18px;
+  cursor: pointer;
+  overflow: hidden;
+
+  background: linear-gradient(145deg, #ffffff, #f3f5ff);
+  border: 1px solid #e6e8ef;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+
+
+  transition: transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border 0.25s ease;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100px;
+}
+
+/* glow layer */
+.check-in-date::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top right,
+      rgba(122, 122, 255, 0.15),
+      transparent 60%);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+/* hover */
+.check-in-date:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.12);
+  border-color: rgb(122 122 255);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+
+}
+
+.check-in-date:hover::after {
+  opacity: 1;
+}
+
+/* ================= LABEL ================= */
+.check-in-date label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: #6b7280;
+  margin-bottom: 8px;
+}
+
+/* ================= DATE ROW ================= */
+.date {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ================= INPUT ================= */
+.date input {
+  border: none;
+  background: transparent;
+  font-size: 26px;
+  font-weight: 800;
+  color: #111827;
+  width: 100%;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+}
+
+.date input:focus {
+  outline: none;
+}
+
+/* ================= ICON ================= */
+.date mat-icon {
+  font-size: 24px;
+  color: #6b7280;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.check-in-date:hover mat-icon {
+  transform: scale(1.15);
+  color: rgb(122 122 255);
+}
+
+
+.date {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* input stays hero */
+.date input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 26px;
+  font-weight: 800;
+  color: #111827;
+  cursor: pointer;
+}
+
+/* ICON BUTTON */
+.date mat-icon {
+  display: grid;
+  place-items: center;
+
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+
+  background: white;
+  border: 1px solid #e6e8ef;
+
+  font-size: 20px;
+  color: #6b7280;
+
+  transition: all 0.2s ease;
+}
+
+/* hover feedback */
+.check-in-date:hover mat-icon {
+  border-color: rgb(122 122 255);
+  color: rgb(122 122 255);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
 }

@@ -1,6 +1,13 @@
 $background: rgb(122 122 255);
 $disabled-bg: #e0e0e0;
  
+.mat-accordion .mat-expansion-panel:last-of-type {
+  background-color: white;
+}
+.mat-expansion-panel-animations-enabled .mat-expansion-panel-header {
+    height: 100px;
+}
+
 h2{
   display: flex;
   align-items: center;
@@ -8,7 +15,7 @@ h2{
   margin-bottom: 10px;
 }
 div{
-    padding: 20px
+    padding: 10px
 }
 button{
     margin-right: 10px;
@@ -33,9 +40,9 @@ button{
   padding: 20px;
 
   .form-section{
-    background-color: white;
+    // background-color: white;
     border-radius: 10px;
-    box-shadow: 1px 1px 10px rgb(208, 208, 208);
+    // box-shadow: 1px 1px 10px rgb(208, 208, 208);
   }
 }
 .save-btn{

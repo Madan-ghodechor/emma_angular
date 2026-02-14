@@ -1,12 +1,13 @@
 import { CommonModule, TitleCasePipe } from '@angular/common';
-import { Component, ElementRef, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, ElementRef, signal, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 import { Api } from '../service/api';
+import { LoggerService } from '../service/logger.service';
 
 @Component({
   selector: 'app-payment-success',
@@ -19,134 +20,211 @@ import { Api } from '../service/api';
   ],
   templateUrl: './payment-success.html',
   styleUrl: './payment-success.scss',
+
 })
 export class PaymentSuccess {
 
-  // res: any = {
-  //   "success": true,
-  //   "message": "Data stored successfully",
-  //   "data": {
-  //     "razorpay_order_id": "order_SCNb7WVpMKuMYX",
-  //     "razorpay_payment_id": "pay_SCNbQcsY2ZtMT5",
-  //     "razorpay_signature": "4d23c58135da8ba2fbad995dc4feec6dddef4b0fea8010ea9fcc19563949c9a6",
-  //     "paymentAmount": 19400,
-  //     "_id": "698444dcbe92611e933c31cb",
-  //     "createdAt": "2026-02-05T07:21:00.383Z",
-  //     "updatedAt": "2026-02-05T07:21:00.383Z",
-  //     "__v": 0,
-  //     "bulkRefId": "BULK_1770276060402_708d53",
-  //     "bookings": [
-  //       {
-  //         "roomId": "single-1",
-  //         "roomType": "single",
-  //         "checkIn": "2026-03-24T00:00:00.000Z",
-  //         "checkOut": "2026-03-26T00:00:00.000Z",
-  //         "attendees": [
-  //           "698444dcbe92611e933c31d1"
-  //         ],
-  //         "bulkRefId": "BULK_1770276060402_708d53",
-  //         "payment": 1,
-  //         "paymentId": "698444dcbe92611e933c31cb",
-  //         "_id": "698444dcbe92611e933c31d3",
-  //         "createdAt": "2026-02-05T07:21:00.431Z",
-  //         "updatedAt": "2026-02-05T07:21:00.431Z",
-  //         "__v": 0
-  //       },
-  //       {
-  //         "roomId": "single-2",
-  //         "roomType": "single",
-  //         "checkIn": "2026-03-24T00:00:00.000Z",
-  //         "checkOut": "2026-03-26T00:00:00.000Z",
-  //         "attendees": [
-  //           "698444dcbe92611e933c31d1"
-  //         ],
-  //         "bulkRefId": "BULK_1770276060402_708d53",
-  //         "payment": 1,
-  //         "paymentId": "698444dcbe92611e933c31cb",
-  //         "_id": "698444dcbe92611e933c31d3",
-  //         "createdAt": "2026-02-05T07:21:00.431Z",
-  //         "updatedAt": "2026-02-05T07:21:00.431Z",
-  //         "__v": 0
-  //       }
-  //     ]
-  //   }
-  // };
+  constructor(private api: Api, private logger: LoggerService, private route: ActivatedRoute) { }
 
-  res: any;
-  constructor(private router: Router, private api: Api) {
-    const navigation = this.router.getCurrentNavigation();
-    this.res = navigation?.extras.state?.['paymentResponse'];
-  }
-
-  data: any;
+  data: any = signal([]);
+  id: string | undefined;
   ngOnInit() {
     sessionStorage.clear();
     localStorage.clear();
-    this.data = this.res.data;
-    console.log(this.data)
 
-    this.api.getBookingRecord(this.res.data.bulkRefId).subscribe({
+    this.id = this.route.snapshot.paramMap.get('id') || "";
+
+
+    this.api.getBookingRecord(this.id).subscribe({
       next: (res: any) => {
-        this.res = res.data.userData
+        this.data.set(res.data)
       }
     })
   }
 
-  @ViewChild('receipt') receipt!: ElementRef;
 
-  downloadReceipt() {
+
+  generateVC() {
+    const payloda = this.payload(this.id, this.data().userData)
+    this.api.generateVoucher(payloda).subscribe(res => {
+      const url = window.URL.createObjectURL(res);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'voucher.pdf';
+      a.click();
+    });
+
+
+  }
+
+  payload(bulkRefId: any, userData: any) {
+
+    let primaryAttendeeName;
+    let primaryAttendeeEmail;
+
+    const attendees = userData[0].attendees.map((guest: any) => {
+      if (guest.is_primary_user) {
+        primaryAttendeeEmail = guest.email
+        primaryAttendeeName = guest.firstName + ' ' + guest.lastName
+      }
+      return {
+        "name": guest?.firstName + ' ' + guest.lastName,
+        "email": guest?.email,
+        "phone": guest?.phone,
+      }
+    })
+
+    const formatToDDMMYY = (dateString: any) => {
+      const d = new Date(dateString);
+
+      const day = String(d.getDate()).padStart(2, '0');
+
+      const month = d.toLocaleString('en-IN', { month: 'short' });
+
+      const year = d.getFullYear();
+
+      return `${day} ${month} ${year}`;
+    }
+    const getTodayDDMonYYYY = () => {
+      const d = new Date();
+
+      const day = String(d.getDate()).padStart(2, '0');
+      const month = d.toLocaleString('en-IN', { month: 'short' });
+      const year = d.getFullYear();
+
+      return `${day} ${month} ${year}`;
+    }
+
+
+
+    let roomtype = userData[0]?.roomtype;
+    let checkIn = formatToDDMMYY(userData[0]?.checkIn);
+    let checkOut = formatToDDMMYY(userData[0]?.checkOut);
+
+    let payload = {
+      "bookingId": bulkRefId,
+      "createdAt": getTodayDDMonYYYY(),
+      "primaryAttendeeName": primaryAttendeeName,
+      "primaryAttendeeEmail": primaryAttendeeEmail,
+      "rooms": [
+        {
+          "type": roomtype,   // Triple, Double, Single
+          "checkIn": checkIn,
+          "checkOut": checkOut,
+          "guests": attendees
+        }
+      ]
+    }
+    return payload;
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  @ViewChild('receipt') receipt!: ElementRef;
+  @ViewChild('pdfHeader') pdfHeader!: ElementRef;
+
+  async downloadReceipt() {
     const element = this.receipt.nativeElement;
 
-    html2canvas(element, { scale: 3, useCORS: true }).then(canvas => {
-      const imgData = canvas.toDataURL('image/png');
+    // 🧠 MEMORY CONTROL (VERY IMPORTANT)
+    const scale = 1;
 
-      const pdf = new jsPDF('p', 'mm', 'a4');
-
-      const pageWidth = 210;
-      const pageHeight = 297;
-
-      const headerHeight = 20;
-      const footerHeight = 15;
-
-      const contentHeight = pageHeight - headerHeight - footerHeight;
-
-      const imgWidth = pageWidth;
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-      let heightLeft = imgHeight;
-      let position = 0;
-      let page = 1;
-
-      while (heightLeft > 0) {
-        if (page > 1) pdf.addPage();
-
-        // HEADER
-        pdf.setFontSize(12);
-        pdf.text('Booking Voucher', 10, 10);
-        pdf.text(`Payment: ${this.data.razorpay_payment_id}`, 150, 10);
-
-        // BODY IMAGE
-        pdf.addImage(
-          imgData,
-          'PNG',
-          0,
-          headerHeight,
-          imgWidth,
-          imgHeight
-        );
-
-        // FOOTER
-        pdf.setFontSize(10);
-        pdf.text(`Page ${page}`, 100, 290);
-
-        heightLeft -= contentHeight;
-        position -= contentHeight;
-        page++;
-      }
-
-      pdf.save(`voucher-${this.data.razorpay_payment_id}.pdf`);
+    // ==============================
+    // BODY CAPTURE
+    // ==============================
+    const bodyCanvas = await html2canvas(element, {
+      scale,
+      useCORS: true,
+      backgroundColor: '#ffffff'
     });
+
+    // use JPEG -> MUCH lighter than PNG
+    const bodyImg = bodyCanvas.toDataURL('image/jpeg', 0.85);
+
+    // ==============================
+    // HEADER CAPTURE (ONCE)
+    // ==============================
+    const headerCanvas = await html2canvas(this.pdfHeader.nativeElement, {
+      scale,
+      useCORS: true,
+      backgroundColor: '#ffffff'
+    });
+
+    const headerImg = headerCanvas.toDataURL('image/jpeg', 0.9);
+
+    // ==============================
+    // PDF
+    // ==============================
+    const pdf = new jsPDF('p', 'pt', [595.28, 841.89]);
+
+    const pageWidth = 595.28;
+    const pageHeight = 841.89;
+
+    // keep ratio
+    const headerHeight = (headerCanvas.height * pageWidth) / headerCanvas.width;
+    const footerHeight = 30;
+
+    const contentHeight = pageHeight - headerHeight - footerHeight;
+
+    const imgWidth = pageWidth;
+    const imgHeight = (bodyCanvas.height * imgWidth) / bodyCanvas.width;
+
+    let heightLeft = imgHeight;
+    let position = 0;
+    let page = 1;
+
+    // ==============================
+    // PAGE LOOP
+    // ==============================
+    while (heightLeft > 0) {
+      if (page > 1) pdf.addPage();
+
+      // HEADER
+      pdf.addImage(headerImg, 'JPEG', 0, 0, pageWidth, headerHeight);
+
+      // BODY SLICE
+      pdf.addImage(
+        bodyImg,
+        'JPEG',
+        0,
+        headerHeight - position,
+        imgWidth,
+        imgHeight
+      );
+
+      // FOOTER
+      this.drawFooter(pdf, page, pageWidth, pageHeight);
+
+      heightLeft -= contentHeight;
+      position += contentHeight;
+      page++;
+    }
+
+    pdf.save(`voucher-${this.data.razorpay_payment_id}.pdf`);
   }
+
+  drawFooter(pdf: jsPDF, page: number, pageWidth: number, pageHeight: number) {
+    pdf.setFontSize(10);
+    pdf.text(`Page ${page}`, pageWidth / 2, pageHeight - 10, { align: 'center' });
+  }
+
 
 
 

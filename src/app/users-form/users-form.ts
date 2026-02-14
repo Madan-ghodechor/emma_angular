@@ -34,6 +34,8 @@ import { DuplicateDialogComponent } from './duplicate-details.component'
 
 import { environment } from '../../environments/environment';
 import { Router } from '@angular/router';
+import { LoggerService } from '../service/logger.service';
+import { ActivatedRoute } from '@angular/router';
 
 
 /* ---------------- Types ---------------- */
@@ -114,12 +116,16 @@ export class UsersForm {
     triple: 3
   };
 
+
+
   constructor(
     public booking: State,
     private dialog: MatDialog,
     private api: Api,
     private _snackBar: MatSnackBar,
-    private router: Router
+    private router: Router,
+    private logger: LoggerService,
+    private route: ActivatedRoute
   ) {
 
     effect(() => {
@@ -130,9 +136,9 @@ export class UsersForm {
       this.generateRooms(single, double, triple);
       this.calculateRoomNights(this.rooms());
 
+
+
       const rooms = this.rooms() as Room[];
-
-
       if (!rooms.length) return;
 
       // Open first room if nothing is open
@@ -144,6 +150,7 @@ export class UsersForm {
 
   }
   ngAfterViewInit() {
+
     if (!sessionStorage.getItem('primaryUser'))
       this.router.navigate(['/'])
 
@@ -153,9 +160,21 @@ export class UsersForm {
 
     const rooms = this.rooms() as Room[];
 
+    this.route.queryParams.subscribe(p => {
+      this.setCheckIn(rooms[0].roomId, p['checkIn'])
+      this.setCheckOut(rooms[0].roomId, p['checkOut'])
+    });
+
     if (rooms.length == 1 || rooms.length == 2) {
       this.activeRoomType.set(rooms[0].roomtype);
     }
+
+    if (rooms.length == 1) {
+      if (!this.rooms()[0].attendees.some(a => a.is_primary_user === true)) {
+        this.addPrimaryUser(rooms[0], 'default')
+      }
+    }
+
   }
 
   readonly totalPrice = computed(() =>
@@ -245,7 +264,7 @@ export class UsersForm {
 
   changeTabsAndExpansion(roomObj: any) {
     const room = Array.isArray(roomObj) ? roomObj[0] : roomObj;
-    console.log(room)
+    this.logger.log(room)
 
     this.openSnackBar()
 
@@ -260,9 +279,9 @@ export class UsersForm {
     const guestInRoom = Room[0].attendees.length;
     const isLastRoom = totalRooms.length == currentRoomNumber ? true : false
 
-    // console.log('Current Room Capacity : ', roomCapacity);
-    // console.log('Guests In Room : ', guestInRoom);
-    // console.log('Current Room Number : ', currentRoomNumber)
+    // this.logger.log('Current Room Capacity : ', roomCapacity);
+    // this.logger.log('Guests In Room : ', guestInRoom);
+    // this.logger.log('Current Room Number : ', currentRoomNumber)
 
     if (roomCapacity == guestInRoom) {
       const expansion = `${type}-${(Number(currentRoomNumber) + 1)}`
@@ -281,7 +300,6 @@ export class UsersForm {
         this.openDialog(Room[0])
       }, 600);
     }
-
 
 
   }
@@ -314,9 +332,9 @@ export class UsersForm {
 
 
   /* ---------------- Attendees ---------------- */
-  addPrimaryUser(room: any): void {
+  addPrimaryUser(room: any, ini = 'add'): void {
     const primaryUser = JSON.parse(sessionStorage.getItem('primaryUser') || '{}');
-    // console.log(primaryUser);
+    // this.logger.log(primaryUser);
     this.addAttendee(
       room,
       {
@@ -328,13 +346,16 @@ export class UsersForm {
         gst: primaryUser.gst,
         is_primary_user: primaryUser.is_primary_user,
         primary_user_email: primaryUser.primary_user_email
-      }
+      },
+      ini
     );
+
   }
 
   addAttendee(
     Atroom: any,
-    attendee: Omit<Attendee, 'id'>
+    attendee: Omit<Attendee, 'id'>,
+    ini = 'add'
   ): void {
 
     const primaryUser = JSON.parse(sessionStorage.getItem('primaryUser') || '{}');
@@ -361,7 +382,10 @@ export class UsersForm {
       })
     );
 
-    this.changeTabsAndExpansion(Atroom)
+    if (ini == 'add') {
+      this.changeTabsAndExpansion(Atroom)
+    }
+
 
 
     const singleroom = this.booking.singleRooms();
@@ -403,7 +427,7 @@ export class UsersForm {
   deleteAttendee(roomId: string, attendee: Attendee): void {
 
     if (!attendee.is_primary_user) {
-      console.log(attendee)
+      this.logger.log(attendee)
 
       this.booking.emailSet.update(list => {
         const newSet = new Set(list);
@@ -434,6 +458,38 @@ export class UsersForm {
 
   /* ---------------- Dialog ---------------- */
   openDialog(room: any, attendee?: Attendee): void {
+
+    const emails__ = new Set<string>();
+    const phones__ = new Set<string>();
+
+    console.log(this.booking.emailSet())
+
+    this.rooms()[0].attendees.forEach(a => {
+      if (a?.email) emails__.add(a.email);
+      if (a?.phone) phones__.add(a.phone);
+    });
+
+    this.booking.emailSet.set(emails__);
+    this.booking.phoneSet.set(phones__);
+
+    this.api.getUsers()
+      .pipe(
+        map((res: any) =>
+          res.data.map((user: any) => ({
+            phone: user.phone,
+            email: user.email
+          }))
+        )
+      )
+      .subscribe({
+        next: result => {
+          for (let da of result) {
+            this.booking.emailSet.update(list => new Set([...list, da?.email]));
+            this.booking.phoneSet.update(list => new Set([...list, da?.phone]));
+          }
+        }
+      });
+
 
     const dialogRef = this.dialog.open(FormDialogComponent, {
       width: '500px',
@@ -469,7 +525,7 @@ export class UsersForm {
 
     if (rooms.length === 1) {
       return rooms;
-      console.log(rooms);
+      this.logger.log(rooms);
     }
 
     return rooms.filter(r => r.roomtype === activeType);
@@ -581,7 +637,7 @@ export class UsersForm {
     const rooms = this.rooms();
 
     if (!rooms || rooms.length === 0) {
-      console.error('No rooms found');
+      this.logger.error('No rooms found');
       return;
     }
 
@@ -591,7 +647,7 @@ export class UsersForm {
         const duplicate = res?.data?.duplicateDetails
 
         if (typeof amount !== 'number' || isNaN(amount) || amount <= 0) {
-          console.error('Invalid amount received:', res);
+          this.logger.error('Invalid amount received:', res);
           return;
         }
 
@@ -622,7 +678,7 @@ export class UsersForm {
 
       },
       error: (err) => {
-        console.error('Amount verification failed:', err);
+        this.logger.error('Amount verification failed:', err);
       }
     });
   }
@@ -636,13 +692,13 @@ export class UsersForm {
     this.api.createOrder(amount).pipe(map((order: any) => order.data)).subscribe({
       next: (order) => {
         if (!order?.id) {
-          console.error('Invalid order object', order);
+          this.logger.error('Invalid order object', order);
           return;
         }
         this.openRazorpay(order, payload);
-        console.log('Order created', order);
+        this.logger.log('Order created', order);
       },
-      error: err => console.error('Order creation failed', err)
+      error: err => this.logger.error('Order creation failed', err)
     });
   }
 
@@ -661,17 +717,17 @@ export class UsersForm {
       handler: (response: any) => {
         this.api.verifyPayment(response).subscribe({
           next: () => {
-            console.log(response)
+            this.logger.log(response)
             this.afterPaymentSuccess(response, payload)
           },
           error: () => {
-            console.log(response)
+            this.logger.log(response)
           }
         });
       },
 
       modal: {
-        ondismiss: () => console.log('Payment popup closed')
+        ondismiss: () => this.logger.log('Payment popup closed')
       },
 
       theme: {
@@ -682,7 +738,7 @@ export class UsersForm {
     const rzp = new (window as any).Razorpay(options);
 
     rzp.on('payment.failed', (response: any) => {
-      console.error('Payment failed', response.error);
+      this.logger.error('Payment failed', response.error);
       this.afterPaymentFailed(response.error, payload, order)
     });
 
@@ -691,17 +747,15 @@ export class UsersForm {
 
   afterPaymentSuccess(razorpayRes: any, prevData: any) {
 
-    console.log("after Payment success called")
+    this.logger.log("after Payment success called")
     const payload = {
       ...razorpayRes,
       ...prevData
     }
     this.api.recordPaymentSuccess(payload).subscribe({
-      next: (res) => {
-        console.log(res);
-        this.router.navigate(['/payment-success'], {
-          state: { paymentResponse: res }
-        });
+      next: (res: any) => {
+        this.logger.log(res);
+        this.router.navigate([`/payment-success/${res.data.bulkRefId}`]);
       },
       error: () => {
 
@@ -709,16 +763,20 @@ export class UsersForm {
     })
   }
 
-  private paymentFailTimer: any;
+  private paymentFailTimer: boolean = true;
 
   afterPaymentFailed(error: any, payload: any, order: any) {
-    clearTimeout(this.paymentFailTimer);
 
-    this.paymentFailTimer = setTimeout(() => {
+    if (this.paymentFailTimer) {
       this.api.recordFailedPayment({ error, ...payload, order }).subscribe({
-        next: (res: any) => console.log(res)
+        next: (res: any) => this.logger.log(res)
       });
-    }, 1000);
+      this.paymentFailTimer = false;
+    }
+
+    setTimeout(() => {
+      this.paymentFailTimer = true
+    }, 20000);
   }
 
 }

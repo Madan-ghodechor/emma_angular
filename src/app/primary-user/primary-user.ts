@@ -16,6 +16,10 @@ import intlTelInput from 'intl-tel-input';
 import { parsePhoneNumber } from 'libphonenumber-js';
 import { State } from '../service/state';
 import { MatDialog } from '@angular/material/dialog';
+import { LoggerService } from '../service/logger.service';
+
+import {ChangeDetectionStrategy,  signal} from '@angular/core';
+import {MatExpansionModule} from '@angular/material/expansion';
 
 interface Company {
   _id: string;
@@ -34,6 +38,7 @@ interface Company {
     MatIconModule,
     AsyncPipe,
     MatAutocompleteModule,
+    MatExpansionModule
   ],
   templateUrl: './primary-user.html',
   styleUrl: './primary-user.scss',
@@ -44,6 +49,9 @@ export class PrimaryUser implements OnInit {
   @ViewChild('phoneInput') phoneInput!: ElementRef<HTMLInputElement>;
 
   iti: any;
+
+  readonly panelOpenState = signal(false);
+  
   ngAfterViewInit() {
     this.iti = intlTelInput(this.phoneInput.nativeElement, {
       initialCountry: 'in',
@@ -90,6 +98,8 @@ export class PrimaryUser implements OnInit {
 
   gstPattern = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/;
 
+  userContacts: any;
+
   constructor(
     private fb: FormBuilder,
     private api: Api,
@@ -97,6 +107,7 @@ export class PrimaryUser implements OnInit {
     public sharedFiltering: SharedFiltering,
     private stateService: State,
     private dialog: MatDialog,
+    private logger: LoggerService
   ) {
     this.api.getUsers()
       .pipe(
@@ -109,18 +120,33 @@ export class PrimaryUser implements OnInit {
       )
       .subscribe({
         next: result => {
-          for (let da of result) {
+          this.userContacts = result;
+          this.stateService.emailSet.set(new Set(['madan']))
+          this.stateService.phoneSet.set(new Set(['930']));
+          console.log(this.userContacts)
+
+          for (let da of this.userContacts) {
             this.stateService.emailSet.update(list => new Set([...list, da?.email]));
             this.stateService.phoneSet.update(list => new Set([...list, da?.phone]));
           }
         }
       });
+  }
+  getDBUSers() {
+    this.stateService.emailSet.set(new Set(['madan']))
+    this.stateService.phoneSet.set(new Set(['930']));
+    console.log(this.userContacts)
 
+    for (let da of this.userContacts) {
+      this.stateService.emailSet.update(list => new Set([...list, da?.email]));
+      this.stateService.phoneSet.update(list => new Set([...list, da?.phone]));
+    }
   }
 
   ngOnInit(): void {
     sessionStorage.clear();
 
+    console.log("madan.ghodechor@cotrav")
     const bgbulkRefId = localStorage.getItem('bkgRef');
     if (bgbulkRefId) {
       this.api.getBookingLogById(bgbulkRefId).subscribe((res: any) => {
@@ -155,6 +181,7 @@ export class PrimaryUser implements OnInit {
 
       if (exists) {
         this.userForm?.get('email')!.setErrors({ duplicate: true });
+        this.logger.log("duplicate")
       } else {
         const errors = this.userForm?.get('email')!.errors;
         if (errors?.['duplicate']) {
@@ -183,7 +210,7 @@ export class PrimaryUser implements OnInit {
       const exists = this.stateService.phoneSet().has(phonepayload.fullNumber);
 
       if (exists) {
-        console.log("duplicate")
+        this.logger.log("duplicate")
         this.userForm?.get('phone')!.setErrors({ duplicate: true });
       } else {
         const errors = this.userForm?.get('phone')!.errors;
@@ -211,11 +238,11 @@ export class PrimaryUser implements OnInit {
 
   }
 
-  openDialog(bgbulkRefId: any, res:any): void {
+  openDialog(bgbulkRefId: any, res: any): void {
 
     const dialogRef = this.dialog.open(pendingDetailsComponent, {
       width: '500px',
-      data : {
+      data: {
         res
       }
     });
@@ -225,7 +252,7 @@ export class PrimaryUser implements OnInit {
 
       if (result === 'startNew') {
         // wipe data, reset forms, clear storage etc
-        console.log('User wants fresh booking');
+        this.logger.log('User wants fresh booking');
       }
 
       if (result === 'continue') {
@@ -297,7 +324,7 @@ export class PrimaryUser implements OnInit {
 
   setGst(event: any) {
     const company = event.option.value;
-    console.log(company)
+    this.logger.log(company)
     this.userForm.patchValue({
       gst: company.gst,
     });
@@ -327,7 +354,7 @@ export class PrimaryUser implements OnInit {
     };
 
     sessionStorage.setItem('primaryUser', JSON.stringify(payload));
-    console.log(payload);
+    this.logger.log(payload);
     const bkgRefInLocal = localStorage.getItem('bkgRef');
 
     let logPayload;
