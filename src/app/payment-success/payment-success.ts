@@ -28,6 +28,7 @@ export class PaymentSuccess {
 
   data: any = signal([]);
   id: string | undefined;
+  
   ngOnInit() {
     sessionStorage.clear();
     localStorage.clear();

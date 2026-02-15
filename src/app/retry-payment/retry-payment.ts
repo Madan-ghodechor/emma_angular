@@ -39,7 +39,7 @@ export class RetryPayment implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private api: Api,
-    private logger:LoggerService
+    private logger: LoggerService
   ) { }
 
   ngOnInit(): void {
@@ -152,9 +152,10 @@ export class RetryPayment implements OnInit {
       ...prevData
     }
     this.api.recordPaymentSuccess(payload).subscribe({
-      next: (res) => {
+      next: (res: any) => {
         this.logger.log(res);
-        this.router.navigate(['/payment-success'], {
+
+        this.router.navigate([`/payment-success/${res.data.bulkRefId}`], {
           state: { paymentResponse: res }
         });
       },
