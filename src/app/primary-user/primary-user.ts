@@ -123,7 +123,7 @@ export class PrimaryUser implements OnInit {
           this.userContacts = result;
           this.stateService.emailSet.set(new Set(['madan']))
           this.stateService.phoneSet.set(new Set(['930']));
-          console.log(this.userContacts)
+          // console.log(this.userContacts)
 
           for (let da of this.userContacts) {
             this.stateService.emailSet.update(list => new Set([...list, da?.email]));
@@ -135,7 +135,7 @@ export class PrimaryUser implements OnInit {
   getDBUSers() {
     this.stateService.emailSet.set(new Set(['madan']))
     this.stateService.phoneSet.set(new Set(['930']));
-    console.log(this.userContacts)
+    // console.log(this.userContacts)
 
     for (let da of this.userContacts) {
       this.stateService.emailSet.update(list => new Set([...list, da?.email]));
@@ -146,7 +146,7 @@ export class PrimaryUser implements OnInit {
   ngOnInit(): void {
     sessionStorage.clear();
 
-    console.log("madan.ghodechor@cotrav")
+    // console.log("madan.ghodechor@cotrav")
     const bgbulkRefId = localStorage.getItem('bkgRef');
     if (bgbulkRefId) {
       this.api.getBookingLogById(bgbulkRefId).subscribe((res: any) => {

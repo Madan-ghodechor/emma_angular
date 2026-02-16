@@ -462,7 +462,7 @@ export class UsersForm {
     const emails__ = new Set<string>();
     const phones__ = new Set<string>();
 
-    console.log(this.booking.emailSet())
+    // console.log(this.booking.emailSet())
 
     this.rooms()[0].attendees.forEach(a => {
       if (a?.email) emails__.add(a.email);
