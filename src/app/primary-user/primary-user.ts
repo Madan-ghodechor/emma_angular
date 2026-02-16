@@ -165,7 +165,7 @@ export class PrimaryUser implements OnInit {
       organisation: ['', [Validators.required, Validators.minLength(2)]],
       email: ['', [Validators.required, Validators.email]],
       phone: ['', [Validators.required, Validators.pattern(/^[0-9]{10}$/)]],
-      gst: ['', [Validators.required, Validators.pattern(this.gstPattern)]],
+      gst: ['', [Validators.pattern(this.gstPattern)]],
       is_primary_user: [true],
       primary_user_email: this.userForm?.get('email')?.value,
     });

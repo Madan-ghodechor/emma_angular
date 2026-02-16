@@ -17,6 +17,29 @@ $bg: #f4f6fb;
   box-sizing: border-box;
 }
 
+.deactive {
+  background-color: #e7e7e7 !important;
+  cursor: not-allowed !important;
+  border: none !important;
+    padding: 0px;
+    margin: 0px;
+  .rooms-not-available{
+    position: absolute;
+    background-color: rgba(255, 250, 250, 0.864);
+    border-radius: 14px;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    display: grid;
+    place-content: center;
+    box-sizing: border-box;
+    padding: 0px;
+    margin-top: -18px;
+    color: rgb(123, 0, 0);
+    
+    letter-spacing: 2px;
+  }
+}
 
 h1,
 h2,
@@ -129,6 +152,7 @@ h2 {
     background: white;
     border: 1px solid $border;
     transition: all 0.25s ease;
+    position: relative;
 
     display: flex;
     flex-direction: column;
@@ -389,4 +413,15 @@ h2 {
   border-color: rgb(122 122 255);
   color: rgb(122 122 255);
   box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+}
+
+
+
+
+.allroomssold{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
 }

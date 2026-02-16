@@ -4,5 +4,6 @@ export const environment = {
   enableLogs: false,
   razorpayKey: 'rzp_live_pI1GHoayLTp31R',
   gst: 1,
+  single_rooms: 90,
   total_rooms : 90
 };

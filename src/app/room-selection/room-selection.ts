@@ -62,24 +62,49 @@ import { Location } from '@angular/common';
 })
 export class RoomSelection {
 
-  constructor(public booking: State, private router: Router, private location: Location, private stateService: State, private api: Api) {
-  }
+  constructor(public booking: State, private router: Router, private location: Location, private stateService: State, private api: Api) { }
+
   roomCount = signal(0)
+  singleRoomActive = signal(false)
 
   ngOnInit() {
-    this.stateService.restore()
-    this.api.getRoomCount().subscribe({
-      next: (res: any) => {
-        this.roomCount.set(environment.total_rooms - res.data.total_rooms)
-      }
-    })
+    this.stateService.restore();
 
-    this.booking.decrease('single');
-    this.booking.decrease('double');
-    this.booking.decrease('triple');
+    this.api.getRoomCount()
+      .pipe(
+        map((res: any) => {
+          return res.data.total_rooms.reduce((acc: any, room: any) => {
+            const type = room.roomType;
+            acc[type] = (acc[type] || 0) + 1;
+            return acc;
+          }, {});
+        })
+      )
+      .subscribe(counts => {
 
-    this.booking.increase('single');
-    this.selected.set('single');
+        const singleUsed = counts['single'] || 0;
+        const doubleUsed = counts['double'] || 0;
+        const tripleUsed = counts['triple'] || 0;
+
+        this.roomCount.set(environment.total_rooms - (singleUsed + doubleUsed + tripleUsed));
+
+        this.booking.decrease('single');
+        this.booking.decrease('double');
+        this.booking.decrease('triple');
+
+        if (environment.single_rooms - singleUsed == 0) {
+          this.singleRoomActive.set(true)
+
+          this.booking.increase('double');
+          this.selected.set('double');
+        } else {
+
+          this.booking.increase('single');
+          this.selected.set('single');
+        }
+
+
+      });
 
   }
 
