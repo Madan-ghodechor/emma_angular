@@ -689,7 +689,7 @@ export class UsersForm {
 
   pay(amount: number, payload: any) {
 
-    this.api.createOrder(5).pipe(map((order: any) => order.data)).subscribe({
+    this.api.createOrder(amount).pipe(map((order: any) => order.data)).subscribe({
       next: (order) => {
         if (!order?.id) {
           this.logger.error('Invalid order object', order);
