@@ -18,8 +18,8 @@ import { State } from '../service/state';
 import { MatDialog } from '@angular/material/dialog';
 import { LoggerService } from '../service/logger.service';
 
-import {ChangeDetectionStrategy,  signal} from '@angular/core';
-import {MatExpansionModule} from '@angular/material/expansion';
+import { ChangeDetectionStrategy, signal } from '@angular/core';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 interface Company {
   _id: string;
@@ -51,7 +51,7 @@ export class PrimaryUser implements OnInit {
   iti: any;
 
   readonly panelOpenState = signal(false);
-  
+
   ngAfterViewInit() {
     this.iti = intlTelInput(this.phoneInput.nativeElement, {
       initialCountry: 'in',
@@ -387,4 +387,9 @@ export class PrimaryUser implements OnInit {
 
     this.router.navigate(['/members-selection']);
   }
+
+  unlock(e: any) {
+    e.target.removeAttribute('readonly');
+  }
+
 }

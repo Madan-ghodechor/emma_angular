@@ -11,9 +11,7 @@ import { JsonPipe } from '@angular/common';
 
 @Component({
   selector: 'app-process-validation',
-  imports: [
-    JsonPipe
-  ],
+  imports: [],
   templateUrl: './process-validation.html',
   styleUrl: './process-validation.scss',
 })

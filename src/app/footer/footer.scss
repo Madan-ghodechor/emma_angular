@@ -1,4 +1,4 @@
-footer{
+footer {
     display: flex;
     justify-content: center;
 
@@ -9,12 +9,20 @@ footer{
     letter-spacing: 1px;
     margin-bottom: 20px;
 
-    img{
-        width: 250px;
-    }
-    font-size: 11px;
+    .content {
+        display: flex;
+        flex-direction: column;
 
-    a{
-        text-decoration: none;
+        img {
+            width: 120px;
+        }
+
+        font-size: 11px;
+
+        a {
+            text-decoration: none;
+            width: 100%;
+            align-items: center;
+        }
     }
 }

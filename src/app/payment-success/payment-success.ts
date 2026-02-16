@@ -51,7 +51,7 @@ export class PaymentSuccess {
       const url = window.URL.createObjectURL(res);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'voucher.pdf';
+      a.download = `${this.id}.pdf`;
       a.click();
     });
 
@@ -119,113 +119,6 @@ export class PaymentSuccess {
     return payload;
 
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  @ViewChild('receipt') receipt!: ElementRef;
-  @ViewChild('pdfHeader') pdfHeader!: ElementRef;
-
-  async downloadReceipt() {
-    const element = this.receipt.nativeElement;
-
-    // 🧠 MEMORY CONTROL (VERY IMPORTANT)
-    const scale = 1;
-
-    // ==============================
-    // BODY CAPTURE
-    // ==============================
-    const bodyCanvas = await html2canvas(element, {
-      scale,
-      useCORS: true,
-      backgroundColor: '#ffffff'
-    });
-
-    // use JPEG -> MUCH lighter than PNG
-    const bodyImg = bodyCanvas.toDataURL('image/jpeg', 0.85);
-
-    // ==============================
-    // HEADER CAPTURE (ONCE)
-    // ==============================
-    const headerCanvas = await html2canvas(this.pdfHeader.nativeElement, {
-      scale,
-      useCORS: true,
-      backgroundColor: '#ffffff'
-    });
-
-    const headerImg = headerCanvas.toDataURL('image/jpeg', 0.9);
-
-    // ==============================
-    // PDF
-    // ==============================
-    const pdf = new jsPDF('p', 'pt', [595.28, 841.89]);
-
-    const pageWidth = 595.28;
-    const pageHeight = 841.89;
-
-    // keep ratio
-    const headerHeight = (headerCanvas.height * pageWidth) / headerCanvas.width;
-    const footerHeight = 30;
-
-    const contentHeight = pageHeight - headerHeight - footerHeight;
-
-    const imgWidth = pageWidth;
-    const imgHeight = (bodyCanvas.height * imgWidth) / bodyCanvas.width;
-
-    let heightLeft = imgHeight;
-    let position = 0;
-    let page = 1;
-
-    // ==============================
-    // PAGE LOOP
-    // ==============================
-    while (heightLeft > 0) {
-      if (page > 1) pdf.addPage();
-
-      // HEADER
-      pdf.addImage(headerImg, 'JPEG', 0, 0, pageWidth, headerHeight);
-
-      // BODY SLICE
-      pdf.addImage(
-        bodyImg,
-        'JPEG',
-        0,
-        headerHeight - position,
-        imgWidth,
-        imgHeight
-      );
-
-      // FOOTER
-      this.drawFooter(pdf, page, pageWidth, pageHeight);
-
-      heightLeft -= contentHeight;
-      position += contentHeight;
-      page++;
-    }
-
-    pdf.save(`voucher-${this.data.razorpay_payment_id}.pdf`);
-  }
-
-  drawFooter(pdf: jsPDF, page: number, pageWidth: number, pageHeight: number) {
-    pdf.setFontSize(10);
-    pdf.text(`Page ${page}`, pageWidth / 2, pageHeight - 10, { align: 'center' });
-  }
-
 
 
 

@@ -73,7 +73,6 @@
                                         [value]="room.checkIn ? (room.checkIn | date : 'yyyy-MM-dd') : null"
                                         min="2026-03-23" max="2026-03-26"
                                         (dateChange)="setCheckIn(room.roomId, $event.value)" readonly />
-                                    <!-- <mat-datepicker-toggle matSuffix [for]="checkInPicker"></mat-datepicker-toggle> -->
                                     <mat-datepicker #checkInPicker></mat-datepicker>
                                 </div>
 
@@ -83,8 +82,7 @@
                                         [min]="room.checkIn ? getMinCheckoutDate(room.checkIn) : '2026-03-24'"
                                         max="2026-03-27"
                                         [value]="room.checkOut ? (room.checkOut | date : 'yyyy-MM-dd') : null"
-                                        (dateChange)="setCheckOut(room.roomId, $event.value)" />
-                                    <!-- <mat-datepicker-toggle matSuffix [for]="checkOutPicker"></mat-datepicker-toggle> -->
+                                        (dateChange)="setCheckOut(room.roomId, $event.value)" readonly />
                                     <mat-datepicker #checkOutPicker></mat-datepicker>
                                 </div>
                             </div>
@@ -93,7 +91,6 @@
                             <br>
 
                             <div class="room-actions">
-                                <!-- {{ !hasPrimaryUser() }} -->
                                 @if (!hasPrimaryUser()) {
                                 <button mat-stroked-button color="primary" class="checkout-wrapper"
                                     [attr.data-note]="(!room.checkIn || !room.checkOut) ? 'Select check In/Out dates' : isRoomFull(room) ? 'Room is full' : 'Add primary guest'"
@@ -118,9 +115,6 @@
                                 </span>
                             </div>
                             <table [cellSpacing]="0" *ngIf="room.attendees.length != 0">
-
-                                <!-- <div class="attendee" > -->
-                                <!-- <mat-icon>person</mat-icon> -->
 
                                 <tr class="heading">
                                     <td> Name </td>
@@ -153,18 +147,6 @@
                                     </td>
                                 </tr>
 
-                                <!-- { 
-                                    "id": "dab98cc6-fee1-4c46-b6e9-dabacb0a4b58",
-                                    "firstName": "Madan",
-                                    "lastName": "Ghodechor",
-                                    "email": "madn@gjsl",
-                                    "organisation": "BAI INFO",
-                                    "phone": "+918376878464",
-                                    "gst": "27DNRPG5170A1Z5",
-                                    "is_primary_user": true,
-                                    "primary_user_email": "madn@gjsl" 
-                                } -->
-                                <!-- </div> -->
                             </table>
 
 
