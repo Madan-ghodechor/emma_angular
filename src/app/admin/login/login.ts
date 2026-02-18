@@ -28,7 +28,7 @@ export class Login {
     this.api.getLoggedIn(this.form.value).subscribe({
       next: (res: any) => {
         if (res.success) {
-          sessionStorage.setItem('adminToken', res.data.token)
+          localStorage.setItem('adminToken', res.data.token)
           this.router.navigate(['/admin/dashbord'])
         }
       }

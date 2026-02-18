@@ -17,6 +17,11 @@ import { MatDividerModule } from '@angular/material/divider';
 import { Api } from '../services/api';
 import { CurrencyPipe, DatePipe, JsonPipe, TitleCasePipe } from '@angular/common';
 import { environment } from '../../../environments/environment';
+import { map } from 'rxjs';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+
+import * as XLSX from 'xlsx';
 
 interface Room {
   roomNo: number;
@@ -49,7 +54,10 @@ interface Room {
     JsonPipe,
     TitleCasePipe,
     DatePipe,
-    CurrencyPipe
+    CurrencyPipe,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule
   ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
@@ -58,7 +66,7 @@ export class Dashboard implements OnInit {
 
   private api = inject(Api);
 
-  displayedColumns: string[] = ['roomNo', 'type', 'payment', 'checkIn', 'checkOut', 'createdAt'];
+  displayedColumns: string[] = ['roomNo', 'type', 'primary_guest', 'checks', 'payment', 'createdAt'];
 
   rooms: Room[] = [];
 
@@ -125,25 +133,54 @@ export class Dashboard implements OnInit {
   selectRoom(room: Room): void {
     this.selectedRoom.set(room);
 
-    this.api.getPaymentById(room?.paymentId).pipe().subscribe({
-      next: (res) => {
-
-        // "_id": "699403578f32c560c96eb31b",
-        // "razorpay_order_id": "order_SH6b4Hh7dlOacV",
-        // "razorpay_payment_id": "pay_SH6bE2DeQ2oHFR",
-        // "razorpay_signature": "8690965daa13c1814f931e8090d4f4152ff3d6c000916ccb11abc8031a443afd",
-        // "paymentAmount": 9500,
-        // "createdAt": "2026-02-17T05:57:43.603Z",
-        // "updatedAt": "2026-02-17T05:57:43.603Z",
-        // "__v": 0
-
-        // this.selectedRoom.update((room: any) => ({
-        //   ...room,
-        //   payment : 
-        // }));
+    this.api.getPaymentById(room?.paymentId).pipe(
+      map((res: any) => {
+        return {
+          amount: res?.data?.paymentAmount,
+          payment_id: res?.data?.razorpay_payment_id
+        }
+      })
+    ).subscribe({
+      next: (res: any) => {
+        this.selectedRoom.update((room: any) => ({
+          ...room,
+          payment: res
+        }));
 
       }
     })
   }
+
+
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
+
+
+  exportToExcel(): void {
+    const data: any = [];
+
+    this.rooms.forEach((room: any) => {
+      room.attendees.forEach((attendee: any) => {
+        data.push({
+          RoomNumber: room.roomNumber,
+          CheckIn: room.checkIn,
+          CheckOut: room.checkOut,
+          Name: attendee.firstName + ' ' + attendee.lastName,
+          Email: attendee.email,
+          Company: attendee.company?.name
+        });
+      });
+    });
+
+    const ws = XLSX.utils.json_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Rooms');
+
+    XLSX.writeFile(wb, 'Dashboard.xlsx');
+  }
+
+
 
 }

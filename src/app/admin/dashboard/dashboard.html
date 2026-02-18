@@ -5,7 +5,7 @@
         <div class="card primary">
             <div class="card-content">
                 <h3>Rooms Remaining</h3>
-                <p class="big-number">{{ usedRooms() }} / {{ totalRooms() }}</p>
+                <p class="big-number">{{ totalRooms() - usedRooms() }} / {{ totalRooms() }}</p>
             </div>
         </div>
 
@@ -46,8 +46,13 @@
         <!-- LEFT SIDE -->
         <div class="left-panel">
 
-            <mat-card class="filter-card">
-                <mat-form-field appearance="outline" class="full-width">
+            <div class="filter-card">
+                <mat-form-field appearance="outline">
+                    <mat-label>Filter By Booking ID</mat-label>
+                    <input matInput (keyup)="applyFilter($event)" placeholder="Ex. SF26000010" #input>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline">
                     <mat-label>Filter by Room Type</mat-label>
                     <mat-select (selectionChange)="filterByType($event.value)">
                         <mat-option value="">All</mat-option>
@@ -56,44 +61,58 @@
                         <mat-option value="triple">Triple</mat-option>
                     </mat-select>
                 </mat-form-field>
-            </mat-card>
+                <button class="downloadBtn" (click)="exportToExcel()">Download Excel</button>
+            </div>
 
             <mat-card>
-                <table mat-table [dataSource]="dataSource" matSort>
+                <table mat-table [dataSource]="dataSource" matSort #TABLE>
 
                     <ng-container matColumnDef="roomNo">
                         <th mat-header-cell *matHeaderCellDef> Ref. No. </th>
                         <td mat-cell *matCellDef="let row let i = index" (click)="selectRoom(row)"
-                            [class.active-row]="selectedRoom()?.roomId === row.roomId">
+                            [class.active-row]="selectedRoom()?._id === row._id">
                             {{ row.bulkRefId }}
                         </td>
                     </ng-container>
 
                     <ng-container matColumnDef="type">
                         <th mat-header-cell *matHeaderCellDef> Room Type </th>
-                        <td mat-cell *matCellDef="let row" (click)="selectRoom(row)"> {{row?.roomType+" Occupancy" | titlecase }} </td>
+                        <td mat-cell *matCellDef="let row" (click)="selectRoom(row)"> {{row?.roomType+" Occupancy" |
+                            titlecase }} </td>
                     </ng-container>
 
                     <ng-container matColumnDef="payment">
                         <th mat-header-cell *matHeaderCellDef> Payment </th>
                         <td mat-cell *matCellDef="let row" (click)="selectRoom(row)">
+                            <p style="margin-bottom: 2px;"> {{ row?.payment?.paymentAmount | currency : 'INR'}} </p>
                             <span class="status" [class.available]="row.payment">
                                 {{ row.payment ? 'Captured' : 'Failed' }}
                             </span>
                         </td>
                     </ng-container>
 
-                    <ng-container matColumnDef="checkIn">
-                        <th mat-header-cell *matHeaderCellDef> Check In </th>
+                    <ng-container matColumnDef="checks">
+                        <th mat-header-cell *matHeaderCellDef> Check In / Check Out </th>
                         <td mat-cell *matCellDef="let row" (click)="selectRoom(row)">
-                            {{ row?.checkIn | date:'dd MMM yyyy' }}
+                            <p style="border-bottom: 1px double rgb(127, 127, 127);">CheckIn : {{ row?.checkIn |
+                                date:'dd MMM yyyy' }}</p>
+                            <p>CheckOut : {{ row?.checkOut | date:'dd MMM yyyy' }}</p>
                         </td>
                     </ng-container>
 
-                    <ng-container matColumnDef="checkOut">
-                        <th mat-header-cell *matHeaderCellDef> Check Out </th>
+                    <ng-container matColumnDef="primary_guest">
+                        <th mat-header-cell *matHeaderCellDef> Primary Guest </th>
                         <td mat-cell *matCellDef="let row" (click)="selectRoom(row)">
-                            {{ row?.checkOut | date:'dd MMM yyyy' }}
+                            @for (user of row.attendees; track user._id) {
+                            @if(user.is_primary_user){
+                            <div>
+                                <p> Name : {{ user.firstName +" "+ user.lastName | titlecase }} </p>
+                                <p> Company Name : {{ user.company?.name }} </p>
+                                <p> Email : {{ user.email }} </p>
+                                <p> Contact : {{ user.phone }} </p>
+                            </div>
+                            }
+                            }
                         </td>
                     </ng-container>
 
@@ -124,9 +143,7 @@
 
 
         <!-- RIGHT SIDE -->
-        @if (selectedRoom()) {
-
-            <!-- { "_id": "699403578f32c560c96eb324", "roomId": "single-1", "roomType": "single", "checkIn": "2026-03-23T00:00:00.000Z", "checkOut": "2026-03-24T00:00:00.000Z", "attendees": [ "699403578f32c560c96eb322" ], "bulkRefId": "SF2600002", "payment": 1, "paymentId": "699403578f32c560c96eb31b", "createdAt": "2026-02-17T05:57:43.616Z" } -->
+        <!-- @if (selectedRoom()) {
 
         <div class="right-panel">
             <mat-card>
@@ -149,9 +166,12 @@
                     </div>
                 </div>
 
+                {{ selectedRoom().payment.amount }}
+                {{ selectedRoom().payment.payment_id }}
+
             </mat-card>
         </div>
-        }
+        } -->
 
 
     </div>
