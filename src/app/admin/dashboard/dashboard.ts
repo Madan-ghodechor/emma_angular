@@ -68,7 +68,7 @@ export class Dashboard implements OnInit {
 
   displayedColumns: string[] = ['roomNo', 'type', 'primary_guest', 'checks', 'payment', 'createdAt'];
 
-  rooms: Room[] = [];
+  rooms: any = [];
 
   dataSource = new MatTableDataSource<Room>([]);
 
@@ -83,6 +83,18 @@ export class Dashboard implements OnInit {
 
   ngOnInit(): void {
     this.loadDashboard();
+
+    this.dataSource.filterPredicate = (data: any, filter: string) => {
+
+      const search = filter.trim().toLowerCase();
+
+      return data?.attendees?.some((att: any) => {
+        const first = att?.firstName?.toLowerCase() || '';
+        const last = att?.lastName?.toLowerCase() || '';
+
+        return first.includes(search) || last.includes(search);
+      });
+    };
   }
 
   private loadDashboard(): void {
@@ -118,7 +130,7 @@ export class Dashboard implements OnInit {
       return;
     }
 
-    this.dataSource.data = this.rooms.filter(room => room?.roomType === type);
+    this.dataSource.data = this.rooms.filter((room: any) => room?.roomType === type);
   }
 
 
@@ -158,28 +170,72 @@ export class Dashboard implements OnInit {
   }
 
 
+  filterByGuestName(event: Event) {
+    const value = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = value.trim().toLowerCase();
+
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+  }
+
+
+
   exportToExcel(): void {
-    const data: any = [];
 
-    this.rooms.forEach((room: any) => {
-      room.attendees.forEach((attendee: any) => {
-        data.push({
-          RoomNumber: room.roomNumber,
-          CheckIn: room.checkIn,
-          CheckOut: room.checkOut,
-          Name: attendee.firstName + ' ' + attendee.lastName,
-          Email: attendee.email,
-          Company: attendee.company?.name
-        });
-      });
-    });
+    if (!this.rooms?.length) {
+      console.warn('No data available for export');
+      return;
+    }
 
-    const ws = XLSX.utils.json_to_sheet(data);
-    const wb = XLSX.utils.book_new();
+    const data = this.rooms.flatMap((room: any) =>
+      room.attendees.map((attendee: any) => ({
+        RoomNumber: room.bulkRefId,
+        CheckIn: this.formatDate(room.checkIn),
+        CheckOut: this.formatDate(room.checkOut),
+        RoomType: `${room.roomType} Occupancy`,
+        Name: `${attendee.firstName || ''} ${attendee.lastName || ''} ${ attendee?.is_primary_user ? '( Primary Guest )': '' }`.trim(),
+        Email: attendee.email || '',
+        Phone: attendee.phone || '',
+        Company: attendee.company?.name || ''
+      }))
+    );
+
+    const ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(data);
+
+    // ✅ Auto column width
+    const colWidths = Object.keys(data[0]).map(key => ({
+      wch: Math.max(
+        key.length,
+        ...data.map((row: any) => (row[key] ? row[key].toString().length : 0))
+      ) + 3
+    }));
+
+    ws['!cols'] = colWidths;
+
+    // ✅ Enable AutoFilter
+    const range = XLSX.utils.decode_range(ws['!ref'] as string);
+    ws['!autofilter'] = {
+      ref: ws['!ref'] as string
+    };
+
+    // ✅ Freeze header row
+    ws['!freeze'] = { xSplit: 0, ySplit: 1 };
+
+    const wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Rooms');
 
-    XLSX.writeFile(wb, 'Dashboard.xlsx');
+    const fileName = `Dashboard_${new Date().toISOString().split('T')[0]}.xlsx`;
+
+    XLSX.writeFile(wb, fileName);
   }
+
+
+  private formatDate(date: any): string {
+    if (!date) return '';
+    return new Date(date).toLocaleDateString('en-GB');
+  }
+
 
 
 

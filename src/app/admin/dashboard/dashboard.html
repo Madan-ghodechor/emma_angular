@@ -51,7 +51,10 @@
                     <mat-label>Filter By Booking ID</mat-label>
                     <input matInput (keyup)="applyFilter($event)" placeholder="Ex. SF26000010" #input>
                 </mat-form-field>
-
+                <mat-form-field appearance="outline">
+                    <mat-label>Filter By Guest</mat-label>
+                    <input matInput (keyup)="filterByGuestName($event)" placeholder="Ex. Madan" #input>
+                </mat-form-field>
                 <mat-form-field appearance="outline">
                     <mat-label>Filter by Room Type</mat-label>
                     <mat-select (selectionChange)="filterByType($event.value)">
