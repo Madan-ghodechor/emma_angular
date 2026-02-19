@@ -47,11 +47,9 @@ interface Room {
     MatIconModule,
     MatChipsModule,
     MatButtonModule,
-    MatPaginator,
     MatSort,
     MatSelectModule,
     MatDividerModule,
-    JsonPipe,
     TitleCasePipe,
     DatePipe,
     CurrencyPipe,
@@ -197,7 +195,7 @@ export class Dashboard implements OnInit {
         Name: `${attendee.firstName || ''} ${attendee.lastName || ''} ${ attendee?.is_primary_user ? '( Primary Guest )': '' }`.trim(),
         Email: attendee.email || '',
         Phone: attendee.phone || '',
-        Company: attendee.company?.name || ''
+        Company: attendee.company?.name + (attendee.company?.gst!='' ? ` (${attendee.company?.gst})` : '' ) || ''
       }))
     );
 
