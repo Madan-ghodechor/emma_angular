@@ -105,6 +105,11 @@
   width: 100%;
   box-sizing: border-box;
 
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background-color: white;
+
   mat-form-field {
     flex: 1;
     margin: 5px;
@@ -266,10 +271,27 @@
   opacity: 0.5;
 }
 
-.downloadBtn {
-  padding: 0px 16px !important;
-  background: #5bb2ff;
-  border: none;
-  border-radius: 14px;
+.span {
+  padding-top: 5px;
+
+  .downloadBtn {
+    padding: 8px 16px !important;
+    background: cornflowerblue;
+    border-color: cornflowerblue;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+  }
+}
+
+
+
+.voucher-btn {
+  background: cornflowerblue;
+  border-color: cornflowerblue;
+  padding: 6px 20px;
+  border-radius: 7px;
+  width: 140px;
   color: white;
+  cursor: pointer;
 }

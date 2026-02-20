@@ -64,7 +64,7 @@ export class Dashboard implements OnInit {
 
   private api = inject(Api);
 
-  displayedColumns: string[] = ['roomNo', 'type', 'primary_guest', 'checks', 'payment', 'createdAt'];
+  displayedColumns: string[] = ['roomNo', 'type', 'primary_guest', 'checks', 'payment', 'createdAt', 'resendVoucher'];
 
   rooms: any = [];
 
@@ -242,6 +242,39 @@ export class Dashboard implements OnInit {
     return new Date(date).toLocaleDateString('en-GB');
   }
 
+
+  private formatDateInto(date: any): string {
+    if (!date) return '';
+
+    return new Date(date).toLocaleDateString('en-GB', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric'
+    });
+  }
+
+  sendVouchers(da: any) {
+
+    const primaryAttendee = da?.attendees.filter((attendee: any) => attendee.is_primary_user == true)
+    let data = {
+      "_id": da?._id,
+      "roomId": da?.roomId,
+      "roomType": da?.roomType,
+      "checkIn": this.formatDateInto(da?.checkIn),
+      "checkOut": this.formatDateInto(da?.checkOut),
+      "attendees": da?.attendees,
+      "bulkRefId": da?.bulkRefId,
+      "primaryAttendee":primaryAttendee[0],
+      "payment": {
+        ...da?.payment
+      },
+      "paymentId": da?.paymentId,
+      "createdAt": this.formatDateInto(da?.createdAt)
+    }
+
+    
+
+  }
 
 
 

@@ -64,7 +64,9 @@
                         <mat-option value="triple">Triple</mat-option>
                     </mat-select>
                 </mat-form-field>
-                <button class="downloadBtn" (click)="exportToExcel()">Download Excel</button>
+                <span class="span">
+                    <button class="downloadBtn" (click)="exportToExcel()">Download Excel</button>
+                </span>
             </div>
 
             <mat-card>
@@ -110,7 +112,8 @@
                             @if(user.is_primary_user){
                             <div>
                                 <p> Name : {{ user.firstName +" "+ user.lastName | titlecase }} </p>
-                                <p> Company Name : {{ user.company?.name }}  {{ user.company?.gst!='' ? '('+user.company?.gst+')' : '' }} </p>
+                                <p> Company Name : {{ user.company?.name }} {{ user.company?.gst!='' ?
+                                    '('+user.company?.gst+')' : '' }} </p>
                                 <p> Email : {{ user.email }} </p>
                                 <p> Contact : {{ user.phone }} </p>
                             </div>
@@ -126,6 +129,13 @@
                         </td>
                     </ng-container>
 
+                    <ng-container matColumnDef="resendVoucher">
+                        <th mat-header-cell *matHeaderCellDef> Resend Voucher </th>
+                        <td mat-cell *matCellDef="let row" (click)="selectRoom(row)">
+                            <button class="voucher-btn" (click)="sendVouchers(row)">Send&nbsp; Voucher</button>
+                        </td>
+                    </ng-container>
+
                     <tr class="mat-row" *matNoDataRow>
                         <td class="mat-cell" [attr.colspan]="displayedColumns.length">
                             <div class="empty-state">
@@ -136,10 +146,14 @@
                     </tr>
 
 
+
                     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
                 </table>
+                <mat-paginator [pageSizeOptions]="[5, 10, 20]" paginator
+                    aria-label="Select page of periodic elements">
+                </mat-paginator>
             </mat-card>
 
         </div>
