@@ -148,11 +148,28 @@ export class PrimaryUser implements OnInit {
 
     // console.log("madan.ghodechor@cotrav")
     const bgbulkRefId = localStorage.getItem('bkgRef');
-    if (bgbulkRefId) {
+
+    if (!bgbulkRefId) {
+      return;
+    }
+
+    function extractNumber(id: string): number {
+      const match = id.match(/\d+/);
+      return match ? parseInt(match[0], 10) : 0;
+    }
+
+    function isSmaller(currentId: string, baseId: string): boolean {
+      return extractNumber(currentId) < extractNumber(baseId);
+    }
+
+
+    if (!isSmaller(bgbulkRefId, 'SF2600027')) {
       this.api.getBookingLogById(bgbulkRefId).subscribe((res: any) => {
         if (res.data.length > 0)
           this.openDialog(bgbulkRefId, res)
       })
+    } else {
+      localStorage.removeItem('bkgRef')
     }
 
     this.userForm = this.fb.group({
