@@ -49,7 +49,7 @@
             <div class="filter-card">
                 <mat-form-field appearance="outline">
                     <mat-label>Filter By Booking ID</mat-label>
-                    <input matInput (keyup)="applyFilter($event)" placeholder="Ex. SF26000010" #input>
+                    <input matInput (keyup)="filterById($event)" placeholder="Ex. SF26000010" #input>
                 </mat-form-field>
                 <mat-form-field appearance="outline">
                     <mat-label>Filter By Guest</mat-label>
@@ -110,8 +110,7 @@
                             @if(user.is_primary_user){
                             <div>
                                 <p> Name : {{ user.firstName +" "+ user.lastName | titlecase }} </p>
-                                <p> Company Name : {{ user.company?.name }} </p>
-                                <p> Company Name : {{ user.company }} </p>
+                                <p> Company Name : {{ user.company?.name }}  {{ user.company?.gst!='' ? '('+user.company?.gst+')' : '' }} </p>
                                 <p> Email : {{ user.email }} </p>
                                 <p> Contact : {{ user.phone }} </p>
                             </div>

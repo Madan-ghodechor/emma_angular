@@ -79,19 +79,32 @@ export class Dashboard implements OnInit {
   registeredUserCount = signal(0)
   collectedAmount = signal(0)
 
+  idFilter = '';
+  nameFilter = '';
+
   ngOnInit(): void {
     this.loadDashboard();
 
-    this.dataSource.filterPredicate = (data: any, filter: string) => {
+    this.dataSource.filterPredicate = (data: any, _) => {
 
-      const search = filter.trim().toLowerCase();
+      const idSearch = this.idFilter.trim().toLowerCase();
+      const nameSearch = this.nameFilter.trim().toLowerCase();
 
-      return data?.attendees?.some((att: any) => {
-        const first = att?.firstName?.toLowerCase() || '';
-        const last = att?.lastName?.toLowerCase() || '';
+      // ✅ ID match logic
+      const idMatch = !idSearch ||
+        (data?.bulkRefId || '').toLowerCase().includes(idSearch) ||
+        (data?.roomId || '').toLowerCase().includes(idSearch) ||
+        (data?.paymentId || '').toString().toLowerCase().includes(idSearch);
 
-        return first.includes(search) || last.includes(search);
-      });
+      // ✅ Guest name match logic
+      const nameMatch = !nameSearch ||
+        data?.attendees?.some((att: any) => {
+          const first = att?.firstName?.toLowerCase() || '';
+          const last = att?.lastName?.toLowerCase() || '';
+          return first.includes(nameSearch) || last.includes(nameSearch);
+        });
+
+      return idMatch && nameMatch;
     };
   }
 
@@ -162,19 +175,14 @@ export class Dashboard implements OnInit {
   }
 
 
-  applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+  filterById(event: Event) {
+    this.idFilter = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = Math.random().toString(); // trigger refresh
   }
 
-
   filterByGuestName(event: Event) {
-    const value = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = value.trim().toLowerCase();
-
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
-    }
+    this.nameFilter = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = Math.random().toString(); // trigger refresh
   }
 
 
@@ -192,10 +200,10 @@ export class Dashboard implements OnInit {
         CheckIn: this.formatDate(room.checkIn),
         CheckOut: this.formatDate(room.checkOut),
         RoomType: `${room.roomType} Occupancy`,
-        Name: `${attendee.firstName || ''} ${attendee.lastName || ''} ${ attendee?.is_primary_user ? '( Primary Guest )': '' }`.trim(),
+        Name: `${attendee.firstName || ''} ${attendee.lastName || ''} ${attendee?.is_primary_user ? '( Primary Guest )' : ''}`.trim(),
         Email: attendee.email || '',
         Phone: attendee.phone || '',
-        Company: attendee.company?.name + (attendee.company?.gst!='' ? ` (${attendee.company?.gst})` : '' ) || ''
+        Company: attendee.company?.name + (attendee.company?.gst != '' ? ` (${attendee.company?.gst})` : '') || ''
       }))
     );
 
