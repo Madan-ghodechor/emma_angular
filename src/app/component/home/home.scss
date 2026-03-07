@@ -1,0 +1,447 @@
+/* ── Variables ───────────────────────────────────────────── */
+
+$accent: #1A56DB;
+$accent-light: #EBF2FF;
+$accent-hover: #1447C0;
+
+$success: #059669;
+
+$text-primary: #0D1B2A;
+$text-secondary: #4A5568;
+$text-muted: #94A3B8;
+
+$border: #DDE1E9;
+
+$bg: #EDEEF2;
+$surface: #FFFFFF;
+
+$radius: 8px;
+$radius-lg: 12px;
+
+
+/* ── Page wrapper ───────────────────────────────────────── */
+
+.page-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 32px 16px;
+    background: $bg;
+    font-family: 'Outfit', 'Segoe UI', sans-serif;
+    box-sizing: border-box;
+}
+
+
+/* ── Card ───────────────────────────────────────────────── */
+
+.card {
+    background: $surface;
+    border-radius: 16px;
+
+    border: 1px solid $border;
+
+    box-shadow:
+        0 8px 28px rgba(0, 0, 0, 0.1),
+        0 2px 8px rgba(0, 0, 0, 0.06);
+
+    width: 100%;
+    max-width: 540px;
+
+    padding: 36px 32px 32px;
+
+    @media (max-width:480px) {
+        padding: 24px 18px 22px;
+        border-radius: 12px;
+    }
+}
+
+
+/* ── Header ─────────────────────────────────────────────── */
+
+.card-header {
+    margin-bottom: 28px;
+}
+
+.step-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    font-size: 11px;
+    font-weight: 600;
+
+    letter-spacing: .07em;
+    text-transform: uppercase;
+
+    color: $accent;
+    background: $accent-light;
+
+    padding: 4px 12px 4px 8px;
+    border-radius: 20px;
+
+    margin-bottom: 12px;
+
+    .chip-icon {
+        font-size: 14px;
+        width: 14px;
+        height: 14px;
+    }
+}
+
+.card-title {
+    font-size: 22px;
+    font-weight: 600;
+    color: $text-primary;
+
+    margin: 0 0 6px;
+    line-height: 1.3;
+
+    @media (max-width:480px) {
+        font-size: 19px;
+    }
+}
+
+.card-subtitle {
+    font-size: 14px;
+    color: $text-secondary;
+    margin: 0;
+}
+
+
+/* ── Form ───────────────────────────────────────────────── */
+
+.full-width {
+    width: 100%;
+}
+
+.close {
+    border: none;
+    margin-right: 6px;
+    border-radius: 55px;
+    background: #ffa4a4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+
+    mat-icon {
+        color: white;
+        font-size: 15px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}
+
+
+/* Material outline styling */
+
+::ng-deep .mat-mdc-form-field.full-width {
+
+    .mat-mdc-floating-label {
+        color: $text-muted;
+    }
+
+    &.mat-focused .mat-mdc-floating-label {
+        color: $accent;
+    }
+
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+        border-color: $border;
+    }
+
+    &.mat-focused {
+
+        .mdc-notched-outline__leading,
+        .mdc-notched-outline__notch,
+        .mdc-notched-outline__trailing {
+            border-color: $accent;
+            border-width: 1.5px;
+        }
+
+    }
+
+    .mat-mdc-form-field-hint {
+        font-size: 12px;
+        color: $text-muted;
+    }
+}
+
+
+/* ── Autocomplete Panel ─────────────────────────────────── */
+
+::ng-deep .mat-mdc-autocomplete-panel {
+
+    border-radius: $radius-lg;
+
+    border: 1px solid $border;
+
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12);
+
+}
+
+
+/* ── Option Row ─────────────────────────────────────────── */
+
+.option-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    width: 100%;
+    padding: 4px 0;
+}
+
+.company-logo {
+
+    width: 34px;
+    height: 34px;
+
+    border-radius: $radius;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-family: 'JetBrains Mono', monospace;
+
+    font-size: 10.5px;
+    font-weight: 500;
+
+    color: white;
+
+    flex-shrink: 0;
+
+    letter-spacing: .02em;
+
+    &.large {
+
+        width: 44px;
+        height: 44px;
+
+        font-size: 13px;
+
+        border-radius: 10px;
+    }
+}
+
+.company-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.company-name {
+
+    font-size: 14px;
+    font-weight: 500;
+
+    color: $text-primary;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+}
+
+.company-meta {
+
+    font-size: 12px;
+
+    color: $text-muted;
+
+    margin-top: 1px;
+
+}
+
+
+/* ── Empty Result ───────────────────────────────────────── */
+
+.no-results {
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    color: $text-muted;
+
+    font-size: 14px;
+    padding: 8px 0;
+
+    mat-icon {
+
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+
+    }
+
+}
+
+
+/* ── Selected Company ───────────────────────────────────── */
+
+.selected-display {
+
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    padding: 14px 16px;
+
+    margin-top: 16px;
+
+    background: $accent-light;
+
+    border: 1px solid rgba(26, 86, 219, 0.18);
+
+    border-radius: $radius-lg;
+
+    animation: slideIn .2s ease;
+
+}
+
+.selected-info {
+
+    flex: 1;
+    min-width: 0;
+
+    .company-name {
+
+        font-size: 15px;
+        font-weight: 600;
+
+    }
+
+}
+
+@keyframes slideIn {
+
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}
+
+
+/* ── Confirm Badge ─────────────────────────────────────── */
+
+.confirmed-badge {
+
+    width: 30px;
+    height: 30px;
+
+    background: $success;
+
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    mat-icon {
+
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+
+        color: white;
+
+    }
+
+}
+
+
+/* ── Actions ───────────────────────────────────────────── */
+
+.actions {
+
+    display: flex;
+    gap: 10px;
+
+    margin-top: 24px;
+
+    @media (max-width:480px) {
+        flex-direction: column;
+    }
+
+}
+
+.btn-cancel {
+
+    flex: 1;
+    height: 44px;
+
+    border-radius: 10px;
+
+    border: 1px solid #d6dbe5;
+    background: #ffffff;
+
+    color: #475569;
+
+    font-size: 14px;
+    font-weight: 500;
+
+    padding: 0 18px;
+
+    transition: all .18s ease;
+
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.03);
+
+    &:hover {
+        background: #f8fafc;
+        border-color: #c7ceda;
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
+    }
+
+    &:active {
+        transform: translateY(1px);
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+    }
+
+}
+
+
+.btn-confirm {
+    flex: 1;
+    height: 44px;
+
+    border-radius: 10px;
+
+    background: #1A56DB;
+    color: white;
+
+    font-weight: 500;
+
+    box-shadow: 0 3px 10px rgba(26, 86, 219, .25);
+
+    transition: all .18s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    &:hover {
+        background: #1447C0;
+        box-shadow: 0 5px 14px rgba(26, 86, 219, .35);
+    }
+
+    &:hover:not(:disabled) {
+        background-color: $accent-hover;
+
+    }
+
+    &:disabled {
+        opacity: .5;
+    }
+
+}

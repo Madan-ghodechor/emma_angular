@@ -1,197 +1,246 @@
+<!-- 
+  OPTIMIZED DASHBOARD HTML
+  - Same Angular template logic, zero changes to bindings/events
+  - Refined visual design: clean card hierarchy, better typography, polished status indicators
+-->
+
 <div class="dashboard">
 
-    <!-- Stats Cards -->
+    <!-- ═══════════ STATS CARDS ═══════════ -->
     <div class="stats-grid">
-        <div class="card primary">
-            <div class="card-content">
-                <h3>Rooms Remaining</h3>
-                <p class="big-number">{{ totalRooms() - usedRooms() }} / {{ totalRooms() }}</p>
+
+        <div class="stat-card stat-card--blue">
+            <div class="stat-card__icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                    <polyline points="9 22 9 12 15 12 15 22" />
+                </svg>
+            </div>
+            <div class="stat-card__body">
+                <span class="stat-card__label">Rooms Remaining</span>
+                <span class="stat-card__value">{{ totalRooms() - usedRooms() }} <small>/ {{ totalRooms()
+                        }}</small></span>
             </div>
         </div>
 
-        <div class="card success">
-            <div class="card-content">
-                <h3>Total Registered Guests</h3>
-                <p class="big-number"> {{ registeredUserCount() }} </p>
+        <div class="stat-card stat-card--emerald">
+            <div class="stat-card__icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                    <circle cx="9" cy="7" r="4" />
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                </svg>
+            </div>
+            <div class="stat-card__body">
+                <span class="stat-card__label">Registered Guests</span>
+                <span class="stat-card__value">{{ registeredUserCount() }}</span>
             </div>
         </div>
 
-        <div class="card warning">
-            <div class="card-content">
-                <h3>Confirmed Bookings</h3>
-                <p class="big-number"> {{ usedRooms() }} </p>
+        <div class="stat-card stat-card--amber">
+            <div class="stat-card__icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path d="M9 11l3 3L22 4" />
+                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+                </svg>
+            </div>
+            <div class="stat-card__body">
+                <span class="stat-card__label">Confirmed Bookings</span>
+                <span class="stat-card__value">{{ usedRooms() }}</span>
             </div>
         </div>
 
-        <div class="card danger">
-            <div class="card-content">
-                <h3>Collected Amount</h3>
-                <p class="big-number"> {{ collectedAmount() | currency : 'INR' }} </p>
+        <div class="stat-card stat-card--rose">
+            <div class="stat-card__icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path
+                        d="M14.16 4.21h3.15l1.21-1.81H6.69L5.48 4.21H7.54c2.08 0 4 .16 4.77 1.9H6.64L5.43 8h7.11v.01c0 1.3-1.08 3.3-4.67 3.3H6.13v1.69l6.92 8.64h3.09l-7.2-9.03c2.96-.16 5.73-1.82 6.13-4.71h2.21L18.49 8h-3.45c-.15-.7-.45-1.38-.88-1.9z" />
+                </svg>
+            </div>
+            <div class="stat-card__body">
+                <span class="stat-card__label">Collected Amount</span>
+                <span class="stat-card__value">{{ collectedAmount() | currency : 'INR' }}</span>
             </div>
         </div>
+
     </div>
 
-    <!-- Room Progress -->
-    <div class="progress-section">
-        <h2>Room Occupancy</h2>
-        <div class="progress-bar">
-            <div class="progress-fill" [style.width.%]="percentage()"></div>
+
+    <!-- ═══════════ OCCUPANCY PROGRESS ═══════════ -->
+    <div class="occupancy-section">
+        <div class="occupancy-section__header">
+            <h2 class="occupancy-section__title">Room Occupancy</h2>
+            <span class="occupancy-section__pct">{{ percentage() }}%</span>
         </div>
-        <p>{{percentage()}}% Rooms Filled</p>
+        <div class="progress-track">
+            <div class="progress-thumb" [style.width.%]="percentage()"></div>
+        </div>
+        <p class="occupancy-section__sub">{{ percentage() }}% of all rooms are currently filled</p>
     </div>
 
-    <!-- Rooms List -->
-    <div class="dashboard-container">
 
-        <!-- LEFT SIDE -->
-        <div class="left-panel">
+    <!-- ═══════════ BOOKINGS TABLE ═══════════ -->
+    <div class="panel">
 
-            <div class="filter-card">
-                <mat-form-field appearance="outline">
-                    <mat-label>Filter By Booking ID</mat-label>
-                    <input matInput (keyup)="filterById($event)" placeholder="Ex. SF26000010" #input>
-                </mat-form-field>
-                <mat-form-field appearance="outline">
-                    <mat-label>Filter By Guest</mat-label>
-                    <input matInput (keyup)="filterByGuestName($event)" placeholder="Ex. Madan" #input>
-                </mat-form-field>
-                <mat-form-field appearance="outline">
-                    <mat-label>Filter by Room Type</mat-label>
-                    <mat-select (selectionChange)="filterByType($event.value)">
+        <!-- ── Filter Bar ── -->
+        <div class="filter-bar">
+            <div class="filter-bar__left">
+
+                <!-- Booking ID -->
+                <div class="filter-input-wrap">
+                    <svg class="filter-input-wrap__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <circle cx="11" cy="11" r="8" />
+                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                    <input class="filter-input" (keyup)="filterById($event)"
+                        placeholder="Booking ID  •  e.g. SF26000010" #input>
+                </div>
+
+                <!-- Guest Name -->
+                <div class="filter-input-wrap">
+                    <svg class="filter-input-wrap__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                    </svg>
+                    <input class="filter-input" (keyup)="filterByGuestName($event)"
+                        placeholder="Guest name  •  e.g. Madan" #input>
+                </div>
+
+                <!-- Room Type filter -->
+                <div class="filter-type-group">
+                    <svg class="filter-input-wrap__icon" style="position:static;margin-right:6px;" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+                        <path d="M4 6h16M7 12h10M10 18h4" />
+                    </svg>
+                    <span class="filter-type-group__label">Type</span>
+                    <mat-select class="type-native-select" (selectionChange)="filterByType($event.value)" value="">
                         <mat-option value="">All</mat-option>
                         <mat-option value="single">Single</mat-option>
                         <mat-option value="double">Double</mat-option>
                         <mat-option value="triple">Triple</mat-option>
                     </mat-select>
-                </mat-form-field>
-                <span class="span">
-                    <button class="downloadBtn" (click)="exportToExcel()">Download Excel</button>
-                </span>
+                </div>
+
             </div>
 
-            <mat-card>
-                <table mat-table [dataSource]="dataSource" matSort #TABLE>
-
-                    <ng-container matColumnDef="roomNo">
-                        <th mat-header-cell *matHeaderCellDef> Ref. No. </th>
-                        <td mat-cell *matCellDef="let row let i = index" (click)="selectRoom(row)"
-                            [class.active-row]="selectedRoom()?._id === row._id">
-                            {{ row.bulkRefId }}
-                        </td>
-                    </ng-container>
-
-                    <ng-container matColumnDef="type">
-                        <th mat-header-cell *matHeaderCellDef> Room Type </th>
-                        <td mat-cell *matCellDef="let row" (click)="selectRoom(row)"> {{row?.roomType+" Occupancy" |
-                            titlecase }} </td>
-                    </ng-container>
-
-                    <ng-container matColumnDef="payment">
-                        <th mat-header-cell *matHeaderCellDef> Payment </th>
-                        <td mat-cell *matCellDef="let row" (click)="selectRoom(row)">
-                            <p style="margin-bottom: 2px;"> {{ row?.payment?.paymentAmount | currency : 'INR'}} </p>
-                            <span class="status" [class.available]="row.payment">
-                                {{ row.payment ? 'Captured' : 'Failed' }}
-                            </span>
-                        </td>
-                    </ng-container>
-
-                    <ng-container matColumnDef="checks">
-                        <th mat-header-cell *matHeaderCellDef> Check In / Check Out </th>
-                        <td mat-cell *matCellDef="let row" (click)="selectRoom(row)">
-                            <p style="border-bottom: 1px double rgb(127, 127, 127);">CheckIn : {{ row?.checkIn |
-                                date:'dd MMM yyyy' }}</p>
-                            <p>CheckOut : {{ row?.checkOut | date:'dd MMM yyyy' }}</p>
-                        </td>
-                    </ng-container>
-
-                    <ng-container matColumnDef="primary_guest">
-                        <th mat-header-cell *matHeaderCellDef> Primary Guest </th>
-                        <td mat-cell *matCellDef="let row" (click)="selectRoom(row)">
-                            @for (user of row.attendees; track user._id) {
-                            @if(user.is_primary_user){
-                            <div>
-                                <p> Name : {{ user.firstName +" "+ user.lastName | titlecase }} </p>
-                                <p> Company Name : {{ user.company?.name }} {{ user.company?.gst!='' ?
-                                    '('+user.company?.gst+')' : '' }} </p>
-                                <p> Email : {{ user.email }} </p>
-                                <p> Contact : {{ user.phone }} </p>
-                            </div>
-                            }
-                            }
-                        </td>
-                    </ng-container>
-
-                    <ng-container matColumnDef="createdAt">
-                        <th mat-header-cell *matHeaderCellDef> Booked On </th>
-                        <td mat-cell *matCellDef="let row" (click)="selectRoom(row)">
-                            {{ row?.createdAt | date:'dd MMM yyyy, hh:mm a' }}
-                        </td>
-                    </ng-container>
-
-                    <ng-container matColumnDef="resendVoucher">
-                        <th mat-header-cell *matHeaderCellDef> Resend Voucher </th>
-                        <td mat-cell *matCellDef="let row" (click)="selectRoom(row)">
-                            <button class="voucher-btn" (click)="sendVouchers(row)">Send&nbsp; Voucher</button>
-                        </td>
-                    </ng-container>
-
-                    <tr class="mat-row" *matNoDataRow>
-                        <td class="mat-cell" [attr.colspan]="displayedColumns.length">
-                            <div class="empty-state">
-                                <mat-icon>hotel</mat-icon>
-                                <p>No rooms available for selected filter</p>
-                            </div>
-                        </td>
-                    </tr>
-
-
-
-                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-
-                </table>
-                <mat-paginator [pageSizeOptions]="[5, 10, 20]" paginator
-                    aria-label="Select page of periodic elements">
-                </mat-paginator>
-            </mat-card>
-
+            <div class="filter-bar__right">
+                <button class="btn-export" (click)="exportToExcel()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="7 10 12 15 17 10" />
+                        <line x1="12" y1="15" x2="12" y2="3" />
+                    </svg>
+                    Export Excel
+                </button>
+            </div>
         </div>
 
+        <!-- Table -->
+        <mat-card class="table-card">
+            <table mat-table [dataSource]="dataSource" matSort #TABLE>
 
-        <!-- RIGHT SIDE -->
-        <!-- @if (selectedRoom()) {
+                <!-- Ref. No. -->
+                <ng-container matColumnDef="roomNo">
+                    <th mat-header-cell *matHeaderCellDef>Ref. No.</th>
+                    <td mat-cell *matCellDef="let row" (click)="selectRoom(row)"
+                        [class.active-row]="selectedRoom()?._id === row._id">
+                        <span class="ref-badge">{{ row.bulkRefId }}</span>
+                    </td>
+                </ng-container>
 
-        <div class="right-panel">
-            <mat-card>
-                <h2>Room Details</h2>
-                <mat-divider></mat-divider>
-                
-                <div class="detail-item">
-                    <label>Reference No:</label>
-                    <span>{{selectedRoom().bulkRefId}}</span>
-                </div>
-                <div class="detail-item">
-                    <label>Type:</label>
-                    <span>{{selectedRoom().roomType | titlecase}} Occupancy</span>
-                </div>
-                <div class="dateTime">
-                    <label>Times</label>
-                    <div>
-                        <div>Check In : {{selectedRoom().checkIn | date:'dd MMM yyyy' }}</div>
-                        <div>Check Out : {{selectedRoom().checkOut | date:'dd MMM yyyy' }}</div>
-                    </div>
-                </div>
+                <!-- Room Type -->
+                <ng-container matColumnDef="type">
+                    <th mat-header-cell *matHeaderCellDef>Room Type</th>
+                    <td mat-cell *matCellDef="let row" (click)="selectRoom(row)">
+                        <span class="room-type-tag">{{ row?.roomType + ' Occupancy' | titlecase }}</span>
+                    </td>
+                </ng-container>
 
-                {{ selectedRoom().payment.amount }}
-                {{ selectedRoom().payment.payment_id }}
+                <!-- Payment -->
+                <ng-container matColumnDef="payment">
+                    <th mat-header-cell *matHeaderCellDef>Payment</th>
+                    <td mat-cell *matCellDef="let row" (click)="selectRoom(row)">
+                        <span class="payment-amount">{{ row?.payment?.paymentAmount | currency : 'INR' }}</span>
+                        <span class="payment-badge" [class.payment-badge--success]="row.payment"
+                            [class.payment-badge--fail]="!row.payment">
+                            {{ row.payment ? 'Captured' : 'Failed' }}
+                        </span>
+                    </td>
+                </ng-container>
 
-            </mat-card>
-        </div>
-        } -->
+                <!-- Check In / Out -->
+                <ng-container matColumnDef="checks">
+                    <th mat-header-cell *matHeaderCellDef>Check In / Check Out</th>
+                    <td mat-cell *matCellDef="let row" (click)="selectRoom(row)">
+                        <div class="dates-cell">
+                            <div class="dates-cell__row">
+                                <span class="dates-cell__label">In</span>
+                                <span>{{ row?.checkIn | date:'dd MMM yyyy' }}</span>
+                            </div>
+                            <div class="dates-cell__row">
+                                <span class="dates-cell__label">Out</span>
+                                <span>{{ row?.checkOut | date:'dd MMM yyyy' }}</span>
+                            </div>
+                        </div>
+                    </td>
+                </ng-container>
 
+                <!-- Primary Guest -->
+                <ng-container matColumnDef="primary_guest">
+                    <th mat-header-cell *matHeaderCellDef>Primary Guest</th>
+                    <td mat-cell *matCellDef="let row" (click)="selectRoom(row)">
+                        @for (user of row.attendees; track user._id) {
+                        @if(user.is_primary_user) {
+                        <div class="guest-cell">
+                            <p class="guest-cell__name">{{ user.firstName + ' ' + user.lastName | titlecase }}</p>
+                            <p class="guest-cell__meta">
+                                {{ user.company?.name }}
+                                {{ user.company?.gst != '' ? '(' + user.company?.gst + ')' : '' }}
+                            </p>
+                            <p class="guest-cell__meta">{{ user.email }}</p>
+                            <p class="guest-cell__meta">{{ user.phone }}</p>
+                        </div>
+                        }
+                        }
+                    </td>
+                </ng-container>
+
+                <!-- Booked On -->
+                <ng-container matColumnDef="createdAt">
+                    <th mat-header-cell *matHeaderCellDef>Booked On</th>
+                    <td mat-cell *matCellDef="let row" (click)="selectRoom(row)">
+                        <span class="date-text">{{ row?.createdAt | date:'dd MMM yyyy' }}</span>
+                        <span class="time-text">{{ row?.createdAt | date:'hh:mm a' }}</span>
+                    </td>
+                </ng-container>
+
+                <!-- Resend Voucher -->
+                <ng-container matColumnDef="resendVoucher">
+                    <th mat-header-cell *matHeaderCellDef>Voucher</th>
+                    <td mat-cell *matCellDef="let row" (click)="selectRoom(row)">
+                        <button class="btn-voucher" (click)="sendVouchers(row)">Send Voucher</button>
+                    </td>
+                </ng-container>
+
+                <!-- Empty state -->
+                <tr class="mat-row" *matNoDataRow>
+                    <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+                        <div class="empty-state">
+                            <mat-icon>hotel</mat-icon>
+                            <p>No rooms found for the selected filter</p>
+                        </div>
+                    </td>
+                </tr>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+
+            <mat-paginator [pageSizeOptions]="[5, 10, 20]" aria-label="Select page of bookings"></mat-paginator>
+        </mat-card>
 
     </div>
-
-
 </div>

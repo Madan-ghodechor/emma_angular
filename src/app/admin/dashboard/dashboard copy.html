@@ -1,0 +1,487 @@
+<div class="dashboard">
+
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+        <div class="card primary">
+            <div class="card-content">
+                <h3>Rooms Remaining</h3>
+                <p class="big-number">{{ totalRooms() - usedRooms() }} / {{ totalRooms() }}</p>
+            </div>
+        </div>
+
+        <div class="card success">
+            <div class="card-content">
+                <h3>Total Registered Guests</h3>
+                <p class="big-number"> {{ registeredUserCount() }} </p>
+            </div>
+        </div>
+
+        <div class="card warning">
+            <div class="card-content">
+                <h3>Confirmed Bookings</h3>
+                <p class="big-number"> {{ usedRooms() }} </p>
+            </div>
+        </div>
+
+        <div class="card danger">
+            <div class="card-content">
+                <h3>Collected Amount</h3>
+                <p class="big-number"> {{ collectedAmount() | currency : 'INR' }} </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Room Progress -->
+    <div class="progress-section">
+        <h2>Room Occupancy</h2>
+        <div class="progress-bar">
+            <div class="progress-fill" [style.width.%]="percentage()"></div>
+        </div>
+        <p>{{percentage()}}% Rooms Filled</p>
+    </div>
+
+    <!-- Rooms List -->
+    <div class="dashboard-container">
+
+        <!-- LEFT SIDE -->
+        <div class="left-panel">
+
+            <div class="filter-card">
+                <mat-form-field appearance="outline">
+                    <mat-label>Filter By Booking ID</mat-label>
+                    <input matInput (keyup)="filterById($event)" placeholder="Ex. SF26000010" #input>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Filter By Guest</mat-label>
+                    <input matInput (keyup)="filterByGuestName($event)" placeholder="Ex. Madan" #input>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Filter by Room Type</mat-label>
+                    <mat-select (selectionChange)="filterByType($event.value)">
+                        <mat-option value="">All</mat-option>
+                        <mat-option value="single">Single</mat-option>
+                        <mat-option value="double">Double</mat-option>
+                        <mat-option value="triple">Triple</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <span class="span">
+                    <button class="downloadBtn" (click)="exportToExcel()">Download Excel</button>
+                </span>
+            </div>
+
+            <mat-card>
+                <table mat-table [dataSource]="dataSource" matSort #TABLE>
+
+                    <ng-container matColumnDef="roomNo">
+                        <th mat-header-cell *matHeaderCellDef> Ref. No. </th>
+                        <td mat-cell *matCellDef="let row let i = index" (click)="selectRoom(row)"
+                            [class.active-row]="selectedRoom()?._id === row._id">
+                            {{ row.bulkRefId }}
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="type">
+                        <th mat-header-cell *matHeaderCellDef> Room Type </th>
+                        <td mat-cell *matCellDef="let row" (click)="selectRoom(row)"> {{row?.roomType+" Occupancy" |
+                            titlecase }} </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="payment">
+                        <th mat-header-cell *matHeaderCellDef> Payment </th>
+                        <td mat-cell *matCellDef="let row" (click)="selectRoom(row)">
+                            <p style="margin-bottom: 2px;"> {{ row?.payment?.paymentAmount | currency : 'INR'}} </p>
+                            <span class="status" [class.available]="row.payment">
+                                {{ row.payment ? 'Captured' : 'Failed' }}
+                            </span>
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="checks">
+                        <th mat-header-cell *matHeaderCellDef> Check In / Check Out </th>
+                        <td mat-cell *matCellDef="let row" (click)="selectRoom(row)">
+                            <p style="border-bottom: 1px double rgb(127, 127, 127);">CheckIn : {{ row?.checkIn |
+                                date:'dd MMM yyyy' }}</p>
+                            <p>CheckOut : {{ row?.checkOut | date:'dd MMM yyyy' }}</p>
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="primary_guest">
+                        <th mat-header-cell *matHeaderCellDef> Primary Guest </th>
+                        <td mat-cell *matCellDef="let row" (click)="selectRoom(row)">
+                            @for (user of row.attendees; track user._id) {
+                            @if(user.is_primary_user){
+                            <div>
+                                <p> Name : {{ user.firstName +" "+ user.lastName | titlecase }} </p>
+                                <p> Company Name : {{ user.company?.name }} {{ user.company?.gst!='' ?
+                                    '('+user.company?.gst+')' : '' }} </p>
+                                <p> Email : {{ user.email }} </p>
+                                <p> Contact : {{ user.phone }} </p>
+                            </div>
+                            }
+                            }
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="createdAt">
+                        <th mat-header-cell *matHeaderCellDef> Booked On </th>
+                        <td mat-cell *matCellDef="let row" (click)="selectRoom(row)">
+                            {{ row?.createdAt | date:'dd MMM yyyy, hh:mm a' }}
+                        </td>
+                    </ng-container>
+
+                    <ng-container matColumnDef="resendVoucher">
+                        <th mat-header-cell *matHeaderCellDef> Resend Voucher </th>
+                        <td mat-cell *matCellDef="let row" (click)="selectRoom(row)">
+                            <button class="voucher-btn" (click)="sendVouchers(row)">Send&nbsp; Voucher</button>
+                        </td>
+                    </ng-container>
+
+                    <tr class="mat-row" *matNoDataRow>
+                        <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+                            <div class="empty-state">
+                                <mat-icon>hotel</mat-icon>
+                                <p>No rooms available for selected filter</p>
+                            </div>
+                        </td>
+                    </tr>
+
+
+
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+                </table>
+                <mat-paginator [pageSizeOptions]="[5, 10, 20]" paginator
+                    aria-label="Select page of periodic elements">
+                </mat-paginator>
+            </mat-card>
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.dashboard {
+  padding: 24px;
+  background: #f5f7fa;
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+}
+
+/* GRID */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+/* CARD */
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 14px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+  transition: 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+.card h3 {
+  font-size: 14px;
+  color: #888;
+  margin-bottom: 10px;
+}
+
+.big-number {
+  font-size: 28px;
+  font-weight: 700;
+}
+
+/* Card Colors */
+.primary {
+  border-left: 6px solid #3b82f6;
+}
+
+.success {
+  border-left: 6px solid #22c55e;
+}
+
+.warning {
+  border-left: 6px solid #f59e0b;
+}
+
+.danger {
+  border-left: 6px solid #ef4444;
+}
+
+/* PROGRESS */
+.progress-section {
+  background: white;
+  padding: 20px;
+  border-radius: 14px;
+  margin-bottom: 30px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+}
+
+.progress-bar {
+  height: 12px;
+  background: #eee;
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 15px 0;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #22c55e);
+}
+
+
+
+
+/* TABLE */
+.dashboard-container {
+  display: grid;
+  // grid-template-columns: 2.2fr 1fr;
+  gap: 28px;
+  padding: 28px;
+  background: #ffffff;
+  min-height: 100vh;
+}
+
+/* LEFT PANEL */
+.left-panel mat-card {
+  padding: 0;
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+/* FILTER */
+.filter-card {
+  padding: 20px !important;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  box-sizing: border-box;
+
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background-color: white;
+
+  mat-form-field {
+    flex: 1;
+    margin: 5px;
+  }
+}
+
+/* TABLE */
+.mat-mdc-table {
+  width: 100%;
+}
+
+.mat-mdc-header-row {
+  background: #f1f3f7;
+}
+
+.mat-mdc-header-cell {
+  font-weight: 600;
+  font-size: 13px;
+  color: #667085;
+  letter-spacing: .3px;
+}
+
+.mat-mdc-row {
+  transition: all 0.2s ease;
+}
+
+.mat-mdc-row:hover {
+  background: #f9fbff;
+  cursor: pointer;
+}
+
+.mat-mdc-cell {
+  // padding: 18px 16px;
+  font-size: 14px;
+}
+
+/* Active row */
+.active-row {
+  background: #e8f1ff !important;
+}
+
+/* STATUS BADGE */
+.status {
+  padding: 6px 14px;
+  border-radius: 30px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.filled {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.available {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+/* RIGHT PANEL */
+.right-panel mat-card {
+  padding: 24px;
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 24px;
+}
+
+.right-panel h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+/* DETAIL ITEMS */
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f2f5;
+
+  label {
+    font-weight: 500;
+    color: #667085;
+  }
+
+  span {
+    font-weight: 600;
+    color: #1f2937;
+  }
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+}
+
+.dateTime {
+  padding: 12px;
+  border-bottom: 1px solid #f0f2f5;
+  border: 1px solid rgb(206, 206, 206);
+  border-radius: 12px;
+
+  label {
+    font-weight: 500;
+    color: #667085;
+    width: 100%;
+  }
+
+  div {
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+
+    div {
+      font-weight: 500;
+      color: #1f2937;
+      font-size: 13px;
+
+      &:last-child {
+        border-left: 1px double rgb(115, 115, 115);
+      }
+    }
+  }
+
+}
+
+
+
+.right-panel mat-card {
+  animation: fadeIn .25s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+.empty-state {
+  padding: 60px 0;
+  text-align: center;
+  color: #98a2b3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.empty-state mat-icon {
+  font-size: 40px;
+  opacity: 0.5;
+}
+
+.span {
+  padding-top: 5px;
+
+  .downloadBtn {
+    padding: 8px 16px !important;
+    background: cornflowerblue;
+    border-color: cornflowerblue;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+  }
+}
+
+
+
+.voucher-btn {
+  background: cornflowerblue;
+  border-color: cornflowerblue;
+  padding: 6px 20px;
+  border-radius: 7px;
+  width: 140px;
+  color: white;
+  cursor: pointer;
+}

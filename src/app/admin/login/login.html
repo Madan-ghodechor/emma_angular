@@ -1,6 +1,5 @@
-<div class="login-page">
+<!-- <div class="login-page">
 
-  <!-- Branding side -->
   <div class="brand-panel">
     <div class="brand-content">
       <h1 style="letter-spacing: 3px;" >COTRAV</h1>
@@ -8,7 +7,6 @@
     </div>
   </div>
 
-  <!-- Login side -->
   <div class="form-panel">
     <mat-card class="login-card">
 
@@ -45,6 +43,67 @@
       </form>
 
     </mat-card>
+  </div>
+
+</div> -->
+
+
+
+<div class="container">
+
+  <div class="panel-left">
+    <div class="ring ring-1"></div>
+    <div class="ring ring-2"></div>
+    <div class="ring ring-3"></div>
+    <div class="dots">
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+    <div class="panel-tagline">
+      <span>Hotel Booking Portal</span>
+      <h2>Where Every Stay<br />Becomes a <em>Story</em></h2>
+      <p>Discover curated stays across the globe. Seamless booking, refined experiences, unforgettable journeys.</p>
+      <div class="ornament">
+        <div class="ornament-line"></div>
+        <div class="ornament-diamond"></div>
+        <div class="ornament-line"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel-right">
+    <div class="form-wrap">
+
+      <div class="logo-wrap">
+        <img src="https://cotrav.co/wp-content/uploads/2024/06/cropped-CoTrav-Logo.png" alt="CoTrav Logo" />
+      </div>
+
+      <div class="form-badge">Hotel Portal</div>
+
+      <div class="form-heading">
+        <h1>Welcome back</h1>
+        <p>Sign in to access your hotel bookings</p>
+      </div>
+
+      <form  [formGroup]="form" (ngSubmit)="submit()">
+        <div class="field">
+          <label for="email">Email Address</label>
+          <input type="email" formControlName="email" placeholder="you@example.com" autocomplete="email" required />
+        </div>
+
+        <div class="field">
+          <label for="password">Password</label>
+          <input type="password" formControlName="password" placeholder="Enter your password" autocomplete="current-password"
+            required />
+        </div>
+
+        <button type="submit" class="btn-login">Sign In</button>
+      </form>
+
+      <p class="footer-note">© 2026 CoTrav. All rights reserved.</p>
+    </div>
   </div>
 
 </div>

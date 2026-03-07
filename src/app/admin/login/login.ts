@@ -1,13 +1,15 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { Api } from '../services/api';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
-  standalone: false,
+  standalone: true,
+  imports: [ReactiveFormsModule],
   templateUrl: './login.html',
-  styleUrls: ['./login.scss'],   // also fixing this, see below
+  styleUrls: ['./login.scss'],
 })
 export class Login {
   hide = true;
@@ -29,7 +31,7 @@ export class Login {
       next: (res: any) => {
         if (res.success) {
           localStorage.setItem('adminToken', res.data.token)
-          this.router.navigate(['/admin/dashbord'])
+          this.router.navigate(['/admin/dashboard'])
         }
       }
     })

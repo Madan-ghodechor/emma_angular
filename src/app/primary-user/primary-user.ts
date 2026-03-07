@@ -148,7 +148,7 @@ export class PrimaryUser implements OnInit {
 
     // console.log("madan.ghodechor@cotrav")
     const bgbulkRefId = localStorage.getItem('bkgRef');
-    
+
     this.checkReality(bgbulkRefId)
 
 
@@ -367,12 +367,16 @@ export class PrimaryUser implements OnInit {
       nationalNumber: this.phoneInput.nativeElement.value
     };
 
+    const white = localStorage.getItem('whiteLabel');
+    const whiteLabel = white ? JSON.parse(white) : null;
+
     const organisation = this.userForm.getRawValue().organisation.name ? this.userForm.getRawValue().organisation.name : this.userForm.getRawValue().organisation
     const payload = {
       ...this.userForm.getRawValue(),
       organisation: organisation,
       phone: phonepayload.fullNumber,
-      primary_user_email: this.userForm.get('email')!.value
+      primary_user_email: this.userForm.get('email')!.value,
+      whiteLabel : whiteLabel
     };
 
     sessionStorage.setItem('primaryUser', JSON.stringify(payload));

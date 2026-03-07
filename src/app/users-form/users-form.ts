@@ -717,7 +717,7 @@ export class UsersForm {
         card: true,
         upi: true,
         wallet: true,
-        emi: false 
+        emi: false
       },
 
       image: "https://play-lh.googleusercontent.com/-Gg0VKCGTW25SSQaFSh8ih6iKCbQs2myvuJCUzO1Rpd1lzeRpDmCFNpSzmddQ_QYgIo=w600-h300-pc0xffffff-pd",
@@ -756,9 +756,12 @@ export class UsersForm {
   afterPaymentSuccess(razorpayRes: any, prevData: any) {
 
     this.logger.log("after Payment success called")
+    const whiteLabel: Storage = JSON.parse(localStorage.getItem('whiteLabel') ?? '');
+
     const payload = {
       ...razorpayRes,
-      ...prevData
+      ...prevData,
+      whiteLabel: whiteLabel
     }
     this.api.recordPaymentSuccess(payload).subscribe({
       next: (res: any) => {

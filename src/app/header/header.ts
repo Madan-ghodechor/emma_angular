@@ -21,13 +21,16 @@ export class Header {
     }
   }
   home: string | undefined;
+  headerImg: any = "images/header.png"
 
   constructor(private location: Location, private router: Router) {
-      this.router.events
-    .pipe(filter(event => event instanceof NavigationEnd))
-    .subscribe(() => {
-      this.home = this.router.url
-    });
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe(() => {
+        this.home = this.router.url
+      });
+
+    this.headerImg = localStorage.getItem('header');
   }
   goBack(): void {
     if (this.paymentInProgress) {

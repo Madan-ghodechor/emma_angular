@@ -1,0 +1,160 @@
+<section class="company-page">
+  <div class="company-card">
+    <div class="company-card__head">
+      <p class="eyebrow">Admin Setup</p>
+      <h1>Add Company</h1>
+      <p>Upload header logos and set company/voucher colors.</p>
+    </div>
+
+    <form class="company-form" [formGroup]="form" (ngSubmit)="submit()">
+      <div class="meta-grid">
+        <label>
+          <span>Name</span>
+          <input type="text" formControlName="name" placeholder="Madan" />
+          <small class="error" *ngIf="hasFieldError('name')">Name is required.</small>
+        </label>
+
+        <label>
+          <span>Abbr</span>
+          <input type="text" formControlName="abbr" placeholder="MG" />
+          <small class="error" *ngIf="hasFieldError('abbr')">Use 2 to 6 letters.</small>
+        </label>
+      </div>
+
+      <div class="meta-grid">
+        <label>
+          <span>Industry (select or type)</span>
+          <input type="text" formControlName="industry" list="industry-list" placeholder="tech" />
+          <datalist id="industry-list">
+            @for (item of industryOptions; track item) {
+              <option [value]="item"></option>
+            }
+          </datalist>
+          <small class="error" *ngIf="hasFieldError('industry')">Industry is required.</small>
+        </label>
+
+        <label>
+          <span>Region (select or type)</span>
+          <input type="text" formControlName="region" list="region-list" placeholder="india" />
+          <datalist id="region-list">
+            @for (item of regionOptions; track item) {
+              <option [value]="item"></option>
+            }
+          </datalist>
+          <small class="error" *ngIf="hasFieldError('region')">Region is required.</small>
+        </label>
+      </div>
+
+      
+      <label class="upload-field">
+        <span>Website Header</span>
+        <input type="file" accept=".svg,.png,.jpg,.jpeg,image/svg+xml,image/png,image/jpeg" (change)="onLogoSelect($event, 3)" />
+        <small class="hint">Accepted: SVG, PNG, JPG, JPEG</small>
+        <small class="error" *ngIf="logoErrors()[3]">{{ logoErrors()[3] }}</small>
+      </label>
+
+      <label>
+        <span>Company color</span>
+        <div class="color-row">
+          <input type="color" formControlName="companyColor" />
+          <input type="text" formControlName="companyColor" placeholder="#5e08ff" />
+        </div>
+        <small class="error" *ngIf="hasFieldError('companyColor')">Use hex format: #RRGGBB</small>
+      </label>
+
+      <label class="upload-field">
+        <h2><span>Voucher Data</span></h2>
+      </label>
+      <hr>
+      <br>
+
+      <label class="upload-field">
+        <span>Header first logo</span>
+        <input type="file" accept=".svg,.png,.jpg,.jpeg,image/svg+xml,image/png,image/jpeg" (change)="onLogoSelect($event, 0)" />
+        <small class="hint">Accepted: SVG, PNG, JPG, JPEG</small>
+        <small class="error" *ngIf="logoErrors()[0]">{{ logoErrors()[0] }}</small>
+      </label>
+
+      <label class="upload-field">
+        <span>Header second logo</span>
+        <input type="file" accept=".svg,.png,.jpg,.jpeg,image/svg+xml,image/png,image/jpeg" (change)="onLogoSelect($event, 1)" />
+        <small class="hint">Accepted: SVG, PNG, JPG, JPEG</small>
+        <small class="error" *ngIf="logoErrors()[1]">{{ logoErrors()[1] }}</small>
+      </label>
+
+      <label class="upload-field">
+        <span>Header third logo</span>
+        <input type="file" accept=".svg,.png,.jpg,.jpeg,image/svg+xml,image/png,image/jpeg" (change)="onLogoSelect($event, 2)" />
+        <small class="hint">Accepted: SVG, PNG, JPG, JPEG</small>
+        <small class="error" *ngIf="logoErrors()[2]">{{ logoErrors()[2] }}</small>
+      </label>
+
+      <div class="meta-grid">
+        <label>
+          <span>Theme main color</span>
+          <div class="color-row">
+            <input type="color" formControlName="themeMainColor" />
+            <input type="text" formControlName="themeMainColor" placeholder="#0f172a" />
+          </div>
+          <small class="error" *ngIf="hasFieldError('themeMainColor')">Use hex format: #RRGGBB</small>
+        </label>
+
+        <label>
+          <span>Theme secondary color</span>
+          <div class="color-row">
+            <input type="color" formControlName="themeSecondaryColor" />
+            <input type="text" formControlName="themeSecondaryColor" placeholder="#14b8a6" />
+          </div>
+          <small class="error" *ngIf="hasFieldError('themeSecondaryColor')">Use hex format: #RRGGBB</small>
+        </label>
+      </div>
+
+      <div class="actions">
+        <button type="submit">Save Company</button>
+        <button type="button" class="ghost" (click)="reset()">Reset</button>
+      </div>
+    </form>
+  </div>
+
+  <aside class="voucher-preview">
+    <p class="voucher-preview__label">Voucher Preview</p>
+    <article
+      class="voucher"
+      [style.--mainThemeColor]="form.value.themeMainColor || '#0f172a'"
+      [style.--secondThemeColor]="form.value.themeSecondaryColor || '#14b8a6'"
+    >
+      <div class="voucher__top-bar">
+        <div class="logo-box" *ngIf="logoUrls()[0] as first; else firstPlaceholder">
+          <img [src]="first" alt="Header first logo" />
+        </div>
+        <ng-template #firstPlaceholder><div class="logo-box placeholder">Logo 1</div></ng-template>
+
+        <div class="logo-box" *ngIf="logoUrls()[1] as second; else secondPlaceholder">
+          <img [src]="second" alt="Header second logo" />
+        </div>
+        <ng-template #secondPlaceholder><div class="logo-box placeholder">Logo 2</div></ng-template>
+
+        <div class="logo-box" *ngIf="logoUrls()[2] as third; else thirdPlaceholder">
+          <img [src]="third" alt="Header third logo" />
+        </div>
+        <ng-template #thirdPlaceholder><div class="logo-box placeholder">Logo 3</div></ng-template>
+      </div>
+
+      <h2 class="voucher__title">{{ (form.value.abbr || 'MG').toUpperCase() }} HOTEL CONFIRMATION VOUCHER</h2>
+      <div class="voucher__booking-pill">Booking ID: SF26000010</div>
+      <p class="voucher__booked">Booked on: 06 Mar 2026</p>
+
+      <div class="voucher__hotel-box">
+        <div class="hotel-name" [style.color]="form.value.companyColor || '#5e08ff'">
+          {{ form.value.name || 'Company Name' }}
+        </div>
+        <p>{{ form.value.industry || 'industry' }} | {{ form.value.region || 'region' }}</p>
+      </div>
+    </article>
+  </aside>
+
+  <aside class="payload" *ngIf="result() as payload">
+    <h2>Submitted Payload</h2>
+    <pre>{{ payload | json }}</pre>
+  </aside>
+</section>

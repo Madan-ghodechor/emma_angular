@@ -1,0 +1,39 @@
+<header class="admin-navbar">
+  <div class="admin-navbar__inner">
+    <a class="brand" routerLink="/admin/dashboard" (click)="closeMenu()">
+      <span class="brand__mark">CT</span>
+      <span class="brand__text">CoTrav Admin</span>
+    </a>
+
+    <button class="menu-toggle" type="button" (click)="toggleMenu()" aria-label="Toggle menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <nav class="nav-links" [class.is-open]="menuOpen()">
+      <a
+        routerLink="/admin/dashboard"
+        routerLinkActive="is-active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        (click)="closeMenu()"
+      >
+        Dashboard
+      </a>
+      <a
+        routerLink="/admin/add-company"
+        routerLinkActive="is-active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        (click)="closeMenu()"
+      >
+        Add Company
+      </a>
+      <a routerLink="/home" routerLinkActive="is-active" (click)="closeMenu()">Website</a>
+      <button class="logout-btn" type="button" (click)="logout()">Logout</button>
+    </nav>
+  </div>
+</header>
+
+<main class="admin-content">
+  <router-outlet></router-outlet>
+</main>

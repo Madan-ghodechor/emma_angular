@@ -1,0 +1,145 @@
+<div class="page-wrapper">
+    <div class="card">
+
+        <!-- HEADER -->
+        <div class="card-header">
+            <span class="step-chip">
+                <mat-icon class="chip-icon">domain</mat-icon>
+                Workspace Setup
+            </span>
+
+            <!-- <h2 class="card-title">Select Your Company</h2> -->
+            <h2 class="card-title">Select Company</h2>
+            <p class="card-subtitle">
+                Search and select the organisation you are associated with.
+            </p>
+        </div>
+
+        <!-- FORM -->
+        <div class="form-section">
+
+            <mat-form-field appearance="outline" class="full-width">
+
+                <mat-label>Company Name</mat-label>
+
+                <input matInput placeholder="Search company..." [formControl]="companyControl"
+                    [matAutocomplete]="auto" />
+
+                <!-- Clear button -->
+                @if (companyControl.value) {
+                <button mat-icon-button matSuffix class="close" type="button" (click)="clear()">
+                    <mat-icon>close</mat-icon>
+                </button>
+                }
+
+                <!-- Avoid async pipe inside hint -->
+                <mat-hint>
+                    Type to search companies
+                </mat-hint>
+
+            </mat-form-field>
+
+
+            <!-- AUTOCOMPLETE -->
+            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn"
+                (optionSelected)="selectCompany($event.option.value)" autoActiveFirstOption>
+
+                @for (company of companiesFiltered; track company.name) {
+
+                <mat-option [value]="company">
+
+                    <div class="option-row">
+
+                        <div class="company-logo" [style.background]="company.color">
+                            {{ company.abbr }}
+                        </div>
+
+                        <div class="company-info">
+                            <div class="company-name">
+                                {{ company.name }}
+                            </div>
+
+                            <div class="company-meta">
+                                {{ company.industry }} • {{ company.region }}
+                            </div>
+                        </div>
+
+                    </div>
+
+                </mat-option>
+
+                } @empty {
+
+                <mat-option disabled>
+                    <div class="no-results">
+                        <mat-icon>search_off</mat-icon>
+                        No companies found
+                    </div>
+                </mat-option>
+
+                }
+
+            </mat-autocomplete>
+
+        </div>
+
+
+        <!-- SELECTED COMPANY -->
+        @if (selectedCompany) {
+
+        <div class="selected-display">
+
+            <div class="company-logo large" [style.background]="selectedCompany.color">
+                {{ selectedCompany.abbr }}
+            </div>
+
+            <div class="selected-info">
+
+                <div class="company-name">
+                    {{ selectedCompany.name }}
+                </div>
+
+                <div class="company-meta">
+                    {{ selectedCompany.industry }} • {{ selectedCompany.region }}
+                </div>
+
+            </div>
+
+            @if (isConfirmed) {
+            <div class="confirmed-badge">
+                <mat-icon>check</mat-icon>
+            </div>
+            }
+
+        </div>
+
+        }
+
+
+        <!-- ACTIONS -->
+        <div class="actions">
+
+            <button mat-stroked-button type="button" class="btn-cancel" (click)="cancel()">
+                Cancel
+            </button>
+
+            <button mat-flat-button color="primary" type="button" class="btn-confirm"
+                [disabled]="!selectedCompany || isConfirmed" (click)="confirm()">
+
+                @if (isConfirmed) {
+
+                <mat-icon>check_circle</mat-icon>
+                Confirmed
+
+                } @else {
+
+                Confirm Selection
+
+                }
+
+            </button>
+
+        </div>
+
+    </div>
+</div>

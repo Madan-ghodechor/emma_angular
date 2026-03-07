@@ -28,10 +28,11 @@ export class PaymentSuccess {
 
   data: any = signal([]);
   id: string | undefined;
-  
+  colors: any;
+
   ngOnInit() {
     sessionStorage.clear();
-    localStorage.clear();
+    localStorage.removeItem('bkgRef');
 
     this.id = this.route.snapshot.paramMap.get('id') || "";
 
@@ -39,8 +40,15 @@ export class PaymentSuccess {
     this.api.getBookingRecord(this.id).subscribe({
       next: (res: any) => {
         this.data.set(res.data)
+
+        this.api.getWhiteLabel(res.data?.userData[0]?.payment?.assetId).subscribe({
+          next: (res: any) => {
+            this.colors = res.data;
+          }
+        })
       }
     })
+
   }
 
 
@@ -114,7 +122,8 @@ export class PaymentSuccess {
           "checkOut": checkOut,
           "guests": attendees
         }
-      ]
+      ],
+      "whiteLabel": this.colors
     }
     return payload;
 

@@ -1,4 +1,4 @@
-import { Component, ViewChild, AfterViewInit, OnInit, inject, signal } from '@angular/core';
+import { Component, ViewChild, OnInit, inject, signal } from '@angular/core';
 
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
@@ -15,7 +15,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDividerModule } from '@angular/material/divider';
 import { Api } from '../services/api';
-import { CurrencyPipe, DatePipe, JsonPipe, TitleCasePipe } from '@angular/common';
+import { CurrencyPipe, DatePipe, TitleCasePipe } from '@angular/common';
 import { environment } from '../../../environments/environment';
 import { map } from 'rxjs';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -39,6 +39,7 @@ interface Room {
 
 @Component({
   selector: 'app-dashboard',
+  standalone: true,
   imports: [
     MatTableModule,
     MatPaginatorModule,
@@ -47,15 +48,13 @@ interface Room {
     MatIconModule,
     MatChipsModule,
     MatButtonModule,
-    MatSort,
     MatSelectModule,
     MatDividerModule,
     TitleCasePipe,
     DatePipe,
     CurrencyPipe,
     MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule
+    MatInputModule
   ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',

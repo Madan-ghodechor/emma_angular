@@ -21,8 +21,18 @@ export class Api {
   getDashBord() {
     return this.http.get(`${environment.apiBaseUrl}admin/getDashboard`)
   }
-  getPaymentById(id:string){
+  getPaymentById(id: string) {
     return this.http.get(`${environment.apiBaseUrl}admin/getPayment/${id}`)
   }
+
+
+  generateVoucher(payload: any) {
+    return this.http.post(`${environment.apiBaseUrl}voucher`, payload, { responseType: 'blob' })
+  }
+
+  saveCompany(payload: any) {
+    return this.http.post(`${environment.apiBaseUrl}white-label`, payload)
+  }
+
 
 }

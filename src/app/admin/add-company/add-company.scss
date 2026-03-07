@@ -1,0 +1,265 @@
+.company-page {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 1.2rem;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: minmax(0, 1fr);
+  background: #f8fafc;
+}
+
+.company-card,
+.voucher-preview,
+.payload {
+  background: #fff;
+  border: 1px solid #dbe1ea;
+  border-radius: 14px;
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
+}
+
+.company-card {
+  padding: 1.1rem;
+}
+
+.company-card__head h1 {
+  margin: 0.2rem 0;
+  font-size: 1.3rem;
+}
+
+.company-card__head p {
+  margin: 0;
+  color: #64748b;
+}
+
+.eyebrow {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #0891b2;
+  font-weight: 700;
+  font-size: 0.72rem;
+}
+
+.company-form {
+  margin-top: 1rem;
+}
+
+.company-form > label {
+  display: block;
+  margin-bottom: 0.9rem;
+}
+
+.upload-field,
+.meta-grid label {
+  display: block;
+  margin-bottom: 0.9rem;
+}
+
+label span {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+input[type='file'],
+input[type='text'] {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 0.62rem 0.7rem;
+  font-size: 0.92rem;
+  background: #fff;
+  box-sizing: border-box;
+}
+
+.meta-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+.hint {
+  display: block;
+  margin-top: 0.25rem;
+  color: #64748b;
+  font-size: 0.75rem;
+}
+
+.error {
+  display: block;
+  margin-top: 0.25rem;
+  color: #dc2626;
+  font-size: 0.78rem;
+}
+
+.color-row {
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: 0.55rem;
+}
+
+input[type='color'] {
+  width: 56px;
+  min-height: 42px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 0.2rem;
+}
+
+.actions {
+  display: flex;
+  gap: 0.6rem;
+  justify-content: end;
+}
+
+button {
+  border: none;
+  background: #0f172a;
+  color: #fff;
+  font-weight: 600;
+  padding: 0.62rem 0.95rem;
+  border-radius: 9px;
+  cursor: pointer;
+}
+
+.ghost {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.voucher-preview {
+  padding: 1rem;
+}
+
+.voucher-preview__label {
+  margin: 0 0 0.7rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #334155;
+}
+
+.voucher {
+  --mainThemeColor: #0f172a;
+  --secondThemeColor: #14b8a6;
+  border: 2px solid var(--mainThemeColor);
+  border-radius: 12px;
+  background: #fff;
+  padding: 0.9rem;
+}
+
+.voucher__top-bar {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.logo-box {
+  border: 1px dashed #cbd5e1;
+  background: #fff;
+  min-height: 56px;
+  border-radius: 9px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.logo-box img {
+  max-width: 100%;
+  max-height: 46px;
+  object-fit: contain;
+}
+
+.logo-box.placeholder {
+  color: #64748b;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.voucher__title {
+  text-align: center;
+  color: var(--mainThemeColor);
+  margin: 0.8rem 0 0.6rem;
+  font-size: 1.08rem;
+}
+
+.voucher__booking-pill {
+  margin: 0 auto;
+  width: fit-content;
+  color: #fff;
+  padding: 0.45rem 1rem;
+  border-radius: 20px;
+  background: linear-gradient(160deg, var(--mainThemeColor) 30%, var(--secondThemeColor) 80%, var(--mainThemeColor) 90%);
+  font-weight: 600;
+  font-size: 0.82rem;
+}
+
+.voucher__booked {
+  text-align: center;
+  margin: 0.5rem 0 0.8rem;
+  color: #334155;
+  font-size: 0.88rem;
+}
+
+.voucher__hotel-box {
+  border: 1.5px solid var(--mainThemeColor);
+  border-radius: 9px;
+  padding: 0.7rem;
+}
+
+.voucher__hotel-box .hotel-name {
+  color: var(--mainThemeColor);
+  font-weight: 700;
+}
+
+.voucher__hotel-box p {
+  margin: 0.3rem 0 0;
+  color: #475569;
+  font-size: 0.86rem;
+}
+
+.payload {
+  padding: 1rem;
+}
+
+.payload h2 {
+  margin: 0 0 0.6rem;
+  font-size: 1rem;
+}
+
+.payload pre {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-size: 0.8rem;
+  background: #f8fafc;
+  padding: 0.8rem;
+  border-radius: 10px;
+}
+
+@media (max-width: 760px) {
+  .meta-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .voucher__top-bar {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (min-width: 1024px) {
+  .company-page {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    align-items: start;
+  }
+
+  .voucher-preview {
+    position: sticky;
+    top: 86px;
+  }
+
+  .payload {
+    grid-column: 1 / -1;
+  }
+}
