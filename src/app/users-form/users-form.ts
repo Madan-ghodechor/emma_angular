@@ -40,7 +40,7 @@ import { ActivatedRoute } from '@angular/router';
 
 /* ---------------- Types ---------------- */
 
-type RoomType = 'single' | 'double' | 'triple';
+type RoomType = 'single' | 'double' /* | 'triple' */;
 
 interface Attendee {
   id: string;
@@ -48,6 +48,7 @@ interface Attendee {
   lastName: string;
   email: string;
   organisation: string;
+  orderId?: string;
   phone?: string;
   gst?: string;
   is_primary_user: boolean;
@@ -113,7 +114,7 @@ export class UsersForm {
   public readonly roomCapacity: Record<RoomType, number> = {
     single: 1,
     double: 2,
-    triple: 3
+    // triple: 3
   };
 
 
@@ -131,9 +132,9 @@ export class UsersForm {
     effect(() => {
       const single = this.booking.singleRooms();
       const double = this.booking.doubleRooms();
-      const triple = this.booking.tripleRooms();
+      // const triple = this.booking.tripleRooms();
 
-      this.generateRooms(single, double, triple);
+      this.generateRooms(single, double);
       this.calculateRoomNights(this.rooms());
 
 
@@ -179,14 +180,15 @@ export class UsersForm {
 
   readonly totalPrice = computed(() =>
   ((this.booking.singlePrice() * this.singleRoomsNights()) +
-    (this.booking.doublePrice() * this.doubleRoomsNights()) +
-    (this.booking.triplePrice() * this.tripleRoomsNights()))
+    (this.booking.doublePrice() * this.doubleRoomsNights()) 
+    // +(this.booking.triplePrice() * this.tripleRoomsNights())
+  )
   );
 
+  readonly gstAmount = computed(() => this.totalPrice() * (environment.gst - 1));
+
   readonly withGST = computed(() =>
-    ((this.booking.singlePrice() * this.singleRoomsNights()) +
-      (this.booking.doublePrice() * this.doubleRoomsNights()) +
-      (this.booking.triplePrice() * this.tripleRoomsNights())) * environment.gst
+    this.totalPrice() * environment.gst
   );
 
 
@@ -195,7 +197,7 @@ export class UsersForm {
   private generateRooms(
     single: number,
     double: number,
-    triple: number
+    // triple: number
   ): void {
     const previous = untracked(() => this.rooms());
     const next: Room[] = [];
@@ -219,7 +221,7 @@ export class UsersForm {
 
     create('single', single);
     create('double', double);
-    create('triple', triple);
+    // create('triple', triple);
 
     this.rooms.set(next);
   }
@@ -245,7 +247,7 @@ export class UsersForm {
   isOpen(roomId: string): boolean {
     return this.expandedRoomId() === roomId;
   }
-  onRoomTypeChange(type: 'single' | 'double' | 'triple') {
+  onRoomTypeChange(type: 'single' | 'double' /* | 'triple' */) {
     this.activeRoomType.set(type);
 
     const rooms = this.filteredRooms();
@@ -292,7 +294,8 @@ export class UsersForm {
         const room_check = this.rooms().some(res => res.roomtype === ro);
 
         if (room_check) {
-          (Room[0].roomtype == 'single') ? this.onRoomTypeChange('double') : (Room[0].roomtype == 'double') ? this.onRoomTypeChange('triple') : ''
+          (Room[0].roomtype == 'single') ? this.onRoomTypeChange('double') : ''
+          // (Room[0].roomtype == 'double') ? this.onRoomTypeChange('triple') : ''
         }
       }
     } else {
@@ -342,6 +345,7 @@ export class UsersForm {
         lastName: primaryUser.lastName,
         email: primaryUser.email,
         organisation: primaryUser.organisation,
+        orderId: primaryUser.orderId,
         phone: primaryUser.phone,
         gst: primaryUser.gst,
         is_primary_user: primaryUser.is_primary_user,
@@ -390,7 +394,7 @@ export class UsersForm {
 
     const singleroom = this.booking.singleRooms();
     const doubleroom = this.booking.doubleRooms();
-    const tripleroom = this.booking.tripleRooms();
+    // const tripleroom = this.booking.tripleRooms();
 
     const bkgRefInLocal = localStorage.getItem('bkgRef');
 
@@ -399,7 +403,7 @@ export class UsersForm {
       "stage": 3,
       singleroom,
       doubleroom,
-      tripleroom,
+      // tripleroom,
       "userdata": this.rooms()
     }
     this.api.createBookingLog(logPayload).subscribe();
@@ -582,12 +586,12 @@ export class UsersForm {
   /// Nights calculation
   singleRoomsNights = signal(1);
   doubleRoomsNights = signal(1);
-  tripleRoomsNights = signal(1);
+  // tripleRoomsNights = signal(1);
 
   calculateRoomNights(rooms: Room[]) {
     this.singleRoomsNights.set(0);
     this.doubleRoomsNights.set(0);
-    this.tripleRoomsNights.set(0);
+    // this.tripleRoomsNights.set(0);
 
     for (const room of rooms) {
       if (!room.checkIn || !room.checkOut) continue;
@@ -603,9 +607,9 @@ export class UsersForm {
           this.doubleRoomsNights.update(n => n + nights);
           break;
 
-        case 'triple':
-          this.tripleRoomsNights.update(n => n + nights);
-          break;
+        // case 'triple':
+        //   this.tripleRoomsNights.update(n => n + nights);
+        //   break;
       }
     }
   }
@@ -756,7 +760,8 @@ export class UsersForm {
   afterPaymentSuccess(razorpayRes: any, prevData: any) {
 
     this.logger.log("after Payment success called")
-    const whiteLabel: Storage = JSON.parse(localStorage.getItem('whiteLabel') ?? '');
+    const whiteLabelRaw = localStorage.getItem('whiteLabel');
+    const whiteLabel = whiteLabelRaw ? JSON.parse(whiteLabelRaw) : null;
 
     const payload = {
       ...razorpayRes,
@@ -768,8 +773,8 @@ export class UsersForm {
         this.logger.log(res);
         this.router.navigate([`/payment-success/${res.data.bulkRefId}`]);
       },
-      error: () => {
-
+      error: (err) => {
+        this.logger.error('Payment record failed', err);
       }
     })
   }

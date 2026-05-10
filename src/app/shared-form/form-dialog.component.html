@@ -55,6 +55,15 @@
       </mat-form-field>
 
       <mat-form-field appearance="outline">
+        <mat-label>Order ID</mat-label>
+        <input matInput placeholder="Order ID*" formControlName="orderId">
+
+        @if (userForm!.get('orderId')?.errors?.['required'] && userForm!.get('orderId')?.touched) {
+        <span class="error-msg">Order ID is required.</span>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
         <mat-label>GST</mat-label>
         <input type="text" placeholder="GST" aria-label="Number" matInput formControlName="gst">
 

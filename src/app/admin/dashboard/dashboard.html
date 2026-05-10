@@ -196,6 +196,7 @@
                         @if(user.is_primary_user) {
                         <div class="guest-cell">
                             <p class="guest-cell__name">{{ user.firstName + ' ' + user.lastName | titlecase }}</p>
+                            <p class="guest-cell__meta">Order ID: {{ user.orderId || '-' }}</p>
                             <p class="guest-cell__meta">
                                 {{ user.company?.name }}
                                 {{ user.company?.gst != '' ? '(' + user.company?.gst + ')' : '' }}

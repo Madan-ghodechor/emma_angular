@@ -85,7 +85,7 @@ export class ProcessValidation {
       if (da.stage == 3 || da.stage == 4) {
         this.stateService.singleCount.set(da?.singleroom);
         this.stateService.doubleCount.set(da?.doubleroom);
-        this.stateService.tripleCount.set(da?.tripleroom);
+        // this.stateService.tripleCount.set(da?.tripleroom);
 
         sessionStorage.setItem('rooms', JSON.stringify(da?.payload))
         setTimeout(() => {

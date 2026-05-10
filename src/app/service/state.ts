@@ -1,40 +1,45 @@
 import { computed, Injectable, signal, effect } from '@angular/core';
 
-type RoomType = 'single' | 'double' | 'triple';
+type RoomType = 'single' | 'double' ;
+// 'triple';
 
 @Injectable({ providedIn: 'root' })
 export class State {
 
   /* ---------------- Prices ---------------- */
   readonly singlePrice = signal(9500);
-  readonly doublePrice = signal(10000);
-  readonly triplePrice = signal(12750);
+  readonly doublePrice = signal(11500);
+  // readonly triplePrice = signal(12750);
 
   /* ---------------- Room counts ---------------- */
   public readonly singleCount = signal(0);
   public readonly doubleCount = signal(0);
-  public readonly tripleCount = signal(0);
+  // public readonly tripleCount = signal(0);
 
   readonly singleRooms = this.singleCount.asReadonly();
   readonly doubleRooms = this.doubleCount.asReadonly();
-  readonly tripleRooms = this.tripleCount.asReadonly();
+  // readonly tripleRooms = this.tripleCount.asReadonly();
 
   /* ---------------- Derived ---------------- */
   readonly totalAttendees = computed(() =>
     this.singleRooms() * 1 +
-    this.doubleRooms() * 2 +
-    this.tripleRooms() * 3
+    this.doubleRooms() * 2 
+    // +
+    // this.tripleRooms() * 3
   );
 
   readonly totalPrice = computed(() =>
     this.singleRooms() * this.singlePrice() +
-    this.doubleRooms() * this.doublePrice() +
-    this.tripleRooms() * this.triplePrice()
+    this.doubleRooms() * this.doublePrice() 
+    // +
+    // this.tripleRooms() * this.triplePrice()
   );
   readonly totalPricewithGST = computed(() =>
   (this.singleRooms() * this.singlePrice() +
-    this.doubleRooms() * this.doublePrice() +
-    this.tripleRooms() * this.triplePrice()) *1.18
+    this.doubleRooms() * this.doublePrice() 
+    // +
+    // this.tripleRooms() * this.triplePrice()
+  ) *1.18
   );
 
   constructor() {
@@ -55,7 +60,7 @@ export class State {
     switch (type) {
       case 'single': return this.singleCount;
       case 'double': return this.doubleCount;
-      case 'triple': return this.tripleCount;
+      // case 'triple': return this.tripleCount;
     }
   }
 
@@ -65,7 +70,7 @@ export class State {
       const data = {
         single: this.singleCount(),
         double: this.doubleCount(),
-        triple: this.tripleCount()
+        // triple: this.tripleCount()
       };
 
       sessionStorage.setItem(
@@ -83,7 +88,7 @@ export class State {
       const parsed = JSON.parse(raw);
       this.singleCount.set(parsed.single ?? 0);
       this.doubleCount.set(parsed.double ?? 0);
-      this.tripleCount.set(parsed.triple ?? 0);
+      // this.tripleCount.set(parsed.triple ?? 0);
 
       const primaryUser = JSON.parse(sessionStorage.getItem('primaryUser') || '{}');
       const email = primaryUser.email;
@@ -100,7 +105,7 @@ export class State {
   reset() {
     this.singleCount.set(0);
     this.doubleCount.set(0);
-    this.tripleCount.set(0);
+    // this.tripleCount.set(0);
     sessionStorage.removeItem('booking_room_counts_v1');
   }
 

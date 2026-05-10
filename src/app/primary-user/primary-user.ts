@@ -161,6 +161,7 @@ export class PrimaryUser implements OnInit {
       firstName: ['', [Validators.required, Validators.minLength(2)]],
       lastName: ['', [Validators.required, Validators.minLength(2)]],
       organisation: ['', [Validators.required, Validators.minLength(2)]],
+      orderId: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
       phone: ['', [Validators.required, Validators.pattern(/^[0-9]{10}$/)]],
       gst: ['', [Validators.pattern(this.gstPattern)]],
@@ -256,9 +257,10 @@ export class PrimaryUser implements OnInit {
         if (res.data.length > 0)
           this.openDialog(bgbulkRefId, res)
       })
-    } else {
-      localStorage.removeItem('bkgRef')
-    }
+    } 
+    // else {
+    //   localStorage.removeItem('bkgRef')
+    // }
   }
   openDialog(bgbulkRefId: any, res: any): void {
 
@@ -298,6 +300,7 @@ export class PrimaryUser implements OnInit {
               firstName: da?.primaryUser?.firstName,
               lastName: da?.primaryUser?.lastName,
               organisation: selectedCompany,
+              orderId: da?.primaryUser?.orderId,
               email: da?.primaryUser?.email,
               // phone: da?.primaryUser?.phone,
               gst: da?.primaryUser?.gst,
@@ -311,7 +314,7 @@ export class PrimaryUser implements OnInit {
           if (da.stage == 3 || da.stage == 4) {
             this.stateService.singleCount.set(da?.singleroom);
             this.stateService.doubleCount.set(da?.doubleroom);
-            this.stateService.tripleCount.set(da?.tripleroom);
+            // this.stateService.tripleCount.set(da?.tripleroom);
 
             sessionStorage.setItem('rooms', JSON.stringify(da?.payload))
             setTimeout(() => {

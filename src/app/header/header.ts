@@ -21,7 +21,7 @@ export class Header {
     }
   }
   home: string | undefined;
-  headerImg: any = "images/header.png"
+  headerImg = 'images/conclave.png';
 
   constructor(private location: Location, private router: Router) {
     this.router.events
@@ -30,7 +30,7 @@ export class Header {
         this.home = this.router.url
       });
 
-    this.headerImg = localStorage.getItem('header');
+    this.headerImg = localStorage.getItem('header') || this.headerImg;
   }
   goBack(): void {
     if (this.paymentInProgress) {

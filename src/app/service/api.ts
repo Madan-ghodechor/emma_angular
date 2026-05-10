@@ -74,5 +74,13 @@ export class Api {
     return this.http.post(`${environment.apiBaseUrl}white-label/getColors`, { id })
   }
 
+  /* ---------------------  EMMA Registration Methods  ----------------------- */
+  createEmmaRegistration(payload: any) {
+    return this.http.post(`${environment.apiBaseUrl}emma-registration`, payload);
+  }
+ 
+  getEmmaRegistrationByEmail(email: string) {
+    return this.http.get(`${environment.apiBaseUrl}emma-registration?email=${email}`);
+  }
 
 }

@@ -9,8 +9,8 @@
                 <label>Check In</label>
 
                 <div class="date">
-                    <input matInput [matDatepicker]="checkInPicker" [value]="checkIn()" min="2026-03-23"
-                        max="2026-03-26" (dateChange)="setCheckIn($event.value)" readonly />
+                    <input matInput [matDatepicker]="checkInPicker" [value]="checkIn()" min="2026-06-09"
+                        max="2026-06-10" (dateChange)="setCheckIn($event.value)" readonly />
 
                     <mat-icon>calendar_today</mat-icon>
                     <mat-datepicker #checkInPicker></mat-datepicker>
@@ -22,7 +22,7 @@
 
                 <div class="date">
                     <input matInput [matDatepicker]="checkOutPicker" [value]="checkOut()" [disabled]="!checkIn()"
-                        [min]="getMinCheckoutDate(checkIn())" max="2026-03-27" (dateChange)="setCheckOut($event.value)"
+                        [min]="getMinCheckoutDate(checkIn())" max="2026-06-11" (dateChange)="setCheckOut($event.value)"
                         readonly />
 
                     <mat-icon>calendar_today</mat-icon>
@@ -47,7 +47,7 @@
                         <h3>Single Room</h3>
                         <div class="price">
                             {{ booking.singlePrice() | currency : 'INR' }} /- Night <span
-                                style="font-weight: 400; font-size: 12px;">(Incl. Tax)</span>
+                                style="font-weight: 400; font-size: 12px;">+ 18% GST</span>
                         </div>
                         <div> <span style="font-weight: 500; font-size: 12px;">Meal plan APAI</span> </div>
                     </div>
@@ -58,13 +58,13 @@
                         <h3>Double Sharing Room</h3>
                         <div class="price">
                             {{ booking.doublePrice() | currency : 'INR' }} /- Night <span
-                                style="font-weight: 400; font-size: 12px;">(Incl. Tax)</span>
+                                style="font-weight: 400; font-size: 12px;">+ 18% GST</span>
                         </div>
                         <div> <span style="font-weight: 500; font-size: 12px;">Meal plan APAI</span> </div>
                     </div>
                 </div>
 
-                <div class="radio" [class.active]="selected() === 'triple'" (click)="select('triple')">
+                <!-- <div class="radio" [class.active]="selected() === 'triple'" (click)="select('triple')">
                     <div class="ticket-info">
                         <h3>Triple Sharing Room</h3>
                         <div class="price">
@@ -73,7 +73,7 @@
                         </div>
                         <div> <span style="font-weight: 500; font-size: 12px;">Meal plan APAI</span> </div>
                     </div>
-                </div>
+                </div> -->
 
             </div>
 
@@ -88,11 +88,11 @@
 
                 <div class="row">
                     <span>Rooms pricing per night</span>
-                    <span>{{ booking.totalPrice()*nights() | currency : "INR" }}</span>
+                    <span>{{ baseAmount() | currency : "INR" }}</span>
                 </div>
                 <div class="row">
-                    <span></span>
-                    <!-- <span> + 18% GST</span> -->
+                    <span>GST 18%</span>
+                    <span>{{ gstAmount() | currency : "INR" }}</span>
                 </div>
 
                 <div class="sub-row" style="display: flex; align-items: center;">
@@ -109,7 +109,7 @@
 
                 <div class="row total">
                     <span>Total</span>
-                    <span>{{ booking.totalPrice()*nights() | currency : "INR" }}</span>
+                    <span>{{ totalAmount() | currency : "INR" }}</span>
                 </div>
 
                 <!-- <small class="tax-note">*Excludes Tax</small> -->
@@ -120,9 +120,13 @@
                         Proceed to Payment
                     </button> -->
 
-                    <button class="continue-btn"
+                    <!-- <button class="continue-btn"
                         [disabled]="(checkIn()==null || checkOut()==null ) || (booking.singleRooms()+booking.doubleRooms()+booking.tripleRooms())==0"
-                        (click)="navigate()">Continue</button>
+                        (click)="navigate()">Continue</button> -->
+
+                        <button class="continue-btn"
+    [disabled]="(checkIn()==null || checkOut()==null) || (booking.singleRooms()+booking.doubleRooms())==0"
+    (click)="navigate()">Continue</button>
 
 
                 </div>
@@ -148,7 +152,7 @@
                     <h3>Single Sharing Room</h3>
                     <div class="price">
                         {{ booking.singlePrice() | currency : 'INR' }} /- Night <span
-                            style="font-weight: 400; font-size: 12px;">(Incl. Tax)</span>
+                            style="font-weight: 400; font-size: 12px;">+ 18% GST</span>
                     </div>
                     <div> <span style="font-weight: 500; font-size: 12px;">Meal plan APAI</span> </div>
                 </div>
@@ -170,7 +174,7 @@
                     <h3>Double Sharing Room</h3>
                     <div class="price">
                         {{ booking.doublePrice() | currency : 'INR' }} /- Night <span
-                            style="font-weight: 400; font-size: 12px;">(Incl. Tax)</span>
+                            style="font-weight: 400; font-size: 12px;">+ 18% GST</span>
                     </div>
                     <div> <span style="font-weight: 500; font-size: 12px;">Meal plan APAI</span> </div>
                 </div>

@@ -16,11 +16,11 @@
                     Double Occupancy ({{ booking.doubleRooms() }}) </div>
                 }
 
-                @if (booking.tripleRooms()>0) {
+                <!-- @if (booking.tripleRooms()>0) {
                 <div class="room" [class.active]="activeRoomType() === 'triple'"
                     (click)="activeRoomType.set('triple'); onRoomTypeChange('triple')">
                     Triple Occupancy ({{ booking.tripleRooms() }}) </div>
-                }
+                } -->
             </div>
 
             <div class="hr-line"></div>
@@ -71,7 +71,7 @@
                                     <label for="">CheckIn</label>
                                     <input matInput [matDatepicker]="checkInPicker"
                                         [value]="room.checkIn ? (room.checkIn | date : 'yyyy-MM-dd') : null"
-                                        min="2026-03-23" max="2026-03-26"
+                                        min="2026-06-09" max="2026-06-10"
                                         (dateChange)="setCheckIn(room.roomId, $event.value)" readonly />
                                     <mat-datepicker #checkInPicker></mat-datepicker>
                                 </div>
@@ -79,8 +79,8 @@
                                 <div class="check-in-date">
                                     <label for="">CheckOut</label>
                                     <input matInput [matDatepicker]="checkOutPicker" [disabled]="!room.checkIn"
-                                        [min]="room.checkIn ? getMinCheckoutDate(room.checkIn) : '2026-03-24'"
-                                        max="2026-03-27"
+                                        [min]="room.checkIn ? getMinCheckoutDate(room.checkIn) : '2026-06-10'"
+                                        max="2026-06-11"
                                         [value]="room.checkOut ? (room.checkOut | date : 'yyyy-MM-dd') : null"
                                         (dateChange)="setCheckOut(room.roomId, $event.value)" readonly />
                                     <mat-datepicker #checkOutPicker></mat-datepicker>
@@ -118,6 +118,7 @@
 
                                 <tr class="heading">
                                     <td> Name </td>
+                                    <td> Order ID </td>
                                     <td> Company Name / GST </td>
                                     <td> Contact </td>
                                     <td> Actions </td>
@@ -125,6 +126,7 @@
 
                                 <tr class="attendee" *ngFor="let person of room.attendees">
                                     <td> {{ person.firstName +' '+ person.lastName }} </td>
+                                    <td> {{ person.orderId || '-' }} </td>
                                     <td> {{ person.organisation +' (' + person.gst + ')' }} </td>
                                     <td>
                                         <p>{{ person.email }}</p>
@@ -172,12 +174,12 @@
                 <h3>Order Summary</h3>
 
                 <div class="row">
-                    <span>Members</span>
+                    <span>Room charges</span>
                     <span>{{ totalPrice() | currency : "INR" }}</span>
                 </div>
                 <div class="row">
-                    <span></span>
-                    <!-- <span>+ 18% GST</span> -->
+                    <span>GST 18%</span>
+                    <span>{{ gstAmount() | currency : "INR" }}</span>
                 </div>
 
                 <div class="sub-row" style="display: flex; align-items: center;">

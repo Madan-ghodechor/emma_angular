@@ -8,45 +8,44 @@ import { Notfound } from './notfound/notfound';
 import { MainLayout } from './layouts/main-layout/main-layout';
 import { BlankLayout } from './layouts/blank-layout/blank-layout';
 import { ProcessValidation } from './process-validation/process-validation';
-import { Home } from './component/home/home';
-
+// import { UpgradeTokenView } from './upgrade-token-view/upgrade-token-view';
+// import { Block } from './block/block';
+import { EmmaRegistration } from './emma-registration/emma-registration';
 
 export const routes: Routes = [
-  
-  // DEFAULT REDIRECT
-  { path: '', redirectTo: 'home', pathMatch: 'full' },
 
-  // MAIN APP LAYOUT
+
   {
     path: '',
     component: MainLayout,
     children: [
       { path: 'primary-pax', component: PrimaryUser },
+      { path: 'emma-registration', component: EmmaRegistration },
+      // { path: 'registration', component: Block },
       { path: 'members-selection', component: RoomSelection },
       { path: 'register', component: UsersForm },
       { path: 'payment-success/:id', component: PaymentSuccess },
       { path: 'process-validation/:id', component: ProcessValidation },
       { path: 'retry-payment', component: RetryPayment },
+      // { path: 'upgrade/:token', component: UpgradeTokenView },
+      // { path: '', redirectTo: 'registration', pathMatch: 'full' },
+      { path: '', redirectTo: 'primary-pax', pathMatch: 'full' },
+
     ]
   },
-
-  // PUBLIC / BLANK LAYOUT
   {
     path: '',
     component: BlankLayout,
     children: [
-      { path: 'home', component: Home },
-
       {
         path: 'admin',
         loadChildren: () =>
           import('./admin/admin-module').then(m => m.AdminModule)
-      }
+      },
+      { path: '**', component: Notfound }
     ]
-  },
+  }
 
-
-  // 404
-  { path: '**', component: Notfound }
 
 ];
+

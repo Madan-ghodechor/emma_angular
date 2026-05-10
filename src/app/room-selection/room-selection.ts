@@ -64,6 +64,11 @@ export class RoomSelection {
 
   constructor(public booking: State, private router: Router, private location: Location, private stateService: State, private api: Api) { }
 
+  readonly gstRate = environment.gst - 1;
+  readonly baseAmount = computed(() => this.booking.totalPrice() * this.nights());
+  readonly gstAmount = computed(() => this.baseAmount() * this.gstRate);
+  readonly totalAmount = computed(() => this.baseAmount() * environment.gst);
+
   roomCount = signal(0)
   singleRoomActive = signal(false)
 
@@ -84,13 +89,13 @@ export class RoomSelection {
 
         const singleUsed = counts['single'] || 0;
         const doubleUsed = counts['double'] || 0;
-        const tripleUsed = counts['triple'] || 0;
+        // const tripleUsed = counts['triple'] || 0;
 
-        this.roomCount.set(environment.total_rooms - (singleUsed + doubleUsed + tripleUsed));
+        this.roomCount.set(environment.total_rooms - (singleUsed + doubleUsed /* + tripleUsed */));
 
         this.booking.decrease('single');
         this.booking.decrease('double');
-        this.booking.decrease('triple');
+        // this.booking.decrease('triple');
 
         if (environment.single_rooms - singleUsed == 0) {
           this.singleRoomActive.set(true)
@@ -119,13 +124,13 @@ export class RoomSelection {
   checkOut = signal<Date | null>(null);
 
 
-  select(type: 'single' | 'double' | 'triple') {
+  select(type: 'single' | 'double' /* | 'triple' */ ) {
     this.selected.set(type);
 
     // First decrease all
     this.booking.decrease('single');
     this.booking.decrease('double');
-    this.booking.decrease('triple');
+    // this.booking.decrease('triple');
 
     // Then increase only selected one
     this.booking.increase(type);
@@ -190,14 +195,14 @@ export class RoomSelection {
     // if (bkgRefInLocal) {
     const singleroom = this.booking.singleRooms();
     const doubleroom = this.booking.doubleRooms();
-    const tripleroom = this.booking.tripleRooms();
+    // const tripleroom = this.booking.tripleRooms();
 
     const logPayload = {
       "bulkRefId": bkgRefInLocal,
       "stage": 3,
       singleroom,
       doubleroom,
-      tripleroom,
+      // tripleroom,
       "userdata": [
       ]
     }

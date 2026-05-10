@@ -1,0 +1,172 @@
+<div class="page-wrapper">
+
+  <div class="page-header">
+    <div class="header-badge">EMMA 2026</div>
+    <h1 class="page-title">Event Registration</h1>
+    <p class="page-subtitle">Secure your spot at the most anticipated event of the year</p>
+  </div>
+
+  <div class="registration-container">
+
+    <!-- Member Type Selector -->
+    <div class="member-type-section">
+      <p class="section-label">Select your membership type</p>
+      <div class="member-cards">
+
+        <div class="member-card" [class.active]="isEmma()" (click)="selectMemberType('emma')">
+          <div class="card-top">
+            <div class="card-check" [class.checked]="isEmma()">
+              @if(isEmma()) { <span class="check-icon">✓</span> }
+            </div>
+            <span class="member-badge emma-badge">EMMA Member</span>
+          </div>
+          <div class="card-price">₹15,000</div>
+          <div class="card-desc">Exclusive rate for registered EMMA members</div>
+          <div class="card-perks">
+            <span class="perk">✦ Priority seating</span>
+            <span class="perk">✦ Member networking</span>
+          </div>
+        </div>
+
+        <div class="member-card" [class.active]="!isEmma()" (click)="selectMemberType('non')">
+          <div class="card-top">
+            <div class="card-check" [class.checked]="!isEmma()">
+              @if(!isEmma()) { <span class="check-icon">✓</span> }
+            </div>
+            <span class="member-badge non-badge">Non-EMMA Member</span>
+          </div>
+          <div class="card-price">₹18,000</div>
+          <div class="card-desc">Standard rate for non-members</div>
+          <div class="card-perks">
+            <span class="perk">✦ Full event access</span>
+            <span class="perk">✦ All sessions</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Form -->
+    <form [formGroup]="form" class="reg-form" autocomplete="off">
+
+      <p class="section-label">Personal details</p>
+
+      <div class="form-row">
+        <div class="field-wrap">
+          <label class="field-label">First Name <span class="req">*</span></label>
+          <mat-form-field appearance="outline" class="field">
+            <input matInput placeholder="John" formControlName="firstName">
+            @if(form.get('firstName')?.invalid && form.get('firstName')?.touched) {
+              <mat-error>First name is required</mat-error>
+            }
+          </mat-form-field>
+        </div>
+        <div class="field-wrap">
+          <label class="field-label">Last Name <span class="req">*</span></label>
+          <mat-form-field appearance="outline" class="field">
+            <input matInput placeholder="Doe" formControlName="lastName">
+            @if(form.get('lastName')?.invalid && form.get('lastName')?.touched) {
+              <mat-error>Last name is required</mat-error>
+            }
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="field-wrap">
+          <label class="field-label">Email Address <span class="req">*</span></label>
+          <mat-form-field appearance="outline" class="field">
+            <input matInput placeholder="john@company.com" formControlName="email" type="email">
+            @if(form.get('email')?.errors?.['required'] && form.get('email')?.touched) {
+              <mat-error>Email is required</mat-error>
+            }
+            @if(form.get('email')?.errors?.['email'] && form.get('email')?.touched) {
+              <mat-error>Invalid email address</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+       <div class="field-wrap">
+  <label class="field-label">Mobile Number <span class="req">*</span></label>
+
+  <mat-form-field appearance="outline" class="field">
+    <input matInput type="tel" #phoneInput formControlName="phone"
+           placeholder="Mobile Number" autocomplete="madan"/>
+
+    @if(form.get('phone')?.errors?.['required'] && form.get('phone')?.touched) {
+      <mat-error>Phone is required</mat-error>
+    }
+    @if(form.get('phone')?.errors?.['duplicate']) {
+      <mat-error>Phone number is already registered</mat-error>
+    }
+    @if(form.get('phone')?.errors?.['invalid'] && form.get('phone')?.touched) {
+      <mat-error>Invalid phone number</mat-error>
+    }
+  </mat-form-field>
+</div>
+
+      </div>
+
+      <div class="form-row">
+        <div class="field-wrap">
+          <label class="field-label">Company Name <span class="req">*</span></label>
+          <mat-form-field appearance="outline" class="field">
+            <input matInput placeholder="Your company" formControlName="company">
+            @if(form.get('company')?.invalid && form.get('company')?.touched) {
+              <mat-error>Company name is required</mat-error>
+            }
+          </mat-form-field>
+        </div>
+        <div class="field-wrap">
+          <label class="field-label">GST Number <span class="optional">(optional)</span></label>
+          <mat-form-field appearance="outline" class="field">
+            <input matInput placeholder="22AAAAA0000A1Z5" formControlName="gst">
+            @if(form.get('gst')?.errors?.['pattern'] && form.get('gst')?.touched) {
+              <mat-error>Invalid GST number</mat-error>
+            }
+          </mat-form-field>
+        </div>
+      </div>
+
+      <!-- EMMA ID — only shown for EMMA members -->
+      @if(isEmma()) {
+        <div class="form-row">
+          <div class="field-wrap full-width">
+            <label class="field-label">EMMA Membership ID <span class="req">*</span></label>
+            <mat-form-field appearance="outline" class="field">
+              <input matInput placeholder="EMMA-XXXX" formControlName="emmaId">
+              @if(form.get('emmaId')?.invalid && form.get('emmaId')?.touched) {
+                <mat-error>EMMA membership ID is required</mat-error>
+              }
+            </mat-form-field>
+          </div>
+        </div>
+      }
+
+      <!-- Fee Summary -->
+      <div class="fee-summary">
+        <div class="fee-left">
+          <span class="fee-label">Registration fee</span>
+          <span class="fee-type">{{ isEmma() ? 'EMMA member rate' : 'Non-EMMA member rate' }}</span>
+        </div>
+        <div class="fee-amount">₹{{ fee.toLocaleString('en-IN') }}</div>
+      </div>
+
+      <!-- Submit -->
+      <button
+        type="button"
+        class="submit-btn"
+        [disabled]="form.invalid || isSubmitting()"
+        (click)="save()">
+        @if(isSubmitting()) {
+          <span class="spinner"></span> Processing...
+        } @else {
+          Register Now →
+        }
+      </button>
+
+    </form>
+
+  </div>
+
+</div>
