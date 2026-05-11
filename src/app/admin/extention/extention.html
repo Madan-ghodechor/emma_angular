@@ -1,0 +1,180 @@
+<div class="extension-page">
+  <div class="extension-shell">
+    <section class="extension-hero">
+      <div class="hero-copy">
+        <p class="eyebrow">Booking Modification</p>
+        <h1>Extend stay or upgrade room allocation</h1>
+        <p>
+          Review the current booking, adjust stay dates, update room type, and generate the additional payable amount.
+        </p>
+      </div>
+
+      <div class="hero-badge">
+        <span class="hero-badge__label">Current Booking</span>
+        <strong>{{ userdata?.bulkRefId || '-' }}</strong>
+      </div>
+    </section>
+
+    <mat-card class="extension-card">
+      @if (userdata) {
+        <section class="booking-summary">
+          <div class="summary-head">
+            <div>
+              <p class="section-label">Booking Snapshot</p>
+              <h2>Current reservation details</h2>
+            </div>
+          </div>
+
+          <div class="summary-grid">
+            <div class="summary-item">
+              <span class="label">Booking Ref</span>
+              <span class="value">{{ userdata?.bulkRefId }}</span>
+            </div>
+
+            <div class="summary-item">
+              <span class="label">Current Room</span>
+              <span class="value">{{ userdata?.roomType | titlecase }} Occupancy</span>
+            </div>
+
+            <div class="summary-item">
+              <span class="label">Current Check In</span>
+              <span class="value">{{ formatWithMoment(userdata?.checkIn) }}</span>
+            </div>
+
+            <div class="summary-item">
+              <span class="label">Current Check Out</span>
+              <span class="value">{{ formatWithMoment(userdata?.checkOut) }}</span>
+            </div>
+          </div>
+        </section>
+      }
+
+      <form [formGroup]="extensionForm" (ngSubmit)="onSubmit()" class="extension-form">
+        <section class="form-section">
+          <div class="section-head">
+            <div>
+              <p class="section-label">Extension Setup</p>
+              <h2>Choose modification type</h2>
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <mat-form-field appearance="outline">
+              <mat-label>Passcode</mat-label>
+              <input matInput formControlName="passcode" placeholder="Enter passcode" />
+              @if (extensionForm.get('passcode')?.hasError('required') && extensionForm.get('passcode')?.touched) {
+                <mat-error>Passcode is required</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>What To Extend</mat-label>
+              <mat-select formControlName="whatToExtend" (selectionChange)="onWhatToExtendChange($event.value)">
+                <mat-option value="stay_extend">Stay Extend</mat-option>
+                <mat-option value="room_upgrade">Room Upgrade</mat-option>
+                <mat-option value="both">Both</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          @if (showRoomUpgradeField()) {
+            <div class="form-grid single-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Upgrade Room Type</mat-label>
+                <mat-select formControlName="roomType">
+                  @for (room of roomOptions; track room) {
+                    <mat-option [value]="room">{{ room | titlecase }}</mat-option>
+                  }
+                </mat-select>
+                @if (roomOptions.length === 0) {
+                  <mat-hint>No higher room type available</mat-hint>
+                }
+                @if (extensionForm.get('roomType')?.hasError('required') && extensionForm.get('roomType')?.touched) {
+                  <mat-error>Please select room type</mat-error>
+                }
+              </mat-form-field>
+            </div>
+          }
+
+          @if (showDateFields()) {
+            <div class="date-grid">
+              <mat-form-field appearance="outline">
+                <mat-label>Check In</mat-label>
+                <input matInput [matDatepicker]="checkInPicker" [min]="minCheckInDate" [max]="maxCheckInDate" formControlName="checkIn" />
+                <mat-datepicker-toggle matSuffix [for]="checkInPicker"></mat-datepicker-toggle>
+                <mat-datepicker #checkInPicker></mat-datepicker>
+                <mat-hint>Format: DD/MM/YYYY</mat-hint>
+                @if (extensionForm.get('checkIn')?.hasError('required') && extensionForm.get('checkIn')?.touched) {
+                  <mat-error>Check in is required</mat-error>
+                }
+                @if (extensionForm.get('checkIn')?.hasError('minDate') && extensionForm.get('checkIn')?.touched) {
+                  <mat-error>Check in cannot be before 23/03/2026</mat-error>
+                }
+                @if (extensionForm.get('checkIn')?.hasError('maxDate') && extensionForm.get('checkIn')?.touched) {
+                  <mat-error>Check in cannot be after 26/03/2026</mat-error>
+                }
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Check Out</mat-label>
+                <input matInput [matDatepicker]="checkOutPicker" [min]="minCheckOutDate" [max]="maxCheckOutDate" formControlName="checkOut" />
+                <mat-datepicker-toggle matSuffix [for]="checkOutPicker"></mat-datepicker-toggle>
+                <mat-datepicker #checkOutPicker></mat-datepicker>
+                <mat-hint>Format: DD/MM/YYYY</mat-hint>
+                @if (extensionForm.get('checkOut')?.hasError('required') && extensionForm.get('checkOut')?.touched) {
+                  <mat-error>Check out is required</mat-error>
+                }
+                @if (extensionForm.get('checkOut')?.hasError('minDate') && extensionForm.get('checkOut')?.touched) {
+                  <mat-error>Check out cannot be before 24/03/2026</mat-error>
+                }
+                @if (extensionForm.get('checkOut')?.hasError('maxDate') && extensionForm.get('checkOut')?.touched) {
+                  <mat-error>Check out cannot be after 27/03/2026</mat-error>
+                }
+              </mat-form-field>
+            </div>
+          }
+        </section>
+
+        <section class="price-summary">
+          <div class="summary-head">
+            <div>
+              <p class="section-label">Pricing Summary</p>
+              <h2>Amount comparison</h2>
+            </div>
+          </div>
+
+          <div class="price-grid">
+            <div class="price-tile">
+              <span class="price-label">Current Stay Amount</span>
+              <strong class="price-value">Rs {{ formatCurrency(currentTotalAmount) }}</strong>
+            </div>
+
+            <div class="price-tile">
+              <span class="price-label">Updated Stay Amount</span>
+              <strong class="price-value">Rs {{ formatCurrency(updatedTotalAmount) }}</strong>
+            </div>
+
+            <div class="price-tile">
+              <span class="price-label">Current Nights</span>
+              <strong class="price-value">{{ currentStayNights }}</strong>
+            </div>
+
+            <div class="price-tile">
+              <span class="price-label">Updated Nights</span>
+              <strong class="price-value">{{ updatedStayNights }}</strong>
+            </div>
+          </div>
+
+          <div class="payable-banner">
+            <span>Extra Payable</span>
+            <strong>Rs {{ formatCurrency(extraPayableAmount) }}</strong>
+          </div>
+        </section>
+
+        <div class="actions">
+          <button mat-flat-button color="primary" type="submit">Request for Payment</button>
+        </div>
+      </form>
+    </mat-card>
+  </div>
+</div>

@@ -25,6 +25,9 @@ export class Api {
     return this.http.get(`${environment.apiBaseUrl}admin/getPayment/${id}`)
   }
 
+  submitExtension(payload: any) {
+    return this.http.post(`${environment.apiBaseUrl}admin/send-remaining-payment-mail`, { "data": payload })
+  }
 
   generateVoucher(payload: any) {
     return this.http.post(`${environment.apiBaseUrl}voucher`, payload, { responseType: 'blob' })
