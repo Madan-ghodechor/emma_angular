@@ -15,8 +15,8 @@ import { SharedFiltering } from '../service/shared-filtering';
 
 import intlTelInput from 'intl-tel-input';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
-import { AsyncPipe } from '@angular/common';
 import { EmmaSuccessModal } from './emma-success-modal';
+import { environment } from '../../environments/environment';
 
 declare var Razorpay: any;
 
@@ -29,7 +29,6 @@ declare var Razorpay: any;
     MatInputModule,
     MatAutocompleteModule,
     MatDialogModule,
-    AsyncPipe,
   ],
   templateUrl: './emma-registration.html',
   styleUrl: './emma-registration.scss',
@@ -48,6 +47,14 @@ export class EmmaRegistration implements OnInit, OnDestroy {
 
   get fee() {
     return this.isEmma() ? 15000 : 18000;
+  }
+
+  get gstAmount() {
+    return Math.round(this.fee * (environment.gst - 1));
+  }
+
+  get totalAmount() {
+    return this.fee + this.gstAmount;
   }
 
   constructor(
@@ -69,10 +76,7 @@ export class EmmaRegistration implements OnInit, OnDestroy {
       phone: ['', [Validators.required]],
       company: ['', [Validators.required, Validators.minLength(2)]],
       gst: ['', [Validators.pattern(this.gstPattern)]],
-      emmaId: [''],
     });
-
-    this.updateEmmaIdValidator();
   }
 
 //   ngAfterViewInit() {
@@ -130,18 +134,6 @@ getPhoneFullNumber(): string | null {
   selectMemberType(type: 'emma' | 'non') {
     this.isEmma.set(type === 'emma');
     this.form.patchValue({ memberType: type });
-    this.updateEmmaIdValidator();
-  }
-
-  private updateEmmaIdValidator() {
-    const emmaIdControl = this.form.get('emmaId');
-    if (this.isEmma()) {
-      emmaIdControl?.setValidators([Validators.required]);
-    } else {
-      emmaIdControl?.clearValidators();
-      emmaIdControl?.setValue('');
-    }
-    emmaIdControl?.updateValueAndValidity();
   }
 
 //   getPhoneFullNumber(): string | null {
@@ -168,7 +160,8 @@ getPhoneFullNumber(): string | null {
 }
 
 const country = this.iti.getSelectedCountryData();
-const fullPhone = '+' + country.dialCode + this.phoneInput.nativeElement.value;
+const nationalPhone = this.phoneInput.nativeElement.value.replace(/\s+/g, '');
+const fullPhone = '+' + country.dialCode + nationalPhone;
 
   this.isSubmitting.set(true);
 
@@ -176,6 +169,8 @@ const fullPhone = '+' + country.dialCode + this.phoneInput.nativeElement.value;
     ...this.form.value,
     phone: fullPhone,
     fee: this.fee,
+    gstAmount: this.gstAmount,
+    totalAmount: this.totalAmount,
   };
 
   this.api.createEmmaRegistration(payload)
@@ -183,10 +178,28 @@ const fullPhone = '+' + country.dialCode + this.phoneInput.nativeElement.value;
     .subscribe({
       next: (res: any) => {
         this.isSubmitting.set(false);
-        this.openSuccessModal(payload, res);
+        const registrationData = res?.data || {};
+        this.openSuccessModal({
+          ...payload,
+          id: registrationData.id,
+          registrationId: registrationData.id,
+          orderId: registrationData.orderId,
+        }, res);
       },
       error: (err) => {
         this.isSubmitting.set(false);
+        const message = err?.error?.message || '';
+
+        if (err?.status === 409 && message.includes('email')) {
+          this.form.get('email')?.setErrors({ duplicate: true });
+          this.form.get('email')?.markAsTouched();
+        }
+
+        if (err?.status === 409 && message.includes('phone')) {
+          this.form.get('phone')?.setErrors({ duplicate: true });
+          this.form.get('phone')?.markAsTouched();
+        }
+
         this.logger.log('Registration error', err);
       }
     });
@@ -196,7 +209,13 @@ const fullPhone = '+' + country.dialCode + this.phoneInput.nativeElement.value;
     const dialogRef = this.dialog.open(EmmaSuccessModal, {
       width: '480px',
       disableClose: true,
-      data: { payload, fee: this.fee, isEmma: this.isEmma() }
+      data: {
+        payload,
+        fee: this.fee,
+        gstAmount: this.gstAmount,
+        totalAmount: this.totalAmount,
+        isEmma: this.isEmma()
+      }
     });
 
     dialogRef.afterClosed().subscribe((result: string) => {
@@ -221,11 +240,18 @@ const fullPhone = '+' + country.dialCode + this.phoneInput.nativeElement.value;
   }
 
   openRazorpay(payload: any) {
-    this.api.createOrder(this.fee)
+    this.api.createOrder(this.totalAmount)
       .pipe(takeUntil(this.destroy$))
-      .subscribe((order: any) => {
+      .subscribe((res: any) => {
+        const order = res?.data;
+
+        if (!order?.id) {
+          this.logger.error('Invalid Razorpay order response', res);
+          return;
+        }
+
         const options = {
-          key: order.key,
+          key: environment.razorpayKey,
           amount: order.amount,
           currency: 'INR',
           name: 'EMMA Registration',
@@ -247,7 +273,7 @@ const fullPhone = '+' + country.dialCode + this.phoneInput.nativeElement.value;
           },
         };
 
-        const rzp = new Razorpay(options);
+        const rzp = new (window as any).Razorpay(options);
         rzp.open();
 
         rzp.on('payment.failed', (response: any) => {

@@ -118,7 +118,6 @@
 
                                 <tr class="heading">
                                     <td> Name </td>
-                                    <td> Order ID </td>
                                     <td> Company Name / GST </td>
                                     <td> Contact </td>
                                     <td> Actions </td>
@@ -126,7 +125,6 @@
 
                                 <tr class="attendee" *ngFor="let person of room.attendees">
                                     <td> {{ person.firstName +' '+ person.lastName }} </td>
-                                    <td> {{ person.orderId || '-' }} </td>
                                     <td> {{ person.organisation +' (' + person.gst + ')' }} </td>
                                     <td>
                                         <p>{{ person.email }}</p>

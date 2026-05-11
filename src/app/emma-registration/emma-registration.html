@@ -55,7 +55,7 @@
         <div class="field-wrap">
           <label class="field-label">First Name <span class="req">*</span></label>
           <mat-form-field appearance="outline" class="field">
-            <input matInput placeholder="John" formControlName="firstName">
+            <input matInput placeholder="Enter your first name" formControlName="firstName">
             @if(form.get('firstName')?.invalid && form.get('firstName')?.touched) {
               <mat-error>First name is required</mat-error>
             }
@@ -64,7 +64,7 @@
         <div class="field-wrap">
           <label class="field-label">Last Name <span class="req">*</span></label>
           <mat-form-field appearance="outline" class="field">
-            <input matInput placeholder="Doe" formControlName="lastName">
+            <input matInput placeholder="Enter your last name" formControlName="lastName">
             @if(form.get('lastName')?.invalid && form.get('lastName')?.touched) {
               <mat-error>Last name is required</mat-error>
             }
@@ -76,12 +76,15 @@
         <div class="field-wrap">
           <label class="field-label">Email Address <span class="req">*</span></label>
           <mat-form-field appearance="outline" class="field">
-            <input matInput placeholder="john@company.com" formControlName="email" type="email">
+            <input matInput placeholder="Enter your email" formControlName="email" type="email">
             @if(form.get('email')?.errors?.['required'] && form.get('email')?.touched) {
               <mat-error>Email is required</mat-error>
             }
             @if(form.get('email')?.errors?.['email'] && form.get('email')?.touched) {
               <mat-error>Invalid email address</mat-error>
+            }
+            @if(form.get('email')?.errors?.['duplicate']) {
+              <mat-error>Email is already registered</mat-error>
             }
           </mat-form-field>
         </div>
@@ -128,28 +131,14 @@
         </div>
       </div>
 
-      <!-- EMMA ID — only shown for EMMA members -->
-      @if(isEmma()) {
-        <div class="form-row">
-          <div class="field-wrap full-width">
-            <label class="field-label">EMMA Membership ID <span class="req">*</span></label>
-            <mat-form-field appearance="outline" class="field">
-              <input matInput placeholder="EMMA-XXXX" formControlName="emmaId">
-              @if(form.get('emmaId')?.invalid && form.get('emmaId')?.touched) {
-                <mat-error>EMMA membership ID is required</mat-error>
-              }
-            </mat-form-field>
-          </div>
-        </div>
-      }
-
       <!-- Fee Summary -->
       <div class="fee-summary">
         <div class="fee-left">
           <span class="fee-label">Registration fee</span>
           <span class="fee-type">{{ isEmma() ? 'EMMA member rate' : 'Non-EMMA member rate' }}</span>
+          <span class="fee-note">GST will be calculated at payment based on your final selection.</span>
         </div>
-        <div class="fee-amount">₹{{ fee.toLocaleString('en-IN') }}</div>
+        <div class="fee-amount">INR {{ fee.toLocaleString('en-IN') }}</div>
       </div>
 
       <!-- Submit -->

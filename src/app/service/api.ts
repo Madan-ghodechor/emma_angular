@@ -79,8 +79,8 @@ export class Api {
     return this.http.post(`${environment.apiBaseUrl}emma-registration`, payload);
   }
  
-  getEmmaRegistrationByEmail(email: string) {
-    return this.http.get(`${environment.apiBaseUrl}emma-registration?email=${email}`);
+  getEmmaRegistration(id: string, orderId: string) {
+    return this.http.get(`${environment.apiBaseUrl}emma-registration?id=${id}&orderId=${orderId}`);
   }
 
 }

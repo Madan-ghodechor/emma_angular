@@ -48,7 +48,6 @@ interface Attendee {
   lastName: string;
   email: string;
   organisation: string;
-  orderId?: string;
   phone?: string;
   gst?: string;
   is_primary_user: boolean;
@@ -345,7 +344,6 @@ export class UsersForm {
         lastName: primaryUser.lastName,
         email: primaryUser.email,
         organisation: primaryUser.organisation,
-        orderId: primaryUser.orderId,
         phone: primaryUser.phone,
         gst: primaryUser.gst,
         is_primary_user: primaryUser.is_primary_user,

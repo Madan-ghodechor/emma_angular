@@ -253,6 +253,7 @@ $white: #ffffff;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 18px;
   background: linear-gradient(135deg, $primary-light, #f5f3ff);
   border: 1px solid rgba(99, 102, 241, 0.2);
   border-radius: 14px;
@@ -277,11 +278,18 @@ $white: #ffffff;
     font-weight: 500;
   }
 
+  .fee-note {
+    font-size: 11px;
+    color: $text-muted;
+    line-height: 1.35;
+  }
+
   .fee-amount {
-    font-size: 26px;
-    font-weight: 700;
+    font-size: 24px;
+    font-weight: 800;
     color: $primary-dark;
     letter-spacing: -0.5px;
+    white-space: nowrap;
   }
 }
 
