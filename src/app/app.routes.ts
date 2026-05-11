@@ -11,6 +11,7 @@ import { ProcessValidation } from './process-validation/process-validation';
 // import { UpgradeTokenView } from './upgrade-token-view/upgrade-token-view';
 // import { Block } from './block/block';
 import { EmmaRegistration } from './emma-registration/emma-registration';
+import { Eemaregcomplete } from './eemaregcomplete/eemaregcomplete';
 
 export const routes: Routes = [
 
@@ -27,6 +28,7 @@ export const routes: Routes = [
       { path: 'payment-success/:id', component: PaymentSuccess },
       { path: 'process-validation/:id', component: ProcessValidation },
       { path: 'retry-payment', component: RetryPayment },
+      { path: 'emma-reg-success', component: Eemaregcomplete },
       // { path: 'upgrade/:token', component: UpgradeTokenView },
       // { path: '', redirectTo: 'registration', pathMatch: 'full' },
       { path: '', redirectTo: 'primary-pax', pathMatch: 'full' },

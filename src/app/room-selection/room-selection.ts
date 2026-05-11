@@ -64,10 +64,12 @@ export class RoomSelection {
 
   constructor(public booking: State, private router: Router, private location: Location, private stateService: State, private api: Api) { }
 
+  sessionfrom = signal("");
+
   readonly gstRate = environment.gst - 1;
   readonly baseAmount = computed(() => this.booking.totalPrice() * this.nights());
   readonly gstAmount = computed(() => this.baseAmount() * this.gstRate);
-  readonly totalAmount = computed(() => this.baseAmount() * environment.gst);
+  readonly totalAmount = computed(() => (this.baseAmount() * environment.gst) + ((this.sessionfrom() as any)?.totalAmount || 0));
 
   roomCount = signal(0)
   singleRoomActive = signal(false)
@@ -111,9 +113,6 @@ export class RoomSelection {
 
       });
 
-    const singleroom = this.booking.singleRooms();
-    const doubleroom = this.booking.doubleRooms();
-    const bkgRefInLocal = localStorage.getItem('bkgRef');
 
     const preparePrimaryUserPayload = (data: any) => {
       return {
@@ -132,24 +131,18 @@ export class RoomSelection {
           primary_user_email: data.primary_user_email || "",
           whiteLabel: null
         },
-        userdata: []
+        userdata: [],
+        eemareg: JSON.parse(sessionStorage.getItem('sessionfrom') || "")
+
       };
     };
-
-
-    const d = JSON.parse(sessionStorage.getItem('primaryUser') ?? '{}');
-    const logPayload = preparePrimaryUserPayload(d)
-
+    const logPayload = preparePrimaryUserPayload(sessionStorage.getItem('primaryUser') ?? '{}')
 
     this.api.createBookingLog(logPayload).subscribe((res: any) => {
       localStorage.setItem('bkgRef', res.data.bulkRefId)
     });
 
-    this.api.createBookingLog(logPayload).subscribe({
-      next: (data: any) => {
-
-      }
-    });
+    this.sessionfrom.set(JSON.parse(sessionStorage.getItem('sessionfrom') || ""))
 
   }
 

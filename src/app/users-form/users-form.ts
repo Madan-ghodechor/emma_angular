@@ -62,6 +62,10 @@ export interface Room {
   attendees: Attendee[];
 }
 
+interface SessionFrom {
+  totalAmount?: number;
+}
+
 /* ---------------- Component ---------------- */
 
 @Component({
@@ -107,6 +111,7 @@ export class UsersForm {
   activeRoomType = signal<RoomType>('single');
   expandedRoomId = signal<any | null>(null);
   rooms = signal<Room[]>([]);
+  sessionfrom = signal<SessionFrom | null>(null);
 
   /* ---------------- Capacity ---------------- */
 
@@ -154,6 +159,8 @@ export class UsersForm {
     if (!sessionStorage.getItem('primaryUser'))
       this.router.navigate(['/'])
 
+    this.sessionfrom.set(JSON.parse(sessionStorage.getItem('sessionfrom') || '{}'));
+
     const roomsProceed: any = sessionStorage.getItem('rooms');
     if (roomsProceed)
       this.rooms.set(JSON.parse(roomsProceed))
@@ -186,8 +193,12 @@ export class UsersForm {
 
   readonly gstAmount = computed(() => this.totalPrice() * (environment.gst - 1));
 
+  readonly registrationAmount = computed(() =>
+    this.sessionfrom()?.totalAmount || 0
+  );
+
   readonly withGST = computed(() =>
-    this.totalPrice() * environment.gst
+    (this.totalPrice() * environment.gst) + this.registrationAmount()
   );
 
 
@@ -645,7 +656,7 @@ export class UsersForm {
 
     this.api.verifyAmount(rooms).subscribe({
       next: (res: any) => {
-        const amount = res?.data?.totalAmount * environment.gst;
+        const amount = (res?.data?.totalAmount * environment.gst) + this.registrationAmount();
         const duplicate = res?.data?.duplicateDetails
 
         if (typeof amount !== 'number' || isNaN(amount) || amount <= 0) {

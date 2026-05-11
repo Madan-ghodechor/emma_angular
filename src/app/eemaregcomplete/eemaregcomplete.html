@@ -1,0 +1,111 @@
+@if (data()) {
+@let reg = registration();
+@let pay = payment();
+<div class="success-page">
+  <section class="receipt">
+    <div class="receipt-header">
+      <div class="status-icon">
+        <mat-icon>check</mat-icon>
+      </div>
+
+      <div>
+        <p class="eyebrow">Payment Successful</p>
+        <h1>Registration Confirmed</h1>
+        <p class="subtitle">
+          Your registration payment has been recorded successfully.
+        </p>
+      </div>
+    </div>
+
+    <div class="amount-panel">
+      <span>Total Paid</span>
+      <strong>{{ pay?.paymentAmount | currency : 'INR' }}</strong>
+      <small>{{ pay?.paymentStatus | titlecase }}</small>
+    </div>
+
+    <div class="grid">
+      <div class="panel">
+        <h2>Registration Details</h2>
+
+        <div class="info-row">
+          <span>Order ID</span>
+          <strong>{{ reg?.orderId }}</strong>
+        </div>
+
+        <div class="info-row">
+          <span>Name</span>
+          <strong>{{ reg?.firstName }} {{ reg?.lastName }}</strong>
+        </div>
+
+        <div class="info-row">
+          <span>Member Type</span>
+          <strong>{{ reg?.memberType | titlecase }}</strong>
+        </div>
+
+        <div class="info-row">
+          <span>Email</span>
+          <strong>{{ reg?.email }}</strong>
+        </div>
+
+        <div class="info-row">
+          <span>Phone</span>
+          <strong>{{ reg?.phone }}</strong>
+        </div>
+
+        <div class="info-row">
+          <span>Company</span>
+          <strong>{{ reg?.company || '-' }}</strong>
+        </div>
+
+        <div class="info-row">
+          <span>GST</span>
+          <strong>{{ reg?.gst || '-' }}</strong>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Payment Details</h2>
+
+        <div class="info-row">
+          <span>Base Fee</span>
+          <strong>{{ pay?.baseFee | currency : 'INR' }}</strong>
+        </div>
+
+        <div class="info-row">
+          <span>GST Amount</span>
+          <strong>{{ pay?.gstAmount | currency : 'INR' }}</strong>
+        </div>
+
+        <div class="info-row">
+          <span>Total Amount</span>
+          <strong>{{ pay?.totalAmount | currency : 'INR' }}</strong>
+        </div>
+
+        <div class="info-row">
+          <span>Razorpay Payment ID</span>
+          <strong>{{ pay?.razorpay_payment_id }}</strong>
+        </div>
+
+        <div class="info-row">
+          <span>Razorpay Order ID</span>
+          <strong>{{ pay?.razorpay_order_id }}</strong>
+        </div>
+
+        <div class="info-row">
+          <span>Paid On</span>
+          <strong>{{ pay?.createdAt | date : 'dd MMM yyyy, h:mm a' }}</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- <div class="footer-actions">
+      <button mat-flat-button color="primary" routerLink="/members-selection">
+        Book Room
+      </button>
+      <button mat-stroked-button routerLink="/emma-registration">
+        New Registration
+      </button>
+    </div> -->
+  </section>
+</div>
+}

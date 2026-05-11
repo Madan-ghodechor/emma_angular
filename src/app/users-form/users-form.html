@@ -192,6 +192,14 @@
 
                 <div class="divider"></div>
 
+                <div class="row">
+                    <span>Registration Fees</span>
+                    <span>{{ registrationAmount() | currency : "INR" }}</span>
+                </div>
+
+
+                <div class="divider"></div>
+
                 <div class="row total">
                     <span>Total</span>
                     <span>{{ withGST() | currency : "INR" }}</span>

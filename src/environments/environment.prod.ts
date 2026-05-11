@@ -1,8 +1,8 @@
 export const environment = {
   production: true,
-  apiBaseUrl: 'https://cotrav.in/api/api/',
+  apiBaseUrl: 'https://cotrav.in/api/',
   enableLogs: false,
-  razorpayKey: 'rzp_live_pI1GHoayLTp31R',
+  razorpayKey: 'rzp_test_SBBuzLPhx0DMgs',
   gst: 1.18,
   single_rooms: 90,
   total_rooms : 90

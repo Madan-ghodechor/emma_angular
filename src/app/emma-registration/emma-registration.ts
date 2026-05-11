@@ -79,125 +79,125 @@ export class EmmaRegistration implements OnInit, OnDestroy {
     });
   }
 
-//   ngAfterViewInit() {
-//     this.iti = intlTelInput(this.phoneInput.nativeElement, {
-//       initialCountry: 'in',
-//       separateDialCode: true,
-//       allowDropdown: true,
-//       countrySearch: false,
-//     });
+  //   ngAfterViewInit() {
+  //     this.iti = intlTelInput(this.phoneInput.nativeElement, {
+  //       initialCountry: 'in',
+  //       separateDialCode: true,
+  //       allowDropdown: true,
+  //       countrySearch: false,
+  //     });
 
-//     this.phoneInput.nativeElement.addEventListener('countrychange', () => {
-//       this.form.patchValue({ phone: '' });
-//     });
-//   }
+  //     this.phoneInput.nativeElement.addEventListener('countrychange', () => {
+  //       this.form.patchValue({ phone: '' });
+  //     });
+  //   }
 
-syncPhoneToForm(): void {
-  if (!this.iti) return;
-  if (this.iti.isValidNumber()) {
-    this.form.patchValue({ phone: this.iti.getNumber() });
-  } else {
-    this.form.patchValue({ phone: '' });
+  syncPhoneToForm(): void {
+    if (!this.iti) return;
+    if (this.iti.isValidNumber()) {
+      this.form.patchValue({ phone: this.iti.getNumber() });
+    } else {
+      this.form.patchValue({ phone: '' });
+    }
   }
-}
 
-ngAfterViewInit() {
-  const inputEl = this.phoneInput.nativeElement;
+  ngAfterViewInit() {
+    const inputEl = this.phoneInput.nativeElement;
 
-  this.iti = intlTelInput(inputEl, {
-    initialCountry: 'in',
-    separateDialCode: true,
-    allowDropdown: true,
-    countrySearch: false,
-    // ✅ ADD THIS
-    loadUtils: () => import('intl-tel-input/utils'),
-  });
+    this.iti = intlTelInput(inputEl, {
+      initialCountry: 'in',
+      separateDialCode: true,
+      allowDropdown: true,
+      countrySearch: false,
+      // ✅ ADD THIS
+      loadUtils: () => import('intl-tel-input/utils'),
+    });
 
-  inputEl.addEventListener(
-    'countrychange',
-    this.onCountryChange.bind(this)
-  );
-}
+    inputEl.addEventListener(
+      'countrychange',
+      this.onCountryChange.bind(this)
+    );
+  }
 
-onCountryChange(): void {
-  this.form.patchValue({ phone: '' });
-  this.syncPhoneToForm();
-}
+  onCountryChange(): void {
+    this.form.patchValue({ phone: '' });
+    this.syncPhoneToForm();
+  }
 
-getPhoneFullNumber(): string | null {
-  if (!this.iti.isValidNumber()) return null;
-  const phoneNumber = parsePhoneNumberFromString(this.iti.getNumber());
-  if (!phoneNumber) return null;
-  return phoneNumber.formatInternational();
-}
+  getPhoneFullNumber(): string | null {
+    if (!this.iti.isValidNumber()) return null;
+    const phoneNumber = parsePhoneNumberFromString(this.iti.getNumber());
+    if (!phoneNumber) return null;
+    return phoneNumber.formatInternational();
+  }
 
   selectMemberType(type: 'emma' | 'non') {
     this.isEmma.set(type === 'emma');
     this.form.patchValue({ memberType: type });
   }
 
-//   getPhoneFullNumber(): string | null {
-//     if (!this.iti?.isValidNumber()) return null;
-//     return this.iti.getNumber();
-//   }
+  //   getPhoneFullNumber(): string | null {
+  //     if (!this.iti?.isValidNumber()) return null;
+  //     return this.iti.getNumber();
+  //   }
 
   save(): void {
 
     console.log('form valid:', this.form.valid);
-  console.log('iti valid:', this.iti.isValidNumber());
-  console.log('iti number:', this.iti.getNumber());
-  console.log('phone input value:', this.phoneInput.nativeElement.value);
-  console.log('form phone value:', this.form.get('phone')?.value);
-  if (this.form.invalid) {
-    this.form.markAllAsTouched();
-    return;
+    console.log('iti valid:', this.iti.isValidNumber());
+    console.log('iti number:', this.iti.getNumber());
+    console.log('phone input value:', this.phoneInput.nativeElement.value);
+    console.log('form phone value:', this.form.get('phone')?.value);
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+
+    if (!this.iti || !this.iti.isValidNumber()) {
+      this.form.get('phone')?.setErrors({ invalid: true });
+      this.form.get('phone')?.markAsTouched();
+      return;
+    }
+
+    const country = this.iti.getSelectedCountryData();
+    const nationalPhone = this.phoneInput.nativeElement.value.replace(/\s+/g, '');
+    const fullPhone = '+' + country.dialCode + nationalPhone;
+
+    this.isSubmitting.set(true);
+
+    const payload = {
+      ...this.form.value,
+      phone: fullPhone,
+      fee: this.fee,
+      gstAmount: this.gstAmount,
+      totalAmount: this.totalAmount,
+    };
+
+    this.api.validateEmmaRegistration(payload)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.isSubmitting.set(false);
+          this.openSuccessModal(payload);
+        },
+        error: (err) => {
+          this.isSubmitting.set(false);
+          const message = err?.error?.message || '';
+
+          if (err?.status === 409 && message.includes('email')) {
+            this.form.get('email')?.setErrors({ duplicate: true });
+            this.form.get('email')?.markAsTouched();
+          }
+
+          if (err?.status === 409 && message.includes('phone')) {
+            this.form.get('phone')?.setErrors({ duplicate: true });
+            this.form.get('phone')?.markAsTouched();
+          }
+
+          this.logger.log('Registration error', err);
+        }
+      });
   }
-
-  if (!this.iti || !this.iti.isValidNumber()) {
-  this.form.get('phone')?.setErrors({ invalid: true });
-  this.form.get('phone')?.markAsTouched();
-  return;
-}
-
-const country = this.iti.getSelectedCountryData();
-const nationalPhone = this.phoneInput.nativeElement.value.replace(/\s+/g, '');
-const fullPhone = '+' + country.dialCode + nationalPhone;
-
-  this.isSubmitting.set(true);
-
-  const payload = {
-    ...this.form.value,
-    phone: fullPhone,
-    fee: this.fee,
-    gstAmount: this.gstAmount,
-    totalAmount: this.totalAmount,
-  };
-
-  this.api.validateEmmaRegistration(payload)
-    .pipe(takeUntil(this.destroy$))
-    .subscribe({
-      next: () => {
-        this.isSubmitting.set(false);
-        this.openSuccessModal(payload);
-      },
-      error: (err) => {
-        this.isSubmitting.set(false);
-        const message = err?.error?.message || '';
-
-        if (err?.status === 409 && message.includes('email')) {
-          this.form.get('email')?.setErrors({ duplicate: true });
-          this.form.get('email')?.markAsTouched();
-        }
-
-        if (err?.status === 409 && message.includes('phone')) {
-          this.form.get('phone')?.setErrors({ duplicate: true });
-          this.form.get('phone')?.markAsTouched();
-        }
-
-        this.logger.log('Registration error', err);
-      }
-    });
-}
 
   openSuccessModal(payload: any) {
     const dialogRef = this.dialog.open(EmmaSuccessModal, {
@@ -224,6 +224,14 @@ const fullPhone = '+' + country.dialCode + nationalPhone;
           is_primary_user: true,
           primary_user_email: payload.email,
         }));
+        const sessionData = {
+          payload,
+          fee: this.fee,
+          gstAmount: this.gstAmount,
+          totalAmount: this.totalAmount,
+          isEmma: this.isEmma()
+        }
+        sessionStorage.setItem('sessionfrom', JSON.stringify(sessionData));
         this.router.navigate(['/members-selection']);
       }
 
@@ -267,8 +275,9 @@ const fullPhone = '+' + country.dialCode + nationalPhone;
               gstAmount: payload.gstAmount,
               totalAmount: payload.totalAmount,
               amount: payload.totalAmount,
-            }).subscribe(() => {
-              this.router.navigate(['/emma-registration']);
+            }).subscribe((res: any) => {
+              sessionStorage.setItem('emmaRegSuccess', JSON.stringify(res.data));
+              this.router.navigate(['/emma-reg-success']);
             });
           },
         };
