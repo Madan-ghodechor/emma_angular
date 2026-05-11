@@ -114,7 +114,9 @@ export class RoomSelection {
       });
 
 
-    const preparePrimaryUserPayload = (data: any) => {
+    const preparePrimaryUserPayload = (da: any) => {
+      const data = JSON.parse(da);
+
       return {
         stage: 1,
         primary_user: {
@@ -137,6 +139,7 @@ export class RoomSelection {
       };
     };
     const logPayload = preparePrimaryUserPayload(sessionStorage.getItem('primaryUser') ?? '{}')
+
 
     this.api.createBookingLog(logPayload).subscribe((res: any) => {
       localStorage.setItem('bkgRef', res.data.bulkRefId)

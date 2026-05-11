@@ -49,7 +49,8 @@ export class FormDialogComponent {
       initialCountry: 'in',
       separateDialCode: true,
       allowDropdown: true,
-      countrySearch: false
+      countrySearch: false,
+      loadUtils: () => import('intl-tel-input/utils'),
     });
 
     // 👇 LISTEN TO COUNTRY CHANGE
@@ -57,6 +58,13 @@ export class FormDialogComponent {
       'countrychange',
       this.onCountryChange.bind(this)
     );
+
+    if (this.userForm.get('phone')?.value) {
+      this.iti.setNumber(this.userForm.get('phone')?.value);
+      this.userForm.patchValue({
+        phone: this.phoneInput.nativeElement.value.replace(/\s+/g, '')
+      });
+    }
   }
   onCountryChange(): void {
     const country = this.iti.getSelectedCountryData();
@@ -92,6 +100,31 @@ export class FormDialogComponent {
       this.userForm.patchValue({
         phone: ''
       });
+    }
+  }
+
+  private getPhonePayload() {
+    if (!this.iti || !this.phoneInput?.nativeElement) return null;
+
+    const country = this.iti.getSelectedCountryData();
+    const rawNumber = this.phoneInput.nativeElement.value.trim();
+
+    if (!rawNumber) return null;
+
+    try {
+      const phoneNumber = parsePhoneNumber(rawNumber, country.iso2.toUpperCase());
+
+      if (!phoneNumber?.isValid()) return null;
+      if (country.iso2 === 'in' && !/^[6-9]\d{9}$/.test(phoneNumber.nationalNumber)) return null;
+
+      return {
+        dialCode: '+' + country.dialCode,
+        countryIso: country.iso2,
+        fullNumber: phoneNumber.number,
+        nationalNumber: phoneNumber.nationalNumber
+      };
+    } catch {
+      return null;
     }
   }
 
@@ -133,7 +166,7 @@ export class FormDialogComponent {
       organisation: ['', [Validators.required, Validators.minLength(2)]],
       gst: ['', [Validators.pattern(this.gstPattern)]],
       email: ['', [Validators.required, Validators.email]],
-      phone: ['', [Validators.required, Validators.pattern(/^[0-9]{10}$/)]],
+      phone: ['', [Validators.required]],
     });
 
     const attendeeData = this.data.attendee;
@@ -185,28 +218,38 @@ export class FormDialogComponent {
 
     /* ---------- PHONE CHECK ---------- */
     this.userForm?.get('phone')!.valueChanges.subscribe(value => {
-      if (!value) return;
+      const control = this.userForm?.get('phone')!;
 
-      const phone = value.trim();
-      const country = this.iti.getSelectedCountryData();
-      const phonepayload = {
-        dialCode: '+' + country.dialCode,
-        countryIso: country.iso2,
-        fullNumber: '+' + country.dialCode + this.phoneInput.nativeElement.value,
-        nationalNumber: this.phoneInput.nativeElement.value
-      };
+      if (!value) {
+        return;
+      }
+
+      const phonepayload = this.getPhonePayload();
+      const errors = { ...(control.errors || {}) };
+
+      if (!phonepayload) {
+        control.setErrors({ ...errors, invalid: true });
+        return;
+      }
+
+      if (errors['invalid']) {
+        delete errors['invalid'];
+        control.setErrors(
+          Object.keys(errors).length ? errors : null
+        );
+      }
 
       const exists = this.stateService.phoneSet().has(phonepayload.fullNumber);
 
       if (exists) {
         this.logger.log("duplicate")
-        this.userForm?.get('phone')!.setErrors({ duplicate: true });
+        control.setErrors({ ...(control.errors || {}), duplicate: true });
       } else {
-        const errors = this.userForm?.get('phone')!.errors;
-        if (errors?.['duplicate']) {
-          delete errors['duplicate'];
-          this.userForm?.get('phone')!.setErrors(
-            Object.keys(errors).length ? errors : null
+        const currentErrors = control.errors;
+        if (currentErrors?.['duplicate']) {
+          delete currentErrors['duplicate'];
+          control.setErrors(
+            Object.keys(currentErrors).length ? currentErrors : null
           );
         }
       }
@@ -258,13 +301,19 @@ export class FormDialogComponent {
   }
 
   save() {
-    const country = this.iti.getSelectedCountryData();
-    const phonepayload = {
-      dialCode: '+' + country.dialCode,
-      countryIso: country.iso2,
-      fullNumber: '+' + country.dialCode + this.phoneInput.nativeElement.value,
-      nationalNumber: this.phoneInput.nativeElement.value
-    };
+    const phonepayload = this.getPhonePayload();
+
+    if (!phonepayload) {
+      this.userForm.get('phone')?.setErrors({ invalid: true });
+      this.userForm.get('phone')?.markAsTouched();
+      return;
+    }
+
+    if (this.userForm.invalid) {
+      this.userForm.markAllAsTouched();
+      return;
+    }
+
     this.userForm.patchValue({
       phone: phonepayload.fullNumber
     })
@@ -294,8 +343,8 @@ export class FormDialogComponent {
       const phonepayload = {
         dialCode: '+' + country.dialCode,
         countryIso: country.iso2,
-        fullNumber: '+' + country.dialCode + this.phoneInput.nativeElement.value,
-        nationalNumber: this.phoneInput.nativeElement.value
+        fullNumber: this.iti.getNumber(),
+        nationalNumber: this.phoneInput.nativeElement.value.replace(/\s+/g, '')
       };
 
 

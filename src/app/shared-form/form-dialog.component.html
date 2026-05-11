@@ -102,7 +102,7 @@
         @if (userForm!.get('phone')?.errors?.['duplicate'] && userForm!.get('phone')?.touched) {
         <span class="error-msg">Phone number is already registered.</span>
         }
-        @if (userForm!.get('phone')?.errors?.['pattern'] && userForm!.get('phone')?.touched) {
+        @if (userForm!.get('phone')?.errors?.['invalid'] && userForm!.get('phone')?.touched) {
         <span class="error-msg">Invalid phone number.</span>
         }
 
@@ -121,7 +121,7 @@
         @if (userForm!.get('phone')?.errors?.['duplicate']) {
         <span class="error-msg">Phone number is already registered.</span>
         }
-        @if (userForm!.get('phone')?.errors?.['pattern'] && userForm!.get('phone')?.touched) {
+        @if (userForm!.get('phone')?.errors?.['invalid'] && userForm!.get('phone')?.touched) {
         <span class="error-msg">Invalid phone number.</span>
         }
       </mat-form-field>
