@@ -21,7 +21,7 @@ export class Eemaregcomplete implements OnInit {
     const saved = sessionStorage.getItem('emmaRegSuccess');
 
     if (!saved) {
-      this.router.navigate(['/emma-registration']);
+      this.router.navigate(['/eema-registration']);
       return;
     }
 

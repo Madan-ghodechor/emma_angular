@@ -1,7 +1,7 @@
 <div class="page-wrapper">
 
   <div class="page-header">
-    <div class="header-badge">EMMA 2026</div>
+    <div class="header-badge">EEMA 2026</div>
     <h1 class="page-title">Event Registration</h1>
     <p class="page-subtitle">Secure your spot at the most anticipated event of the year</p>
   </div>
@@ -18,10 +18,10 @@
             <div class="card-check" [class.checked]="isEmma()">
               @if(isEmma()) { <span class="check-icon">✓</span> }
             </div>
-            <span class="member-badge emma-badge">EMMA Member</span>
+            <span class="member-badge emma-badge">EEMA Member</span>
           </div>
           <div class="card-price">₹15,000</div>
-          <div class="card-desc">Exclusive rate for registered EMMA members</div>
+          <div class="card-desc">Exclusive rate for registered EEMA members</div>
           <div class="card-perks">
             <span class="perk">✦ Priority seating</span>
             <span class="perk">✦ Member networking</span>
@@ -33,7 +33,7 @@
             <div class="card-check" [class.checked]="!isEmma()">
               @if(!isEmma()) { <span class="check-icon">✓</span> }
             </div>
-            <span class="member-badge non-badge">Non-EMMA Member</span>
+            <span class="member-badge non-badge">Non-EEMA Member</span>
           </div>
           <div class="card-price">₹18,000</div>
           <div class="card-desc">Standard rate for non-members</div>
@@ -135,7 +135,7 @@
       <div class="fee-summary">
         <div class="fee-left">
           <span class="fee-label">Registration fee</span>
-          <span class="fee-type">{{ isEmma() ? 'EMMA member rate' : 'Non-EMMA member rate' }}</span>
+          <span class="fee-type">{{ isEmma() ? 'EEMA member rate' : 'Non-EEMA member rate' }}</span>
           <span class="fee-note">GST will be calculated at payment based on your final selection.</span>
         </div>
         <div class="fee-amount">INR {{ fee.toLocaleString('en-IN') }}</div>

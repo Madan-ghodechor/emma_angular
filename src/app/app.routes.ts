@@ -21,7 +21,7 @@ export const routes: Routes = [
     component: MainLayout,
     children: [
       { path: 'primary-pax', component: PrimaryUser },
-      { path: 'emma-registration', component: EmmaRegistration },
+      { path: 'eema-registration', component: EmmaRegistration },
       // { path: 'registration', component: Block },
       { path: 'members-selection', component: RoomSelection },
       { path: 'register', component: UsersForm },
