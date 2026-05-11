@@ -50,8 +50,8 @@ type RoomType = 'single' | 'double' | 'triple';
     { provide: DateAdapter, useClass: MomentDateAdapter },
     { provide: MAT_DATE_FORMATS, useValue: DAY_MONTH_YEAR_FORMATS }
   ],
-  templateUrl: './extension.html',
-  styleUrl: './extension.scss'
+  templateUrl: './extention.html',
+  styleUrl: './extention.scss',
 })
 export class Extension {
   private fb = inject(FormBuilder);
