@@ -173,18 +173,12 @@ const fullPhone = '+' + country.dialCode + nationalPhone;
     totalAmount: this.totalAmount,
   };
 
-  this.api.createEmmaRegistration(payload)
+  this.api.validateEmmaRegistration(payload)
     .pipe(takeUntil(this.destroy$))
     .subscribe({
-      next: (res: any) => {
+      next: () => {
         this.isSubmitting.set(false);
-        const registrationData = res?.data || {};
-        this.openSuccessModal({
-          ...payload,
-          id: registrationData.id,
-          registrationId: registrationData.id,
-          orderId: registrationData.orderId,
-        }, res);
+        this.openSuccessModal(payload);
       },
       error: (err) => {
         this.isSubmitting.set(false);
@@ -205,7 +199,7 @@ const fullPhone = '+' + country.dialCode + nationalPhone;
     });
 }
 
-  openSuccessModal(payload: any, res: any) {
+  openSuccessModal(payload: any) {
     const dialogRef = this.dialog.open(EmmaSuccessModal, {
       width: '480px',
       disableClose: true,
@@ -264,11 +258,17 @@ const fullPhone = '+' + country.dialCode + nationalPhone;
           },
           theme: { color: '#6366f1' },
           handler: (response: any) => {
-            this.api.recordPaymentSuccess({
-              ...response,
-              userData: payload,
+            this.api.recordEmmaRegistrationPaymentSuccess({
+              registrationData: payload,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              baseFee: payload.fee,
+              gstAmount: payload.gstAmount,
+              totalAmount: payload.totalAmount,
+              amount: payload.totalAmount,
             }).subscribe(() => {
-              this.router.navigate(['/payment-success', response.razorpay_order_id]);
+              this.router.navigate(['/emma-registration']);
             });
           },
         };

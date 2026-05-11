@@ -78,9 +78,17 @@ export class Api {
   createEmmaRegistration(payload: any) {
     return this.http.post(`${environment.apiBaseUrl}emma-registration`, payload);
   }
+
+  validateEmmaRegistration(payload: any) {
+    return this.http.post(`${environment.apiBaseUrl}emma-registration/validate`, payload);
+  }
  
   getEmmaRegistration(id: string, orderId: string) {
     return this.http.get(`${environment.apiBaseUrl}emma-registration?id=${id}&orderId=${orderId}`);
+  }
+
+  recordEmmaRegistrationPaymentSuccess(payload: any) {
+    return this.http.post(`${environment.apiBaseUrl}emma-registration/payment-success`, payload);
   }
 
 }
