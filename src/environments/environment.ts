@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-  apiBaseUrl: 'http://localhost:4000/api/',
+  apiBaseUrl: 'http://localhost:3001/api/',
   // apiBaseUrl: 'https://cotrav.in/api/api/',
   enableLogs: true,
   razorpayKey: 'rzp_test_SBBuzLPhx0DMgs',

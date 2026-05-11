@@ -111,6 +111,46 @@ export class RoomSelection {
 
       });
 
+    const singleroom = this.booking.singleRooms();
+    const doubleroom = this.booking.doubleRooms();
+    const bkgRefInLocal = localStorage.getItem('bkgRef');
+
+    const preparePrimaryUserPayload = (data: any) => {
+      return {
+        stage: 1,
+        primary_user: {
+          roomType: null,
+          id: crypto.randomUUID(),
+          firstName: data.firstName || "",
+          lastName: data.lastName || "",
+          organisation: data.organisation || "",
+          orderId: "",
+          email: data.email || "",
+          phone: data.phone || "",
+          gst: data.gst || "",
+          is_primary_user: data.is_primary_user || false,
+          primary_user_email: data.primary_user_email || "",
+          whiteLabel: null
+        },
+        userdata: []
+      };
+    };
+
+
+    const d = JSON.parse(sessionStorage.getItem('primaryUser') ?? '{}');
+    const logPayload = preparePrimaryUserPayload(d)
+
+
+    this.api.createBookingLog(logPayload).subscribe((res: any) => {
+      localStorage.setItem('bkgRef', res.data.bulkRefId)
+    });
+
+    this.api.createBookingLog(logPayload).subscribe({
+      next: (data: any) => {
+
+      }
+    });
+
   }
 
   goBack() {
@@ -124,7 +164,7 @@ export class RoomSelection {
   checkOut = signal<Date | null>(null);
 
 
-  select(type: 'single' | 'double' /* | 'triple' */ ) {
+  select(type: 'single' | 'double' /* | 'triple' */) {
     this.selected.set(type);
 
     // First decrease all
