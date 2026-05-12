@@ -18,7 +18,7 @@ import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/materia
       <p class="modal-sub">
         Welcome, <strong>{{ data.payload.firstName }}</strong>!
         Your registration as an
-        <span class="type-badge">{{ data.isEmma ? 'EMMA Member' : 'Non-EMMA Member' }}</span>
+        <span class="type-badge">{{ data.isEmma ? 'EEMA Member' : 'Non-EEMA Member' }}</span>
         is confirmed.
       </p>
 
