@@ -22,6 +22,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
 import * as XLSX from 'xlsx';
+import { Router } from '@angular/router';
 
 interface Room {
   roomNo: number;
@@ -62,6 +63,7 @@ interface Room {
 export class Dashboard implements OnInit {
 
   private api = inject(Api);
+  private router = inject(Router)
 
   displayedColumns: string[] = ['roomNo', 'type', 'primary_guest', 'checks', 'payment', 'createdAt', 'resendVoucher'];
 
@@ -274,6 +276,20 @@ export class Dashboard implements OnInit {
 
     
 
+  }
+
+    extensionOfRoom(userdata: any) {
+    const confirmed = window.confirm(
+      `Open extension form for booking ${userdata?.bulkRefId || userdata?.roomId || ''}?`
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    this.router.navigate(['/admin/extension'], {
+      state: { userdata }
+    });
   }
 
 

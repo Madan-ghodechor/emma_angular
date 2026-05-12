@@ -33,6 +33,10 @@ export class Api {
     return this.http.post(`${environment.apiBaseUrl}voucher`, payload, { responseType: 'blob' })
   }
 
+  sendVoucher(payload: any) {
+    return this.http.post(`${environment.apiBaseUrl}admin/send-voucher`, payload)
+  }
+
   saveCompany(payload: any) {
     return this.http.post(`${environment.apiBaseUrl}white-label`, payload)
   }
