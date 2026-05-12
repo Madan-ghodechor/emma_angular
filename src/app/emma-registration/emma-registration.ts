@@ -16,6 +16,7 @@ import { SharedFiltering } from '../service/shared-filtering';
 import intlTelInput from 'intl-tel-input';
 import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import { EmmaSuccessModal } from './emma-success-modal';
+import { EmmaConfirmModal } from './emma-confirmation-modal';
 import { environment } from '../../environments/environment';
 
 declare var Razorpay: any;
@@ -69,7 +70,7 @@ export class EmmaRegistration implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.form = this.fb.group({
-      memberType: ['emma'],
+      memberType: ['eema'],
       firstName: ['', [Validators.required, Validators.minLength(2)]],
       lastName: ['', [Validators.required, Validators.minLength(2)]],
       email: ['', [Validators.required, Validators.email]],
@@ -131,8 +132,8 @@ export class EmmaRegistration implements OnInit, OnDestroy {
     return phoneNumber.formatInternational();
   }
 
-  selectMemberType(type: 'emma' | 'non') {
-    this.isEmma.set(type === 'emma');
+  selectMemberType(type: 'eema' | 'non') {
+    this.isEmma.set(type === 'eema');
     this.form.patchValue({ memberType: type });
   }
 
@@ -236,9 +237,52 @@ export class EmmaRegistration implements OnInit, OnDestroy {
       }
 
       if (result === 'pay') {
+        this.openConfirmationModal(payload);
+      }
+    });
+  }
+  openConfirmationModal(payload: any) {
+    const dialogRef = this.dialog.open(EmmaConfirmModal, {
+      width: '480px',
+      disableClose: true,
+      data: {
+        payload,
+        fee: this.fee,
+        gstAmount: this.gstAmount,
+        totalAmount: this.totalAmount,
+        isEmma: this.isEmma()
+      }
+    });
+
+
+    dialogRef.afterClosed().subscribe((result: string) => {
+      if (result === 'book') {
+        sessionStorage.setItem('primaryUser', JSON.stringify({
+          firstName: payload.firstName,
+          lastName: payload.lastName,
+          organisation: payload.company,
+          email: payload.email,
+          phone: payload.phone,
+          gst: payload.gst,
+          is_primary_user: true,
+          primary_user_email: payload.email,
+        }));
+        const sessionData = {
+          payload,
+          fee: this.fee,
+          gstAmount: this.gstAmount,
+          totalAmount: this.totalAmount,
+          isEmma: this.isEmma()
+        }
+        sessionStorage.setItem('sessionfrom', JSON.stringify(sessionData));
+        this.router.navigate(['/members-selection']);
+      }
+
+      if (result === 'pay') {
         this.openRazorpay(payload);
       }
     });
+
   }
 
   openRazorpay(payload: any) {

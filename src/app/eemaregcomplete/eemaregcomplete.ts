@@ -1,4 +1,4 @@
-import { CurrencyPipe, DatePipe, TitleCasePipe } from '@angular/common';
+import { CurrencyPipe, DatePipe, TitleCasePipe, UpperCasePipe } from '@angular/common';
 import { Component, OnInit, computed, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
@@ -6,7 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-eemaregcomplete',
-  imports: [CurrencyPipe, DatePipe, TitleCasePipe, RouterLink, MatIcon, MatButtonModule],
+  imports: [CurrencyPipe, DatePipe, TitleCasePipe, RouterLink, MatIcon, MatButtonModule, UpperCasePipe],
   templateUrl: './eemaregcomplete.html',
   styleUrl: './eemaregcomplete.scss',
 })
