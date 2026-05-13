@@ -133,7 +133,7 @@
         <div class="field-wrap">
           <label class="field-label">GST Number <span class="optional">(optional)</span></label>
           <mat-form-field appearance="outline" class="field">
-            <input matInput placeholder="22AAAAA0000A1Z5" formControlName="gst">
+            <input matInput placeholder="Enter GST Number" formControlName="gst">
             @if(form.get('gst')?.errors?.['pattern'] && form.get('gst')?.touched) {
             <mat-error>Invalid GST number</mat-error>
             }
