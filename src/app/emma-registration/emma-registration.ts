@@ -188,8 +188,10 @@ export class EmmaRegistration implements OnInit, OnDestroy {
       Swal.fire({
         icon: 'warning',
         title: 'Invalid EEMA Member',
-        text: `"${selectedCompany?.name ?? selectedCompany}" is not a registered EEMA member company. Please select a valid EEMA member company or register as a Non-EEMA Member.`,
+        html: `<span style="font-size:13px;color:#6b7280">"${selectedCompany?.name ?? selectedCompany}" is not a registered EEMA member company. Please select a valid EEMA member company or register as a Non-EEMA Member.</span>`,
         confirmButtonColor: '#4f46e5',
+        customClass: { title: 'swal-title-sm' },
+        didOpen: () => { const t = document.querySelector('.swal-title-sm') as HTMLElement; if (t) t.style.fontSize = '18px'; },
       });
       return;
     }
