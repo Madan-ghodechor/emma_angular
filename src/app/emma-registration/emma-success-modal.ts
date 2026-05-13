@@ -10,19 +10,19 @@ import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/materia
       <div class="top-band"></div>
 
       <div class="success-icon">
-        <span class="checkmark">OK</span>
+        <span class="checkmark">!</span>
         <div class="ripple"></div>
       </div>
 
-      <h2 class="modal-title">You're registered!</h2>
+      <h2 class="modal-title">Almost There!</h2>
       <p class="modal-sub">
-        Welcome, <strong>{{ data.payload.firstName }}</strong>!
+        Hi, <strong>{{ data.payload.firstName }}</strong>!
         Your registration as an
         <span class="type-badge">{{ data.isEmma ? 'EEMA Member' : 'Non-EEMA Member' }}</span>
-        is confirmed.
+        is received but <strong>not confirmed yet</strong> — your spot will be secured once payment is complete.
       </p>
 
-      <p class="modal-question">Choose your next step</p>
+      <p class="modal-question">Complete your registration</p>
 
       <div class="action-cards">
         <button class="action-card book-card" (click)="choose('book')">
@@ -53,7 +53,7 @@ import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/materia
       text-align: center;
       font-family: inherit;
       background:
-        linear-gradient(180deg, rgba(240, 253, 244, 0.9), rgba(255, 255, 255, 0) 42%),
+        linear-gradient(180deg, rgba(255, 251, 235, 0.9), rgba(255, 255, 255, 0) 42%),
         #ffffff;
     }
 
@@ -63,7 +63,7 @@ import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/materia
       left: 0;
       right: 0;
       height: 8px;
-      background: linear-gradient(90deg, #16a34a, #0ea5e9, #6366f1);
+      background: linear-gradient(90deg, #f59e0b, #f97316, #6366f1);
     }
 
     .success-icon {
@@ -80,26 +80,26 @@ import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/materia
         height: 82px;
         background:
           radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.45), transparent 28%),
-          linear-gradient(135deg, #22c55e, #047857);
+          linear-gradient(135deg, #fbbf24, #d97706);
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 18px;
+        font-size: 28px;
         color: white;
-        font-weight: 800;
+        font-weight: 900;
         letter-spacing: 0;
         position: relative;
         z-index: 1;
         line-height: 82px;
-        box-shadow: 0 18px 38px rgba(4, 120, 87, 0.28);
+        box-shadow: 0 18px 38px rgba(217, 119, 6, 0.28);
       }
 
       .ripple {
         position: absolute;
         inset: -10px;
         border-radius: 50%;
-        border: 2px solid rgba(34, 197, 94, 0.28);
+        border: 2px solid rgba(251, 191, 36, 0.35);
         animation: ripple 1.5s ease-out infinite;
       }
     }

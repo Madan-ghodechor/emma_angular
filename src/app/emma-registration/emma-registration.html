@@ -22,9 +22,11 @@
           </div>
           <div class="card-price">₹15,000</div>
           <div class="card-desc">Exclusive rate for registered EEMA members</div>
+
           <div class="card-perks">
             <span class="perk">✦ Priority seating</span>
             <span class="perk">✦ Member networking</span>
+            <span class="perk">✦ Stay Not Included</span>
           </div>
         </div>
 
@@ -37,9 +39,11 @@
           </div>
           <div class="card-price">₹18,000</div>
           <div class="card-desc">Standard rate for non-members</div>
+
           <div class="card-perks">
             <span class="perk">✦ Full event access</span>
             <span class="perk">✦ All sessions</span>
+            <span class="perk">✦ Stay Not Included</span>
           </div>
         </div>
 
@@ -57,7 +61,7 @@
           <mat-form-field appearance="outline" class="field">
             <input matInput placeholder="Enter your first name" formControlName="firstName">
             @if(form.get('firstName')?.invalid && form.get('firstName')?.touched) {
-              <mat-error>First name is required</mat-error>
+            <mat-error>First name is required</mat-error>
             }
           </mat-form-field>
         </div>
@@ -66,7 +70,7 @@
           <mat-form-field appearance="outline" class="field">
             <input matInput placeholder="Enter your last name" formControlName="lastName">
             @if(form.get('lastName')?.invalid && form.get('lastName')?.touched) {
-              <mat-error>Last name is required</mat-error>
+            <mat-error>Last name is required</mat-error>
             }
           </mat-form-field>
         </div>
@@ -78,35 +82,35 @@
           <mat-form-field appearance="outline" class="field">
             <input matInput placeholder="Enter your email" formControlName="email" type="email">
             @if(form.get('email')?.errors?.['required'] && form.get('email')?.touched) {
-              <mat-error>Email is required</mat-error>
+            <mat-error>Email is required</mat-error>
             }
             @if(form.get('email')?.errors?.['email'] && form.get('email')?.touched) {
-              <mat-error>Invalid email address</mat-error>
+            <mat-error>Invalid email address</mat-error>
             }
             @if(form.get('email')?.errors?.['duplicate']) {
-              <mat-error>Email is already registered</mat-error>
+            <mat-error>Email is already registered</mat-error>
             }
           </mat-form-field>
         </div>
 
-       <div class="field-wrap">
-  <label class="field-label">Mobile Number <span class="req">*</span></label>
+        <div class="field-wrap">
+          <label class="field-label">Mobile Number <span class="req">*</span></label>
 
-  <mat-form-field appearance="outline" class="field">
-    <input matInput type="tel" #phoneInput formControlName="phone"
-           placeholder="Mobile Number" autocomplete="madan"/>
+          <mat-form-field appearance="outline" class="field">
+            <input matInput type="tel" #phoneInput formControlName="phone" placeholder="Mobile Number"
+              autocomplete="madan" />
 
-    @if(form.get('phone')?.errors?.['required'] && form.get('phone')?.touched) {
-      <mat-error>Phone is required</mat-error>
-    }
-    @if(form.get('phone')?.errors?.['duplicate']) {
-      <mat-error>Phone number is already registered</mat-error>
-    }
-    @if(form.get('phone')?.errors?.['invalid'] && form.get('phone')?.touched) {
-      <mat-error>Invalid phone number</mat-error>
-    }
-  </mat-form-field>
-</div>
+            @if(form.get('phone')?.errors?.['required'] && form.get('phone')?.touched) {
+            <mat-error>Phone is required</mat-error>
+            }
+            @if(form.get('phone')?.errors?.['duplicate']) {
+            <mat-error>Phone number is already registered</mat-error>
+            }
+            @if(form.get('phone')?.errors?.['invalid'] && form.get('phone')?.touched) {
+            <mat-error>Invalid phone number</mat-error>
+            }
+          </mat-form-field>
+        </div>
 
       </div>
 
@@ -114,9 +118,15 @@
         <div class="field-wrap">
           <label class="field-label">Company Name <span class="req">*</span></label>
           <mat-form-field appearance="outline" class="field">
-            <input matInput placeholder="Your company" formControlName="company">
+            <input matInput placeholder="Your company" formControlName="company"
+              [matAutocomplete]="companyAuto">
+            <mat-autocomplete #companyAuto="matAutocomplete" [displayWith]="displayCompany" (optionSelected)="setGst($event)">
+              @for (company of filteredOptions | async; track company.id) {
+                <mat-option [value]="company">{{ company.name }}</mat-option>
+              }
+            </mat-autocomplete>
             @if(form.get('company')?.invalid && form.get('company')?.touched) {
-              <mat-error>Company name is required</mat-error>
+            <mat-error>Company name is required</mat-error>
             }
           </mat-form-field>
         </div>
@@ -125,7 +135,7 @@
           <mat-form-field appearance="outline" class="field">
             <input matInput placeholder="22AAAAA0000A1Z5" formControlName="gst">
             @if(form.get('gst')?.errors?.['pattern'] && form.get('gst')?.touched) {
-              <mat-error>Invalid GST number</mat-error>
+            <mat-error>Invalid GST number</mat-error>
             }
           </mat-form-field>
         </div>
@@ -142,15 +152,11 @@
       </div>
 
       <!-- Submit -->
-      <button
-        type="button"
-        class="submit-btn"
-        [disabled]="form.invalid || isSubmitting()"
-        (click)="save()">
+      <button type="button" class="submit-btn" [disabled]="form.invalid || isSubmitting()" (click)="save()">
         @if(isSubmitting()) {
-          <span class="spinner"></span> Processing...
+        <span class="spinner"></span> Processing...
         } @else {
-          Register Now →
+        Register Now →
         }
       </button>
 

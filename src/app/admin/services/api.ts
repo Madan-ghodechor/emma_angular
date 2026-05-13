@@ -41,5 +41,9 @@ export class Api {
     return this.http.post(`${environment.apiBaseUrl}white-label`, payload)
   }
 
+  bulkUploadCompanies(payload: FormData) {
+    return this.http.post(`${environment.apiBaseUrl}admin/add-companies`, payload)
+  }
+
 
 }

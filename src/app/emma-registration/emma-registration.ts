@@ -3,9 +3,10 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { AsyncPipe } from '@angular/common';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { Subject, takeUntil, map } from 'rxjs';
+import { Observable, Subject, takeUntil, map, startWith } from 'rxjs';
 
 import { Api } from '../service/api';
 import { State } from '../service/state';
@@ -18,6 +19,7 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import { EmmaSuccessModal } from './emma-success-modal';
 import { EmmaConfirmModal } from './emma-confirmation-modal';
 import { environment } from '../../environments/environment';
+import Swal from 'sweetalert2';
 
 declare var Razorpay: any;
 
@@ -30,6 +32,7 @@ declare var Razorpay: any;
     MatInputModule,
     MatAutocompleteModule,
     MatDialogModule,
+    AsyncPipe,
   ],
   templateUrl: './emma-registration.html',
   styleUrl: './emma-registration.scss',
@@ -45,6 +48,7 @@ export class EmmaRegistration implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   gstPattern = /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/;
+  filteredOptions!: Observable<any[]>;
 
   get fee() {
     return this.isEmma() ? 15000 : 18000;
@@ -78,6 +82,15 @@ export class EmmaRegistration implements OnInit, OnDestroy {
       company: ['', [Validators.required, Validators.minLength(2)]],
       gst: ['', [Validators.pattern(this.gstPattern)]],
     });
+
+    this.api.getCompanies().pipe(map((res: any) =>
+      res.data.map((c: any) => ({ id: c._id, name: c.name, isEEMAMember: c.isEEMAMember }))
+    )).subscribe(companies => this.sharedFiltering.companies = companies);
+
+    this.filteredOptions = this.form.get('company')!.valueChanges.pipe(
+      startWith(''),
+      map(value => this.sharedFiltering.filterCompanies(value))
+    );
   }
 
   //   ngAfterViewInit() {
@@ -137,6 +150,15 @@ export class EmmaRegistration implements OnInit, OnDestroy {
     this.form.patchValue({ memberType: type });
   }
 
+  displayCompany(company: any): string {
+    return company ? (typeof company === 'string' ? company : company.name) : '';
+  }
+
+  setGst(event: any): void {
+    const company = event.option.value;
+    this.form.get('gst')?.setValue(company.gst ?? '');
+  }
+
   //   getPhoneFullNumber(): string | null {
   //     if (!this.iti?.isValidNumber()) return null;
   //     return this.iti.getNumber();
@@ -160,14 +182,28 @@ export class EmmaRegistration implements OnInit, OnDestroy {
       return;
     }
 
+    const selectedCompany = this.form.value.company;
+
+    if (this.isEmma() && selectedCompany?.isEEMAMember !== 1) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Invalid EEMA Member',
+        text: `"${selectedCompany?.name ?? selectedCompany}" is not a registered EEMA member company. Please select a valid EEMA member company or register as a Non-EEMA Member.`,
+        confirmButtonColor: '#4f46e5',
+      });
+      return;
+    }
+
     const country = this.iti.getSelectedCountryData();
     const nationalPhone = this.phoneInput.nativeElement.value.replace(/\s+/g, '');
     const fullPhone = '+' + country.dialCode + nationalPhone;
 
     this.isSubmitting.set(true);
 
+    const companyValue = this.form.value.company;
     const payload = {
       ...this.form.value,
+      company: companyValue?.name ?? companyValue,
       phone: fullPhone,
       fee: this.fee,
       gstAmount: this.gstAmount,

@@ -1,0 +1,53 @@
+<section class="bulk-page">
+  <div class="bulk-card">
+    <div class="bulk-card__head">
+      <p class="eyebrow">Admin Setup</p>
+      <h1>Bulk Add Companies</h1>
+      <p>Upload an Excel file (.xlsx / .xls) to import multiple companies at once.</p>
+    </div>
+
+    <form class="bulk-form" (ngSubmit)="submit()">
+
+      <label class="upload-field">
+        <span>Excel File <span class="required">*</span></span>
+        <input
+          type="file"
+          accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
+          (change)="onFileSelect($event)"
+        />
+        <small class="hint">Accepted: .xlsx, .xls</small>
+        @if (fileError()) {
+          <small class="error">{{ fileError() }}</small>
+        }
+      </label>
+
+      @if (selectedFile()) {
+        <div class="file-preview">
+          <span class="file-icon">&#128196;</span>
+          <span class="file-name">{{ selectedFile()!.name }}</span>
+          <span class="file-size">({{ fileSizeLabel() }})</span>
+          <button type="button" class="remove-btn" (click)="removeFile()">&#10005;</button>
+        </div>
+      }
+
+      <div class="actions">
+        <button type="submit" [disabled]="uploading()">
+          {{ uploading() ? 'Uploading…' : 'Upload Companies' }}
+        </button>
+        <button type="button" class="ghost" (click)="reset()" [disabled]="uploading()">Reset</button>
+      </div>
+    </form>
+
+    @if (successMsg()) {
+      <div class="result-box success">
+        <span>&#10003;</span> {{ successMsg() }}
+      </div>
+    }
+
+    @if (errorMsg()) {
+      <div class="result-box error">
+        <span>&#10005;</span> {{ errorMsg() }}
+      </div>
+    }
+  </div>
+</section>

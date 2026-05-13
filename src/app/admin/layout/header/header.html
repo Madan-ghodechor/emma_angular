@@ -21,7 +21,15 @@
         Dashboard
       </a>
       <a
-        routerLink="/admin/add-company"
+        routerLink="/admin/add-white-label"
+        routerLinkActive="is-active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        (click)="closeMenu()"
+      >
+        White Label
+      </a>
+      <a
+        routerLink="/admin/add-bulk-company"
         routerLinkActive="is-active"
         [routerLinkActiveOptions]="{ exact: true }"
         (click)="closeMenu()"
