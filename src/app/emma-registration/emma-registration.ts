@@ -341,6 +341,17 @@ export class EmmaRegistration implements OnInit, OnDestroy {
           name: 'EMMA Registration',
           description: `${this.isEmma() ? 'EMMA Member' : 'Non-EMMA Member'} Registration Fee`,
           order_id: order.id,
+
+          method: {
+            netbanking: true,
+            card: true,
+            upi: true,
+            wallet: true,
+            emi: false
+          },
+
+          image: "https://play-lh.googleusercontent.com/-Gg0VKCGTW25SSQaFSh8ih6iKCbQs2myvuJCUzO1Rpd1lzeRpDmCFNpSzmddQ_QYgIo=w600-h300-pc0xffffff-pd",
+
           prefill: {
             name: `${payload.firstName} ${payload.lastName}`,
             email: payload.email,
