@@ -2,16 +2,13 @@
 
   <div class="content">
 
-    <!-- <strong>{{ data()?.userData | json}}</strong> -->
-
-
     <div class="success-wrapper">
 
       <!-- HEADER -->
       <div class="success-banner">
         <mat-icon>check_circle</mat-icon>
         <div>
-          <h2>Booking Confirmed</h2>
+          <h2>{{ isCombinedPayment ? 'Registration & Booking Confirmed' : 'Booking Confirmed' }}</h2>
           <p>Your room has been successfully reserved</p>
         </div>
       </div>
@@ -39,11 +36,6 @@
           @for (booking of data().userData; track booking) {
           <mat-card class="card">
             <h3>Room Details</h3>
-
-            <!-- <div class="info-row">
-              <span>Room</span>
-              <strong>{{ booking.roomId | uppercase }}</strong>
-            </div> -->
 
             <div class="info-row">
               <span>Room Type</span>
@@ -73,42 +65,90 @@
         <div class="right-section stick">
 
           <mat-card class="summary-card">
-
             <h3>Payment Summary</h3>
 
-            <div class="amount">
-              {{ data().userData?.[0]?.payment?.paymentAmount | currency : 'INR'}}
-            </div>
+            <!-- Registration Fees -->
+            @if (data()?.registrationFees) {
+              <div class="section-label">
+                Registration Fees
+                @if (!isCombinedPayment) {
+                  <span class="paid-badge">Paid</span>
+                }
+              </div>
 
-            <div class="status success">
-              Payment Successful
+              <div class="info-row small">
+                <span>Base Fee</span>
+                <strong>{{ data().registrationFees.baseFee | currency:'INR':'symbol':'1.0-0' }}</strong>
+              </div>
+
+              <div class="info-row small">
+                <span>GST (18%)</span>
+                <strong>{{ data().registrationFees.gstAmount | currency:'INR':'symbol':'1.0-0' }}</strong>
+              </div>
+
+              <div class="info-row small subtotal-row">
+                <span>Subtotal</span>
+                <strong>{{ data().registrationFees.totalAmount | currency:'INR':'symbol':'1.0-0' }}</strong>
+              </div>
+
+              <div class="divider"></div>
+            }
+
+            <!-- Room Booking -->
+            <div class="section-label">Room Booking</div>
+
+            <div class="info-row small">
+              <span>Amount</span>
+              <strong>{{ bookingAmount | currency:'INR':'symbol':'1.0-0' }}</strong>
             </div>
 
             <div class="divider"></div>
 
+            <!-- Total -->
+            <div class="info-row total-row">
+              <span>{{ isCombinedPayment ? 'Total Paid' : 'Paid Now' }}</span>
+              <div class="amount">{{ totalPaid | currency:'INR':'symbol':'1.0-0' }}</div>
+            </div>
+
+            <div class="status success">Payment Successful</div>
+
+            <div class="divider"></div>
+
+            <!-- Booking Payment Details -->
             <div class="info-row small">
               <span>Payment ID</span>
-              <strong>{{ data().userData?.[0]?.payment?.razorpay_payment_id }}</strong>
+              <strong class="break-all">{{ data()?.userData?.[0]?.payment?.razorpay_payment_id }}</strong>
             </div>
 
             <div class="info-row small">
               <span>Order ID</span>
-              <strong>{{ data().userData?.[0]?.payment?.razorpay_order_id }}</strong>
+              <strong class="break-all">{{ data()?.userData?.[0]?.payment?.razorpay_order_id }}</strong>
             </div>
+
+            <!-- Separate registration payment details -->
+            @if (!isCombinedPayment && data()?.registrationFees?.payment) {
+              <div class="divider"></div>
+              <div class="section-label">Registration Payment</div>
+              <div class="info-row small">
+                <span>Payment ID</span>
+                <strong class="break-all">{{ data().registrationFees.payment.razorpay_payment_id }}</strong>
+              </div>
+              <div class="info-row small">
+                <span>Order ID</span>
+                <strong class="break-all">{{ data().registrationFees.payment.razorpay_order_id }}</strong>
+              </div>
+            }
 
           </mat-card>
 
           <div class="action-buttons">
-
-            <button mat-stroked-button (click)="generateVC()"> Download Voucher</button>
-
+            <button mat-stroked-button (click)="generateVC()">Download Voucher</button>
           </div>
 
         </div>
 
       </div>
     </div>
-
 
   </div>
 

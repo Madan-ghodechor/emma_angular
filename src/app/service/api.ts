@@ -87,6 +87,10 @@ export class Api {
     return this.http.get(`${environment.apiBaseUrl}emma-registration?id=${id}&orderId=${orderId}`);
   }
 
+  getEmmaRegistrationBookingStatus(orderId: string) {
+    return this.http.get(`${environment.apiBaseUrl}emma-registration/booking-status?orderId=${encodeURIComponent(orderId)}`);
+  }
+
   recordEmmaRegistrationPaymentSuccess(payload: any) {
     return this.http.post(`${environment.apiBaseUrl}emma-registration/payment-success`, payload);
   }

@@ -79,6 +79,7 @@ export class Dashboard implements OnInit {
   usedRooms = signal(0)
   registeredUserCount = signal(0)
   collectedAmount = signal(0)
+  totalRegistrationAmount = signal(0)
 
   idFilter = '';
   nameFilter = '';
@@ -95,7 +96,8 @@ export class Dashboard implements OnInit {
       const idMatch = !idSearch ||
         (data?.bulkRefId || '').toLowerCase().includes(idSearch) ||
         (data?.roomId || '').toLowerCase().includes(idSearch) ||
-        (data?.paymentId || '').toString().toLowerCase().includes(idSearch);
+        (data?.payment?.razorpay_payment_id || '').toLowerCase().includes(idSearch) ||
+        (data?.payment?.razorpay_order_id || '').toLowerCase().includes(idSearch);
 
       // ✅ Guest name match logic
       const nameMatch = !nameSearch ||
@@ -115,20 +117,21 @@ export class Dashboard implements OnInit {
     this.api.getDashBord().subscribe({
       next: (res: any) => {
         const rooms = res?.data?.rooms ?? [];
-        const user_count = res?.data?.user_count ?? [];
-        const collectedAmount = res?.data?.totelAmount ?? [];
+        const summary = res?.data?.summary ?? {};
 
         this.rooms = rooms;
         this.dataSource.data = rooms;
 
-        const per = Math.round((rooms.length / environment.total_rooms) * 100)
+        const bookedRooms = summary.totalRooms ?? rooms.length;
+        const per = Math.round((bookedRooms / environment.total_rooms) * 100);
         this.percentage.set(per);
         this.totalRooms.set(environment.total_rooms);
-        this.usedRooms.set(rooms.length)
-        this.registeredUserCount.set(user_count)
-        this.collectedAmount.set(collectedAmount)
-      }
-      ,
+        this.usedRooms.set(bookedRooms);
+        this.registeredUserCount.set(summary.totalUsers ?? 0);
+        this.collectedAmount.set(summary.totalAmount ?? 0);
+        this.totalRegistrationAmount.set(summary.totalRegistrationAmount ?? 0);
+        this.loading = false;
+      },
       error: (err) => {
         console.error('Dashboard load failed', err);
         this.loading = false;
@@ -201,11 +204,10 @@ export class Dashboard implements OnInit {
         CheckIn: this.formatDate(room.checkIn),
         CheckOut: this.formatDate(room.checkOut),
         RoomType: `${room.roomType} Occupancy`,
-        Name: `${attendee.firstName || ''} ${attendee.lastName || ''} ${attendee?.is_primary_user ? '( Primary Guest )' : ''}`.trim(),
-        OrderID: attendee.orderId || '',
+        Name: `${attendee.firstName || ''} ${attendee.lastName || ''} ${attendee?.isPrimary ? '(Primary Guest)' : ''}`.trim(),
         Email: attendee.email || '',
         Phone: attendee.phone || '',
-        Company: attendee.company?.name + (attendee.company?.gst != '' ? ` (${attendee.company?.gst})` : '') || ''
+        Company: attendee.company?.name + (attendee.company?.gst ? ` (${attendee.company?.gst})` : '') || ''
       }))
     );
 
@@ -256,8 +258,6 @@ export class Dashboard implements OnInit {
   }
 
   sendVouchers(da: any) {
-
-    const primaryAttendee = da?.attendees.filter((attendee: any) => attendee.is_primary_user == true)
     let data = {
       "_id": da?._id,
       "roomId": da?.roomId,
@@ -266,16 +266,12 @@ export class Dashboard implements OnInit {
       "checkOut": this.formatDateInto(da?.checkOut),
       "attendees": da?.attendees,
       "bulkRefId": da?.bulkRefId,
-      "primaryAttendee":primaryAttendee[0],
+      "primaryAttendee": da?.primaryAttendee,
       "payment": {
         ...da?.payment
       },
-      "paymentId": da?.paymentId,
       "createdAt": this.formatDateInto(da?.createdAt)
     }
-
-    
-
   }
 
     extensionOfRoom(userdata: any) {

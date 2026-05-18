@@ -101,6 +101,57 @@ $disabled-bg: #e0e0e0;
   font-size: 13px;
 }
 
+.section-label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #666;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.paid-badge {
+  font-size: 11px;
+  font-weight: 600;
+  color: #2e7d32;
+  background: #e8f5e9;
+  padding: 2px 8px;
+  border-radius: 10px;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.subtotal-row {
+  font-weight: 600;
+  border-top: 1px solid #eee;
+  margin-top: 4px;
+  padding-top: 8px;
+}
+
+.total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  font-size: 15px;
+
+  .amount {
+    font-size: 26px;
+    font-weight: bold;
+    margin: 0;
+  }
+}
+
+.break-all {
+  word-break: break-all;
+  text-align: right;
+  max-width: 65%;
+  font-size: 12px;
+}
+
 /* Buttons */
 .action-buttons {
   margin-top: 20px;

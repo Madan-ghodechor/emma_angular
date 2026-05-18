@@ -8,6 +8,7 @@ import { LoggerService } from '../service/logger.service';
 import { SharedFiltering } from '../service/shared-filtering';
 import { State } from '../service/state';
 import { JsonPipe } from '@angular/common';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-process-validation',
@@ -57,6 +58,12 @@ export class ProcessValidation {
     localStorage.clear()
 
     const bgbulkRefId = this.route.snapshot.paramMap.get('id') || "";
+
+    if (this.isEmmaOrderId(bgbulkRefId)) {
+      this.loadEmmaRegistrationBooking(bgbulkRefId);
+      return;
+    }
+
     localStorage.setItem('bkgRef', bgbulkRefId)
 
     this.api.getCompanies().pipe(map((res: any) => {
@@ -95,5 +102,99 @@ export class ProcessValidation {
       }
 
     });
+  }
+
+  private isEmmaOrderId(id: string): boolean {
+    return /^EC-?/i.test(id);
+  }
+
+  private loadEmmaRegistrationBooking(orderId: string): void {
+    localStorage.setItem('bkgRef', orderId);
+    localStorage.setItem('emmaOrderId', orderId);
+
+    this.api.getEmmaRegistrationBookingStatus(orderId)
+      .subscribe({
+        next: (res: any) => {
+          const registration = this.getEmmaRegistrationData(res);
+
+          if (!registration) {
+            this.logger.error('EMMA registration booking status not found', res);
+            this.router.navigate(['/eema-registration']);
+            return;
+          }
+
+          const payload = this.buildEmmaRegistrationPayload(registration, orderId);
+
+          sessionStorage.setItem('primaryUser', JSON.stringify({
+            firstName: payload.firstName,
+            lastName: payload.lastName,
+            organisation: payload.company,
+            email: payload.email,
+            phone: payload.phone,
+            gst: payload.gst,
+            is_primary_user: true,
+            primary_user_email: payload.email,
+          }));
+
+          sessionStorage.setItem('sessionfrom', JSON.stringify({
+            payload: {
+              ...payload,
+              fee: 0,
+              gstAmount: 0,
+              totalAmount: 0,
+            },
+            fee: 0,
+            gstAmount: 0,
+            totalAmount: 0,
+            isEmma: payload.memberType === 'eema'
+          }));
+
+          this.router.navigate(['/members-selection']);
+        },
+        error: (err) => {
+          this.logger.error('EMMA registration booking status failed', err);
+          this.router.navigate(['/eema-registration']);
+        }
+      });
+  }
+
+  private getEmmaRegistrationData(res: any): any {
+    if (Array.isArray(res?.data)) {
+      return res.data[0];
+    }
+
+    return res?.data?.registrationData
+      || res?.data?.registration
+      || res?.data
+      || res?.registrationData
+      || res?.registration
+      || null;
+  }
+
+  private buildEmmaRegistrationPayload(registration: any, orderId: string): any {
+    const memberType = registration?.memberType
+      || (registration?.isEmma || registration?.isEEMAMember === 1 ? 'eema' : 'non');
+    const fee = Number(registration?.fee ?? registration?.baseFee ?? (memberType === 'eema' ? 15000 : 18000));
+    const gstAmount = Number(registration?.gstAmount ?? Math.round(fee * (environment.gst - 1)));
+    const totalAmount = Number(registration?.totalAmount ?? registration?.amount ?? fee + gstAmount);
+    const company = registration?.company?.name
+      || registration?.company
+      || registration?.organisation
+      || '';
+
+    return {
+      ...registration,
+      orderId: registration?.orderId || orderId,
+      memberType,
+      firstName: registration?.firstName || '',
+      lastName: registration?.lastName || '',
+      email: registration?.email || '',
+      phone: registration?.phone || '',
+      company,
+      gst: registration?.gst || '',
+      fee,
+      gstAmount,
+      totalAmount,
+    };
   }
 }

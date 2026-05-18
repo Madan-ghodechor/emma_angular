@@ -36,19 +36,35 @@ export class PaymentSuccess {
 
     this.id = this.route.snapshot.paramMap.get('id') || "";
 
-
     this.api.getBookingRecord(this.id).subscribe({
       next: (res: any) => {
-        this.data.set(res.data)
+        this.data.set(res.data);
 
         this.api.getWhiteLabel(res.data?.userData[0]?.payment?.assetId).subscribe({
           next: (res: any) => {
             this.colors = res.data;
           }
-        })
+        });
       }
-    })
+    });
+  }
 
+  get isCombinedPayment(): boolean {
+    const bookingPid = this.data()?.userData?.[0]?.payment?.razorpay_payment_id;
+    const regPid = this.data()?.registrationFees?.payment?.razorpay_payment_id;
+    return !!(bookingPid && regPid && bookingPid === regPid);
+  }
+
+  get bookingAmount(): number {
+    const collected = this.data()?.userData?.[0]?.collectedAmount || 0;
+    if (this.isCombinedPayment) {
+      return collected - (this.data()?.registrationFees?.totalAmount || 0);
+    }
+    return collected;
+  }
+
+  get totalPaid(): number {
+    return this.data()?.userData?.[0]?.collectedAmount || 0;
   }
 
 

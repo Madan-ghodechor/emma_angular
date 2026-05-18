@@ -138,8 +138,11 @@ export class RoomSelection {
 
       };
     };
-    const logPayload = preparePrimaryUserPayload(sessionStorage.getItem('primaryUser') ?? '{}')
-
+    const existingBkgRef = localStorage.getItem('bkgRef');
+    const logPayload = {
+      ...preparePrimaryUserPayload(sessionStorage.getItem('primaryUser') ?? '{}'),
+      ...(existingBkgRef ? { bulkRefId: existingBkgRef } : {})
+    };
 
     this.api.createBookingLog(logPayload).subscribe((res: any) => {
       localStorage.setItem('bkgRef', res.data.bulkRefId)

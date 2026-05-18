@@ -717,6 +717,8 @@ export class UsersForm {
 
   openRazorpay(order: any, payload: any) {
 
+    console.trace(payload)
+
     const options = {
       key: environment.razorpayKey,
       amount: order.amount,

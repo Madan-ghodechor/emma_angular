@@ -17,6 +17,8 @@
   $--clr-amber-bg: #fffbeb;
   $--clr-rose: #ef4444;
   $--clr-rose-bg: #fef2f2;
+  $--clr-violet: #8b5cf6;
+  $--clr-violet-bg: #f5f3ff;
   $--font-sans: 'DM Sans', 'Segoe UI', sans-serif;
   $--font-mono: 'JetBrains Mono', monospace;
 
@@ -30,7 +32,7 @@
 
   .stats-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     gap: 16px;
     margin-bottom: 24px;
   }
@@ -85,6 +87,11 @@
   .stat-card--rose .stat-card__icon {
     background: $--clr-rose-bg;
     color: $--clr-rose;
+  }
+
+  .stat-card--violet .stat-card__icon {
+    background: $--clr-violet-bg;
+    color: $--clr-violet;
   }
 
   .stat-card__body {
@@ -410,10 +417,40 @@
     color: $--clr-blue;
   }
 
+  .emma-badge {
+    display: inline-block;
+    margin-top: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: .05em;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: $--clr-violet-bg;
+    color: $--clr-violet;
+    border: 1px solid rgba(139, 92, 246, .2);
+  }
+
   .payment-amount {
     display: block;
     font-weight: 600;
     margin-bottom: 4px;
+  }
+
+  .payment-breakdown {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    margin-bottom: 5px;
+  }
+
+  .payment-sub {
+    font-size: 11px;
+    color: $--clr-muted;
+  }
+
+  .payment-sub--reg {
+    color: $--clr-violet;
+    font-weight: 500;
   }
 
   .payment-badge {
@@ -524,6 +561,12 @@
   .empty-state p {
     margin: 0;
     font-size: 14px;
+  }
+
+  @media (max-width: 1400px) {
+    .stats-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
   }
 
   @media (max-width: 1100px) {

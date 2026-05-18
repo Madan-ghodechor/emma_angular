@@ -59,8 +59,22 @@
                 </svg>
             </div>
             <div class="stat-card__body">
-                <span class="stat-card__label">Collected Amount</span>
+                <span class="stat-card__label">Room Amount</span>
                 <span class="stat-card__value">{{ collectedAmount() | currency : 'INR' }}</span>
+            </div>
+        </div>
+
+        <div class="stat-card stat-card--violet">
+            <div class="stat-card__icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                    <path d="M2 17l10 5 10-5" />
+                    <path d="M2 12l10 5 10-5" />
+                </svg>
+            </div>
+            <div class="stat-card__body">
+                <span class="stat-card__label">Registration Amount</span>
+                <span class="stat-card__value">{{ totalRegistrationAmount() | currency : 'INR' }}</span>
             </div>
         </div>
 
@@ -148,6 +162,9 @@
                     <td mat-cell *matCellDef="let row"
                         [class.active-row]="selectedRoom()?._id === row._id">
                         <span class="ref-badge">{{ row.bulkRefId }}</span>
+                        @if(row.hasEmmaRegistration) {
+                        <span class="emma-badge">EMMA</span>
+                        }
                     </td>
                 </ng-container>
 
@@ -163,11 +180,14 @@
                 <ng-container matColumnDef="payment">
                     <th mat-header-cell *matHeaderCellDef>Payment</th>
                     <td mat-cell *matCellDef="let row">
-                        <span class="payment-amount">{{ row?.payment?.paymentAmount | currency : 'INR' }}</span>
-                        <span class="payment-badge" [class.payment-badge--success]="row.payment"
-                            [class.payment-badge--fail]="!row.payment">
-                            {{ row.payment ? 'Captured' : 'Failed' }}
-                        </span>
+                        <span class="payment-amount">{{ row?.payment?.totalPaid | currency : 'INR' }}</span>
+                        <div class="payment-breakdown">
+                            <span class="payment-sub">Room: {{ row?.payment?.roomAmount | currency : 'INR' }}</span>
+                            @if(row?.payment?.registrationAmount > 0) {
+                            <span class="payment-sub payment-sub--reg">Reg: {{ row?.payment?.registrationAmount | currency : 'INR' }}</span>
+                            }
+                        </div>
+                        <span class="payment-badge payment-badge--success">Captured</span>
                     </td>
                 </ng-container>
 
@@ -192,19 +212,16 @@
                 <ng-container matColumnDef="primary_guest">
                     <th mat-header-cell *matHeaderCellDef>Primary Guest</th>
                     <td mat-cell *matCellDef="let row">
-                        @for (user of row.attendees; track user._id) {
-                        @if(user.is_primary_user) {
+                        @if(row.primaryAttendee) {
                         <div class="guest-cell">
-                            <p class="guest-cell__name">{{ user.firstName + ' ' + user.lastName | titlecase }}</p>
-                            <p class="guest-cell__meta">Order ID: {{ user.orderId || '-' }}</p>
+                            <p class="guest-cell__name">{{ row.primaryAttendee.firstName + ' ' + row.primaryAttendee.lastName | titlecase }}</p>
                             <p class="guest-cell__meta">
-                                {{ user.company?.name }}
-                                {{ user.company?.gst != '' ? '(' + user.company?.gst + ')' : '' }}
+                                {{ row.primaryAttendee.company?.name }}
+                                {{ row.primaryAttendee.company?.gst ? '(' + row.primaryAttendee.company?.gst + ')' : '' }}
                             </p>
-                            <p class="guest-cell__meta">{{ user.email }}</p>
-                            <p class="guest-cell__meta">{{ user.phone }}</p>
+                            <p class="guest-cell__meta">{{ row.primaryAttendee.email }}</p>
+                            <p class="guest-cell__meta">{{ row.primaryAttendee.phone }}</p>
                         </div>
-                        }
                         }
                     </td>
                 </ng-container>
