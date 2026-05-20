@@ -42,6 +42,17 @@ export const routes: Routes = [
     component: BlankLayout,
     children: [
       {
+        path: 'new',
+        loadChildren: () =>
+          import('./new-flow/new-flow-module').then(m => m.NewFlowModule)
+      },
+    ]
+  },
+  {
+    path: '',
+    component: BlankLayout,
+    children: [
+      {
         path: 'admin',
         loadChildren: () =>
           import('./admin/admin-module').then(m => m.AdminModule)

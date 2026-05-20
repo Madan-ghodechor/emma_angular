@@ -1,0 +1,481 @@
+// ─── Tokens ──────────────────────────────────────────────────────────────────
+$bg:          #f4f6fb;
+$surface:     #ffffff;
+$border:      #e3e8f2;
+$text:        #17202e;
+$muted:       #637087;
+$blue:        #3b5bdb;
+$blue-light:  #edf2ff;
+$emerald:     #0ea473;
+$emerald-light: #e6faf3;
+$amber:       #d97706;
+$amber-light: #fffbeb;
+$rose:        #e11d48;
+$rose-light:  #fff1f2;
+$radius:      12px;
+$radius-sm:   8px;
+$shadow-xs:   0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+$shadow-sm:   0 4px 20px rgba(0,0,0,.08);
+$shadow-btn:  0 2px 10px rgba(59,91,219,.32);
+
+// ─── Base ─────────────────────────────────────────────────────────────────────
+* { box-sizing: border-box; }
+
+.event-form {
+  background: $bg;
+  color: $text;
+  font-family: 'DM Sans', 'Segoe UI', system-ui, sans-serif;
+  min-height: 100vh;
+  padding: 32px 36px;
+}
+
+p, h1, h2 { margin: 0; }
+
+// ─── Page header ──────────────────────────────────────────────────────────────
+.page-head {
+  align-items: flex-start;
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+  margin-bottom: 28px;
+}
+
+.eyebrow {
+  color: $blue;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+}
+
+h1 {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  line-height: 1.2;
+}
+
+.page-head__desc {
+  color: $muted;
+  font-size: 13.5px;
+  margin-top: 5px;
+}
+
+// ─── Form grid ────────────────────────────────────────────────────────────────
+.form-grid {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+// ─── Panel ────────────────────────────────────────────────────────────────────
+.panel {
+  background: $surface;
+  border: 1px solid $border;
+  border-radius: $radius;
+  box-shadow: $shadow-xs;
+  padding: 22px 24px;
+  transition: box-shadow .25s;
+
+  &:hover { box-shadow: $shadow-sm; }
+}
+
+.span-2 { grid-column: span 2; }
+
+// ─── Panel header ─────────────────────────────────────────────────────────────
+.panel__header {
+  align-items: center;
+  display: flex;
+  gap: 14px;
+}
+
+.panel__icon {
+  align-items: center;
+  border-radius: $radius-sm;
+  display: flex;
+  flex-shrink: 0;
+  height: 46px;
+  justify-content: center;
+  width: 46px;
+
+  &--blue    { background: $blue-light;    color: $blue; }
+  &--emerald { background: $emerald-light; color: $emerald; }
+  &--amber   { background: $amber-light;   color: $amber; }
+  &--rose    { background: $rose-light;    color: $rose; }
+}
+
+.panel__header__text {
+  flex: 1;
+  min-width: 0;
+
+  h2 {
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: -.01em;
+    margin-bottom: 3px;
+  }
+
+  p {
+    color: $muted;
+    font-size: 13px;
+  }
+}
+
+// ─── Divider ──────────────────────────────────────────────────────────────────
+.divider {
+  border: 0;
+  border-top: 1px solid $border;
+  margin: 18px 0;
+}
+
+// ─── Sub section label ────────────────────────────────────────────────────────
+.sub-label {
+  color: $muted;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+
+// ─── GST toggle row ───────────────────────────────────────────────────────────
+.gst-toggle {
+  align-items: center;
+  background: #f8f9fc;
+  border: 1px solid $border;
+  border-radius: $radius-sm;
+  cursor: pointer;
+  display: flex;
+  gap: 12px;
+  margin-bottom: 18px;
+  padding: 12px 14px;
+
+  span {
+    display: grid;
+    flex: 1;
+    gap: 3px;
+
+    strong {
+      color: $text;
+      font-size: 13.5px;
+      font-weight: 700;
+    }
+
+    small {
+      color: $muted;
+      font-size: 12.5px;
+    }
+  }
+}
+
+// ─── Sharing grid ─────────────────────────────────────────────────────────────
+.sharing-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.sharing-card {
+  border: 1.5px solid $border;
+  border-radius: $radius-sm;
+  padding: 16px;
+  transition: border-color .2s, background .2s, box-shadow .2s;
+
+  &--active {
+    background: #fafbff;
+    border-color: rgba(59, 91, 219, .3);
+    box-shadow: 0 2px 10px rgba(59, 91, 219, .08);
+  }
+}
+
+.sharing-card__head {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+}
+
+.sharing-card__icon {
+  align-items: center;
+  background: $bg;
+  border-radius: $radius-sm;
+  color: $muted;
+  display: flex;
+  flex-shrink: 0;
+  height: 38px;
+  justify-content: center;
+  width: 38px;
+  transition: background .2s, color .2s;
+
+  .sharing-card--active & {
+    background: $blue-light;
+    color: $blue;
+  }
+}
+
+.sharing-card__info {
+  display: grid;
+  flex: 1;
+  gap: 3px;
+  min-width: 0;
+
+  strong {
+    color: $text;
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  small {
+    color: $muted;
+    font-size: 12px;
+  }
+}
+
+.sharing-card__price {
+  border-top: 1px solid $border;
+  margin-top: 14px;
+  padding-top: 14px;
+}
+
+// ─── Fields ───────────────────────────────────────────────────────────────────
+.field {
+  display: grid;
+  gap: 7px;
+
+  > span {
+    color: $text;
+    font-size: 13px;
+    font-weight: 600;
+  }
+}
+
+.field-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.one-col { grid-template-columns: 1fr; }
+
+// ─── Inputs ───────────────────────────────────────────────────────────────────
+input[type='text'],
+input[type='number'],
+input[type='tel'],
+input[type='email'],
+input[type='url'],
+input[type='time'],
+textarea {
+  background: #fafbfd;
+  border: 1.5px solid $border;
+  border-radius: $radius-sm;
+  color: $text;
+  font: inherit;
+  font-size: 14px;
+  min-height: 42px;
+  outline: none;
+  padding: 10px 13px;
+  transition: border-color .15s, box-shadow .15s, background .15s;
+  width: 100%;
+
+  &::placeholder { color: #a4afbf; }
+
+  &:focus {
+    background: #fff;
+    border-color: $blue;
+    box-shadow: 0 0 0 3px rgba(59, 91, 219, .12);
+  }
+}
+
+textarea { resize: vertical; }
+
+// ─── Prefixed input ───────────────────────────────────────────────────────────
+.input-prefix-wrap {
+  align-items: stretch;
+  background: #fafbfd;
+  border: 1.5px solid $border;
+  border-radius: $radius-sm;
+  display: flex;
+  overflow: hidden;
+  transition: border-color .15s, box-shadow .15s;
+
+  &:focus-within {
+    background: #fff;
+    border-color: $blue;
+    box-shadow: 0 0 0 3px rgba(59, 91, 219, .12);
+  }
+
+  input {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+.input-suffix-wrap {
+  align-items: stretch;
+  background: #fafbfd;
+  border: 1.5px solid $border;
+  border-radius: $radius-sm;
+  display: flex;
+  overflow: hidden;
+  transition: border-color .15s, box-shadow .15s;
+
+  &:focus-within {
+    background: #fff;
+    border-color: $blue;
+    box-shadow: 0 0 0 3px rgba(59, 91, 219, .12);
+  }
+
+  input {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+.input-suffix {
+  align-items: center;
+  background: #f0f3f9;
+  border-left: 1.5px solid $border;
+  color: $muted;
+  display: flex;
+  flex-shrink: 0;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 0 13px;
+}
+
+.gst-rate-row {
+  margin-bottom: 18px;
+  max-width: 240px;
+}
+
+.input-prefix {
+  align-items: center;
+  background: #f0f3f9;
+  border-right: 1.5px solid $border;
+  color: $muted;
+  display: flex;
+  flex-shrink: 0;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 0 13px;
+}
+
+// ─── Upload zone ──────────────────────────────────────────────────────────────
+.upload-zone {
+  align-items: center;
+  background: #fafbfd;
+  border: 2px dashed $border;
+  border-radius: $radius-sm;
+  color: $muted;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 30px 20px;
+  position: relative;
+  text-align: center;
+  transition: border-color .2s, background .2s, color .2s;
+
+  &:hover {
+    background: $blue-light;
+    border-color: rgba(59, 91, 219, .4);
+    color: $blue;
+
+    .upload-zone__text { color: $blue; }
+  }
+
+  &--sm { padding: 18px 16px; }
+
+  input[type='file'] {
+    border: 0;
+    cursor: pointer;
+    height: 100%;
+    inset: 0;
+    min-height: unset;
+    opacity: 0;
+    padding: 0;
+    position: absolute;
+    width: 100%;
+  }
+}
+
+.upload-zone__text {
+  color: $text;
+  font-size: 13.5px;
+  font-weight: 600;
+}
+
+.upload-zone small {
+  color: $muted;
+  font-size: 11.5px;
+}
+
+// ─── Conditional ──────────────────────────────────────────────────────────────
+.conditional { display: none; }
+.conditional.active { display: grid; }
+
+// ─── Form actions bar ─────────────────────────────────────────────────────────
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 24px;
+}
+
+// ─── Button ───────────────────────────────────────────────────────────────────
+.btn {
+  align-items: center;
+  border: 0;
+  border-radius: $radius-sm;
+  cursor: pointer;
+  display: inline-flex;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  gap: 8px;
+  min-height: 44px;
+  padding: 10px 22px;
+  transition: background .15s, box-shadow .15s, transform .15s;
+  white-space: nowrap;
+}
+
+.btn-primary {
+  background: $blue;
+  box-shadow: $shadow-btn;
+  color: #fff;
+
+  &:hover {
+    background: #2f4dbf;
+    box-shadow: 0 4px 18px rgba(59, 91, 219, .4);
+    transform: translateY(-1px);
+  }
+
+  &:active { transform: translateY(0); }
+}
+
+// ─── Responsive ───────────────────────────────────────────────────────────────
+@media (max-width: 1100px) {
+  .sharing-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 760px) {
+  .event-form { padding: 16px; }
+
+  .page-head {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn-primary { justify-content: center; }
+
+  .form-grid,
+  .field-grid,
+  .sharing-grid { grid-template-columns: 1fr; }
+
+  .span-2 { grid-column: auto; }
+}

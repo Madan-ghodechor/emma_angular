@@ -1,0 +1,317 @@
+<main class="event-form">
+  <header class="page-head">
+    <div class="page-head__info">
+      <p class="eyebrow">Dynamic setup</p>
+      <h1>Add Event Configuration</h1>
+      <p class="page-head__desc">Set up pricing, room types and voucher details for your event.</p>
+    </div>
+  </header>
+
+  <form id="dynamicEventForm" class="form-grid" [formGroup]="form" (ngSubmit)="saveConfiguration()">
+
+    <!-- ── Guests Registration ── -->
+    <section class="panel span-2">
+      <div class="panel__header">
+        <div class="panel__icon panel__icon--blue">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="20" height="20">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+        </div>
+        <div class="panel__header__text">
+          <h2>Guests Registration</h2>
+          <p>Enable registration pricing for member and non-member guests.</p>
+        </div>
+        <mat-slide-toggle formControlName="guestsRegistrationEnabled"></mat-slide-toggle>
+      </div>
+
+      @if (guestsRegistrationEnabled) {
+      <div class="conditional active">
+        <div class="divider"></div>
+        <p class="sub-label">Event prices</p>
+        <div class="field-grid">
+          <label class="field">
+            <span>Member price</span>
+            <div class="input-prefix-wrap">
+              <span class="input-prefix">₹</span>
+              <input type="number" formControlName="memberPrice" min="0" placeholder="0.00" />
+            </div>
+          </label>
+          <label class="field">
+            <span>Non-member price</span>
+            <div class="input-prefix-wrap">
+              <span class="input-prefix">₹</span>
+              <input type="number" formControlName="nonMemberPrice" min="0" placeholder="0.00" />
+            </div>
+          </label>
+        </div>
+      </div>
+      }
+    </section>
+
+    <!-- ── Room Selection ── -->
+    <section class="panel span-2">
+      <div class="panel__header">
+        <div class="panel__icon panel__icon--emerald">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="20" height="20">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+        </div>
+        <div class="panel__header__text">
+          <h2>Room Selection</h2>
+          <p>Configure room pricing and available sharing types.</p>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <label class="gst-toggle">
+        <mat-slide-toggle formControlName="roomPricingExcludingGst"></mat-slide-toggle>
+        <span>
+          <strong>Room pricing excluding GST</strong>
+          <small>Room prices do not include tax — specify the GST rate below.</small>
+        </span>
+      </label>
+
+      @if (roomPricingExcludingGst) {
+      <div class="gst-rate-row">
+        <label class="field">
+          <span>GST percentage</span>
+          <div class="input-suffix-wrap">
+            <input type="number" formControlName="gstPercentage" min="0" max="100" placeholder="e.g. 18" />
+            <span class="input-suffix">%</span>
+          </div>
+        </label>
+      </div>
+      }
+
+      <div class="sharing-grid">
+
+        <article class="sharing-card" [class.sharing-card--active]="singleSharingRoomEnabled">
+          <div class="sharing-card__head">
+            <div class="sharing-card__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="18" height="18">
+                <rect x="3" y="8" width="18" height="12" rx="2"/>
+                <path d="M10 8V6a2 2 0 0 1 4 0v2"/>
+                <line x1="12" y1="12" x2="12" y2="16"/>
+              </svg>
+            </div>
+            <div class="sharing-card__info">
+              <strong>Single Sharing</strong>
+              <small>1 guest per room</small>
+            </div>
+            <mat-slide-toggle formControlName="singleSharingRoomEnabled"></mat-slide-toggle>
+          </div>
+          @if (singleSharingRoomEnabled) {
+          <div class="sharing-card__price">
+            <label class="field">
+              <span>Price per room</span>
+              <div class="input-prefix-wrap">
+                <span class="input-prefix">₹</span>
+                <input type="number" formControlName="singleSharingPrice" min="0" placeholder="0.00" />
+              </div>
+            </label>
+          </div>
+          }
+        </article>
+
+        <article class="sharing-card" [class.sharing-card--active]="doubleSharingRoomEnabled">
+          <div class="sharing-card__head">
+            <div class="sharing-card__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="18" height="18">
+                <path d="M2 4v16"/>
+                <path d="M2 8h18a2 2 0 0 1 2 2v10"/>
+                <path d="M2 17h20"/>
+                <path d="M6 8v9"/>
+              </svg>
+            </div>
+            <div class="sharing-card__info">
+              <strong>Double Sharing</strong>
+              <small>2 guests per room</small>
+            </div>
+            <mat-slide-toggle formControlName="doubleSharingRoomEnabled"></mat-slide-toggle>
+          </div>
+          @if (doubleSharingRoomEnabled) {
+          <div class="sharing-card__price">
+            <label class="field">
+              <span>Price per room</span>
+              <div class="input-prefix-wrap">
+                <span class="input-prefix">₹</span>
+                <input type="number" formControlName="doubleSharingPrice" min="0" placeholder="0.00" />
+              </div>
+            </label>
+          </div>
+          }
+        </article>
+
+        <article class="sharing-card" [class.sharing-card--active]="tripleSharingRoomEnabled">
+          <div class="sharing-card__head">
+            <div class="sharing-card__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="18" height="18">
+                <rect x="2" y="3" width="20" height="14" rx="2"/>
+                <path d="M8 21v-4"/>
+                <path d="M16 21v-4"/>
+                <path d="M2 13h20"/>
+                <path d="M2 8h20"/>
+              </svg>
+            </div>
+            <div class="sharing-card__info">
+              <strong>Triple Sharing</strong>
+              <small>3 guests per room</small>
+            </div>
+            <mat-slide-toggle formControlName="tripleSharingRoomEnabled"></mat-slide-toggle>
+          </div>
+          @if (tripleSharingRoomEnabled) {
+          <div class="sharing-card__price">
+            <label class="field">
+              <span>Price per room</span>
+              <div class="input-prefix-wrap">
+                <span class="input-prefix">₹</span>
+                <input type="number" formControlName="tripleSharingPrice" min="0" placeholder="0.00" />
+              </div>
+            </label>
+          </div>
+          }
+        </article>
+
+      </div>
+    </section>
+
+    <!-- ── Frontend Config ── -->
+    <section class="panel">
+      <div class="panel__header">
+        <div class="panel__icon panel__icon--amber">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="20" height="20">
+            <rect x="3" y="3" width="18" height="18" rx="2"/>
+            <path d="M3 9h18"/>
+            <path d="M9 21V9"/>
+          </svg>
+        </div>
+        <div class="panel__header__text">
+          <h2>Frontend Config</h2>
+          <p>Upload assets shown to guests.</p>
+        </div>
+      </div>
+      <div class="divider"></div>
+
+      <label class="field">
+        <span>Header banner</span>
+        <div class="upload-zone">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="30" height="30">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+            <circle cx="8.5" cy="8.5" r="1.5"/>
+            <polyline points="21 15 16 10 5 21"/>
+          </svg>
+          <span class="upload-zone__text">Click to upload banner image</span>
+          <small>PNG, JPG, SVG · up to 5 MB</small>
+          <input type="file" accept="image/*" (change)="onHeaderBannerChange($event)" />
+        </div>
+      </label>
+    </section>
+
+    <!-- ── Voucher Config ── -->
+    <section class="panel">
+      <div class="panel__header">
+        <div class="panel__icon panel__icon--rose">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="20" height="20">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+          </svg>
+        </div>
+        <div class="panel__header__text">
+          <h2>Voucher Config</h2>
+          <p>Details printed on guest vouchers.</p>
+        </div>
+      </div>
+      <div class="divider"></div>
+
+      <div class="field-grid one-col">
+
+        <label class="field">
+          <span>Header image</span>
+          <div class="upload-zone upload-zone--sm">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="22" height="22">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+              <circle cx="8.5" cy="8.5" r="1.5"/>
+              <polyline points="21 15 16 10 5 21"/>
+            </svg>
+            <span class="upload-zone__text">Upload header image</span>
+            <input type="file" accept="image/*" (change)="onVoucherHeaderImageChange($event)" />
+          </div>
+        </label>
+
+        <label class="field">
+          <span>Resort name</span>
+          <input type="text" formControlName="resortName" placeholder="Enter resort name" />
+        </label>
+
+        <label class="field">
+          <span>Resort address</span>
+          <textarea formControlName="resortAddress" rows="3" placeholder="Enter resort address"></textarea>
+        </label>
+
+        <div class="field-grid">
+          <label class="field">
+            <span>Hotel support contact</span>
+            <input type="tel" formControlName="hotelSupportContact" placeholder="+91 00000 00000" />
+          </label>
+          <label class="field">
+            <span>Hotel support email</span>
+            <input type="email" formControlName="hotelSupportEmail" placeholder="hotel@example.com" />
+          </label>
+        </div>
+
+        <label class="field">
+          <span>Google location URL</span>
+          <input type="url" formControlName="googleLocation" placeholder="https://maps.google.com/..." />
+        </label>
+
+        <div class="field-grid">
+          <label class="field">
+            <span>Standard check-in</span>
+            <input type="time" formControlName="standardCheckIn" />
+          </label>
+          <label class="field">
+            <span>Standard check-out</span>
+            <input type="time" formControlName="standardCheckOut" />
+          </label>
+        </div>
+
+        <label class="field">
+          <span>Event name in Terms &amp; Conditions</span>
+          <input type="text" formControlName="termsEventName" placeholder="Enter event name for T&C" />
+        </label>
+
+        <div class="field-grid">
+          <label class="field">
+            <span>Cotrav support contact</span>
+            <input type="tel" formControlName="cotravSupportContact" placeholder="+91 00000 00000" />
+          </label>
+          <label class="field">
+            <span>Cotrav support email</span>
+            <input type="email" formControlName="cotravSupportEmail" placeholder="support@cotrav.co" />
+          </label>
+        </div>
+
+      </div>
+    </section>
+
+  </form>
+
+  <div class="form-actions">
+    <button class="btn btn-primary" type="submit" form="dynamicEventForm">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16">
+        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+        <polyline points="17 21 17 13 7 13 7 21"/>
+        <polyline points="7 3 7 8 15 8"/>
+      </svg>
+      Save Configuration
+    </button>
+  </div>
+
+</main>
