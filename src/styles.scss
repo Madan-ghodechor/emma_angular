@@ -150,6 +150,17 @@ body {
   font-size: 14px !important;
 }
 
+// ── Snackbar feedback ────────────────────────────────────────────────────────
+.snack-success .mdc-snackbar__surface {
+  background-color: #0ea473 !important;
+  color: #fff !important;
+}
+
+.snack-error .mdc-snackbar__surface {
+  background-color: #e11d48 !important;
+  color: #fff !important;
+}
+
 
 div.mat-mdc-autocomplete-panel.mat-mdc-autocomplete-visible {
   background-color: white;

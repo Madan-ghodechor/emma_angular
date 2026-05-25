@@ -1,35 +1,36 @@
-// ─── Tokens ──────────────────────────────────────────────────────────────────
-$bg:          #f4f6fb;
-$surface:     #ffffff;
-$border:      #e3e8f2;
-$text:        #17202e;
-$muted:       #637087;
-$blue:        #3b5bdb;
-$blue-light:  #edf2ff;
-$emerald:     #0ea473;
+// ─── Tokens ───────────────────────────────────────────────────────────────────
+$bg:            #f4f6fb;
+$surface:       #ffffff;
+$border:        #e3e8f2;
+$text:          #17202e;
+$muted:         #637087;
+$blue:          #3b5bdb;
+$blue-light:    #edf2ff;
+$emerald:       #0ea473;
 $emerald-light: #e6faf3;
-$amber:       #d97706;
-$amber-light: #fffbeb;
-$rose:        #e11d48;
-$rose-light:  #fff1f2;
-$radius:      12px;
-$radius-sm:   8px;
-$shadow-xs:   0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
-$shadow-sm:   0 4px 20px rgba(0,0,0,.08);
-$shadow-btn:  0 2px 10px rgba(59,91,219,.32);
+$amber:         #d97706;
+$amber-light:   #fffbeb;
+$rose:          #e11d48;
+$rose-light:    #fff1f2;
+$radius:        12px;
+$radius-sm:     8px;
+$shadow-xs:     0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+$shadow-sm:     0 4px 20px rgba(0,0,0,.08);
+$shadow-btn:    0 2px 10px rgba(59,91,219,.32);
+$font:          'DM Sans', 'Segoe UI', system-ui, sans-serif;
 
 // ─── Base ─────────────────────────────────────────────────────────────────────
 * { box-sizing: border-box; }
 
+p, h1, h2 { margin: 0; }
+
 .event-form {
   background: $bg;
   color: $text;
-  font-family: 'DM Sans', 'Segoe UI', system-ui, sans-serif;
+  font-family: $font;
   min-height: 100vh;
   padding: 32px 36px;
 }
-
-p, h1, h2 { margin: 0; }
 
 // ─── Page header ──────────────────────────────────────────────────────────────
 .page-head {
@@ -116,10 +117,7 @@ h1 {
     margin-bottom: 3px;
   }
 
-  p {
-    color: $muted;
-    font-size: 13px;
-  }
+  p { color: $muted; font-size: 13px; }
 }
 
 // ─── Divider ──────────────────────────────────────────────────────────────────
@@ -129,7 +127,7 @@ h1 {
   margin: 18px 0;
 }
 
-// ─── Sub section label ────────────────────────────────────────────────────────
+// ─── Sub-section label ────────────────────────────────────────────────────────
 .sub-label {
   color: $muted;
   font-size: 11px;
@@ -156,18 +154,28 @@ h1 {
     flex: 1;
     gap: 3px;
 
-    strong {
-      color: $text;
-      font-size: 13.5px;
-      font-weight: 700;
-    }
-
-    small {
-      color: $muted;
-      font-size: 12.5px;
-    }
+    strong { color: $text; font-size: 13.5px; font-weight: 700; }
+    small  { color: $muted; font-size: 12.5px; }
   }
 }
+
+.gst-rate-row {
+  margin-bottom: 8px;
+  max-width: 240px;
+}
+
+// ─── Field grid ───────────────────────────────────────────────────────────────
+.field-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.one-col { grid-template-columns: 1fr; gap: 20px; }
+
+// ─── Conditional section ──────────────────────────────────────────────────────
+.conditional { display: none; }
+.conditional.active { display: grid; }
 
 // ─── Sharing grid ─────────────────────────────────────────────────────────────
 .sharing-grid {
@@ -204,13 +212,10 @@ h1 {
   flex-shrink: 0;
   height: 38px;
   justify-content: center;
-  width: 38px;
   transition: background .2s, color .2s;
+  width: 38px;
 
-  .sharing-card--active & {
-    background: $blue-light;
-    color: $blue;
-  }
+  .sharing-card--active & { background: $blue-light; color: $blue; }
 }
 
 .sharing-card__info {
@@ -219,16 +224,8 @@ h1 {
   gap: 3px;
   min-width: 0;
 
-  strong {
-    color: $text;
-    font-size: 14px;
-    font-weight: 700;
-  }
-
-  small {
-    color: $muted;
-    font-size: 12px;
-  }
+  strong { color: $text; font-size: 14px; font-weight: 700; }
+  small  { color: $muted; font-size: 12px; }
 }
 
 .sharing-card__price {
@@ -237,133 +234,12 @@ h1 {
   padding-top: 14px;
 }
 
-// ─── Fields ───────────────────────────────────────────────────────────────────
+// ─── File upload fields ───────────────────────────────────────────────────────
 .field {
   display: grid;
   gap: 7px;
 
-  > span {
-    color: $text;
-    font-size: 13px;
-    font-weight: 600;
-  }
-}
-
-.field-grid {
-  display: grid;
-  gap: 14px;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.one-col { grid-template-columns: 1fr; }
-
-// ─── Inputs ───────────────────────────────────────────────────────────────────
-input[type='text'],
-input[type='number'],
-input[type='tel'],
-input[type='email'],
-input[type='url'],
-input[type='time'],
-textarea {
-  background: #fafbfd;
-  border: 1.5px solid $border;
-  border-radius: $radius-sm;
-  color: $text;
-  font: inherit;
-  font-size: 14px;
-  min-height: 42px;
-  outline: none;
-  padding: 10px 13px;
-  transition: border-color .15s, box-shadow .15s, background .15s;
-  width: 100%;
-
-  &::placeholder { color: #a4afbf; }
-
-  &:focus {
-    background: #fff;
-    border-color: $blue;
-    box-shadow: 0 0 0 3px rgba(59, 91, 219, .12);
-  }
-}
-
-textarea { resize: vertical; }
-
-// ─── Prefixed input ───────────────────────────────────────────────────────────
-.input-prefix-wrap {
-  align-items: stretch;
-  background: #fafbfd;
-  border: 1.5px solid $border;
-  border-radius: $radius-sm;
-  display: flex;
-  overflow: hidden;
-  transition: border-color .15s, box-shadow .15s;
-
-  &:focus-within {
-    background: #fff;
-    border-color: $blue;
-    box-shadow: 0 0 0 3px rgba(59, 91, 219, .12);
-  }
-
-  input {
-    background: transparent !important;
-    border: 0 !important;
-    box-shadow: none !important;
-    flex: 1;
-    min-width: 0;
-  }
-}
-
-.input-suffix-wrap {
-  align-items: stretch;
-  background: #fafbfd;
-  border: 1.5px solid $border;
-  border-radius: $radius-sm;
-  display: flex;
-  overflow: hidden;
-  transition: border-color .15s, box-shadow .15s;
-
-  &:focus-within {
-    background: #fff;
-    border-color: $blue;
-    box-shadow: 0 0 0 3px rgba(59, 91, 219, .12);
-  }
-
-  input {
-    background: transparent !important;
-    border: 0 !important;
-    box-shadow: none !important;
-    flex: 1;
-    min-width: 0;
-  }
-}
-
-.input-suffix {
-  align-items: center;
-  background: #f0f3f9;
-  border-left: 1.5px solid $border;
-  color: $muted;
-  display: flex;
-  flex-shrink: 0;
-  font-size: 14px;
-  font-weight: 600;
-  padding: 0 13px;
-}
-
-.gst-rate-row {
-  margin-bottom: 18px;
-  max-width: 240px;
-}
-
-.input-prefix {
-  align-items: center;
-  background: #f0f3f9;
-  border-right: 1.5px solid $border;
-  color: $muted;
-  display: flex;
-  flex-shrink: 0;
-  font-size: 14px;
-  font-weight: 600;
-  padding: 0 13px;
+  > span { color: $text; font-size: 13px; font-weight: 600; }
 }
 
 // ─── Upload zone ──────────────────────────────────────────────────────────────
@@ -411,23 +287,15 @@ textarea { resize: vertical; }
   font-weight: 600;
 }
 
-.upload-zone small {
-  color: $muted;
-  font-size: 11.5px;
-}
+.upload-zone small { color: $muted; font-size: 11.5px; }
 
-// ─── Conditional ──────────────────────────────────────────────────────────────
-.conditional { display: none; }
-.conditional.active { display: grid; }
-
-// ─── Form actions bar ─────────────────────────────────────────────────────────
+// ─── Form actions ─────────────────────────────────────────────────────────────
 .form-actions {
   display: flex;
   justify-content: flex-end;
   margin-top: 24px;
 }
 
-// ─── Button ───────────────────────────────────────────────────────────────────
 .btn {
   align-items: center;
   border: 0;
@@ -449,13 +317,129 @@ textarea { resize: vertical; }
   box-shadow: $shadow-btn;
   color: #fff;
 
-  &:hover {
+  &:hover:not(:disabled) {
     background: #2f4dbf;
     box-shadow: 0 4px 18px rgba(59, 91, 219, .4);
     transform: translateY(-1px);
   }
 
-  &:active { transform: translateY(0); }
+  &:active:not(:disabled) { transform: translateY(0); }
+
+  &:disabled {
+    background: lighten($blue, 20%);
+    box-shadow: none;
+    cursor: not-allowed;
+    opacity: .7;
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.spin { animation: spin .8s linear infinite; }
+
+// ─── Angular Material form-field overrides ────────────────────────────────────
+::ng-deep {
+
+  // Full width + font
+  .mat-mdc-form-field {
+    width: 100%;
+    font-family: $font;
+  }
+
+  // Remove extra bottom subscript gap when no hint/error is present
+  .mat-mdc-form-field .mat-mdc-form-field-subscript-wrapper {
+    height: 0;
+    overflow: hidden;
+  }
+
+  // ── Outline border ────────────────────────────────────────────────────────
+  .mdc-text-field--outlined .mdc-notched-outline__leading,
+  .mdc-text-field--outlined .mdc-notched-outline__notch,
+  .mdc-text-field--outlined .mdc-notched-outline__trailing {
+    border-color: $border;
+    border-width: 1.5px;
+  }
+
+  // Border radius matching design tokens
+  .mdc-text-field--outlined .mdc-notched-outline__leading {
+    border-radius: $radius-sm 0 0 $radius-sm;
+    min-width: $radius-sm;
+  }
+
+  .mdc-text-field--outlined .mdc-notched-outline__trailing {
+    border-radius: 0 $radius-sm $radius-sm 0;
+  }
+
+  // ── Hover ─────────────────────────────────────────────────────────────────
+  .mdc-text-field--outlined:not(.mdc-text-field--focused):not(.mdc-text-field--disabled):hover {
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+      border-color: darken($border, 12%);
+    }
+  }
+
+  // ── Focus ─────────────────────────────────────────────────────────────────
+  .mdc-text-field--outlined.mdc-text-field--focused {
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+      border-color: $blue;
+      border-width: 2px;
+    }
+  }
+
+  // ── Label ─────────────────────────────────────────────────────────────────
+  .mat-mdc-form-field .mdc-floating-label {
+    color: $muted;
+    font-family: $font;
+    font-size: 14px;
+  }
+
+  .mat-mdc-form-field.mat-focused .mdc-floating-label {
+    color: $blue;
+  }
+
+  // ── Input & textarea ──────────────────────────────────────────────────────
+  .mat-mdc-form-field .mdc-text-field__input {
+    color: $text;
+    font-family: $font;
+    font-size: 14px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    &::placeholder { color: #a4afbf; }
+  }
+
+  // Textarea overrides ellipsis (multiline should scroll, not truncate)
+  .mat-mdc-form-field textarea.mdc-text-field__input {
+    overflow-y: auto;
+    text-overflow: clip;
+    white-space: pre-wrap;
+  }
+
+  // ── Prefix / Suffix text ──────────────────────────────────────────────────
+  .mat-mdc-form-field-text-prefix,
+  .mat-mdc-form-field-text-suffix {
+    color: $muted;
+    font-family: $font;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  // ── Caret & ripple accent ─────────────────────────────────────────────────
+  .mat-mdc-form-field .mdc-text-field__input {
+    caret-color: $blue;
+  }
+
+  .mat-mdc-form-field .mat-mdc-select-arrow,
+  .mat-mdc-form-field.mat-focused .mat-mdc-select-arrow {
+    color: $blue;
+  }
+
 }
 
 // ─── Responsive ───────────────────────────────────────────────────────────────
@@ -466,10 +450,7 @@ textarea { resize: vertical; }
 @media (max-width: 760px) {
   .event-form { padding: 16px; }
 
-  .page-head {
-    flex-direction: column;
-    align-items: stretch;
-  }
+  .page-head { flex-direction: column; align-items: stretch; }
 
   .btn-primary { justify-content: center; }
 

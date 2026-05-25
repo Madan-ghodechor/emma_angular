@@ -1,8 +1,8 @@
 <main class="event-form">
   <header class="page-head">
     <div class="page-head__info">
-      <p class="eyebrow">Dynamic setup</p>
-      <h1>Add Event Configuration</h1>
+      <p class="eyebrow">{{ isEditMode ? 'Edit · #' + editEventId : 'Dynamic setup' }}</p>
+      <h1>{{ isEditMode ? 'Edit Event Configuration' : 'Add Event Configuration' }}</h1>
       <p class="page-head__desc">Set up pricing, room types and voucher details for your event.</p>
     </div>
   </header>
@@ -32,20 +32,16 @@
         <div class="divider"></div>
         <p class="sub-label">Event prices</p>
         <div class="field-grid">
-          <label class="field">
-            <span>Member price</span>
-            <div class="input-prefix-wrap">
-              <span class="input-prefix">₹</span>
-              <input type="number" formControlName="memberPrice" min="0" placeholder="0.00" />
-            </div>
-          </label>
-          <label class="field">
-            <span>Non-member price</span>
-            <div class="input-prefix-wrap">
-              <span class="input-prefix">₹</span>
-              <input type="number" formControlName="nonMemberPrice" min="0" placeholder="0.00" />
-            </div>
-          </label>
+          <mat-form-field appearance="outline">
+            <mat-label>Member price</mat-label>
+            <span matTextPrefix>₹&nbsp;</span>
+            <input matInput type="number" formControlName="memberPrice" min="0" placeholder="0.00" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Non-member price</mat-label>
+            <span matTextPrefix>₹&nbsp;</span>
+            <input matInput type="number" formControlName="nonMemberPrice" min="0" placeholder="0.00" />
+          </mat-form-field>
         </div>
       </div>
       }
@@ -78,13 +74,11 @@
 
       @if (roomPricingExcludingGst) {
       <div class="gst-rate-row">
-        <label class="field">
-          <span>GST percentage</span>
-          <div class="input-suffix-wrap">
-            <input type="number" formControlName="gstPercentage" min="0" max="100" placeholder="e.g. 18" />
-            <span class="input-suffix">%</span>
-          </div>
-        </label>
+        <mat-form-field appearance="outline">
+          <mat-label>GST percentage</mat-label>
+          <input matInput type="number" formControlName="gstPercentage" min="0" max="100" placeholder="e.g. 18" />
+          <span matTextSuffix>%</span>
+        </mat-form-field>
       </div>
       }
 
@@ -107,13 +101,11 @@
           </div>
           @if (singleSharingRoomEnabled) {
           <div class="sharing-card__price">
-            <label class="field">
-              <span>Price per room</span>
-              <div class="input-prefix-wrap">
-                <span class="input-prefix">₹</span>
-                <input type="number" formControlName="singleSharingPrice" min="0" placeholder="0.00" />
-              </div>
-            </label>
+            <mat-form-field appearance="outline">
+              <mat-label>Price per room</mat-label>
+              <span matTextPrefix>₹&nbsp;</span>
+              <input matInput type="number" formControlName="singleSharingPrice" min="0" placeholder="0.00" />
+            </mat-form-field>
           </div>
           }
         </article>
@@ -136,13 +128,11 @@
           </div>
           @if (doubleSharingRoomEnabled) {
           <div class="sharing-card__price">
-            <label class="field">
-              <span>Price per room</span>
-              <div class="input-prefix-wrap">
-                <span class="input-prefix">₹</span>
-                <input type="number" formControlName="doubleSharingPrice" min="0" placeholder="0.00" />
-              </div>
-            </label>
+            <mat-form-field appearance="outline">
+              <mat-label>Price per room</mat-label>
+              <span matTextPrefix>₹&nbsp;</span>
+              <input matInput type="number" formControlName="doubleSharingPrice" min="0" placeholder="0.00" />
+            </mat-form-field>
           </div>
           }
         </article>
@@ -166,13 +156,11 @@
           </div>
           @if (tripleSharingRoomEnabled) {
           <div class="sharing-card__price">
-            <label class="field">
-              <span>Price per room</span>
-              <div class="input-prefix-wrap">
-                <span class="input-prefix">₹</span>
-                <input type="number" formControlName="tripleSharingPrice" min="0" placeholder="0.00" />
-              </div>
-            </label>
+            <mat-form-field appearance="outline">
+              <mat-label>Price per room</mat-label>
+              <span matTextPrefix>₹&nbsp;</span>
+              <input matInput type="number" formControlName="tripleSharingPrice" min="0" placeholder="0.00" />
+            </mat-form-field>
           </div>
           }
         </article>
@@ -245,57 +233,57 @@
           </div>
         </label>
 
-        <label class="field">
-          <span>Resort name</span>
-          <input type="text" formControlName="resortName" placeholder="Enter resort name" />
-        </label>
+        <mat-form-field appearance="outline">
+          <mat-label>Resort name</mat-label>
+          <input matInput formControlName="resortName" placeholder="Enter resort name" />
+        </mat-form-field>
 
-        <label class="field">
-          <span>Resort address</span>
-          <textarea formControlName="resortAddress" rows="3" placeholder="Enter resort address"></textarea>
-        </label>
+        <mat-form-field appearance="outline">
+          <mat-label>Resort address</mat-label>
+          <input matInput formControlName="resortAddress" placeholder="Enter resort address" />
+        </mat-form-field>
 
         <div class="field-grid">
-          <label class="field">
-            <span>Hotel support contact</span>
-            <input type="tel" formControlName="hotelSupportContact" placeholder="+91 00000 00000" />
-          </label>
-          <label class="field">
-            <span>Hotel support email</span>
-            <input type="email" formControlName="hotelSupportEmail" placeholder="hotel@example.com" />
-          </label>
+          <mat-form-field appearance="outline">
+            <mat-label>Hotel support contact</mat-label>
+            <input matInput type="tel" formControlName="hotelSupportContact" placeholder="+91 00000 00000" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Hotel support email</mat-label>
+            <input matInput type="email" formControlName="hotelSupportEmail" placeholder="hotel@example.com" />
+          </mat-form-field>
         </div>
 
-        <label class="field">
-          <span>Google location URL</span>
-          <input type="url" formControlName="googleLocation" placeholder="https://maps.google.com/..." />
-        </label>
+        <mat-form-field appearance="outline">
+          <mat-label>Google location URL</mat-label>
+          <input matInput type="url" formControlName="googleLocation" placeholder="https://maps.google.com/..." />
+        </mat-form-field>
 
         <div class="field-grid">
-          <label class="field">
-            <span>Standard check-in</span>
-            <input type="time" formControlName="standardCheckIn" />
-          </label>
-          <label class="field">
-            <span>Standard check-out</span>
-            <input type="time" formControlName="standardCheckOut" />
-          </label>
+          <mat-form-field appearance="outline">
+            <mat-label>Standard check-in</mat-label>
+            <input matInput type="time" formControlName="standardCheckIn" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Standard check-out</mat-label>
+            <input matInput type="time" formControlName="standardCheckOut" />
+          </mat-form-field>
         </div>
 
-        <label class="field">
-          <span>Event name in Terms &amp; Conditions</span>
-          <input type="text" formControlName="termsEventName" placeholder="Enter event name for T&C" />
-        </label>
+        <mat-form-field appearance="outline">
+          <mat-label>Event name in Terms &amp; Conditions</mat-label>
+          <input matInput formControlName="termsEventName" placeholder="Enter event name for T&C" />
+        </mat-form-field>
 
         <div class="field-grid">
-          <label class="field">
-            <span>Cotrav support contact</span>
-            <input type="tel" formControlName="cotravSupportContact" placeholder="+91 00000 00000" />
-          </label>
-          <label class="field">
-            <span>Cotrav support email</span>
-            <input type="email" formControlName="cotravSupportEmail" placeholder="support@cotrav.co" />
-          </label>
+          <mat-form-field appearance="outline">
+            <mat-label>Cotrav support contact</mat-label>
+            <input matInput type="tel" formControlName="cotravSupportContact" placeholder="+91 00000 00000" />
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Cotrav support email</mat-label>
+            <input matInput type="email" formControlName="cotravSupportEmail" placeholder="support@cotrav.co" />
+          </mat-form-field>
         </div>
 
       </div>
@@ -304,13 +292,20 @@
   </form>
 
   <div class="form-actions">
-    <button class="btn btn-primary" type="submit" form="dynamicEventForm">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16">
-        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
-        <polyline points="17 21 17 13 7 13 7 21"/>
-        <polyline points="7 3 7 8 15 8"/>
-      </svg>
-      Save Configuration
+    <button class="btn btn-primary" type="submit" form="dynamicEventForm" [disabled]="isLoading">
+      @if (isLoading) {
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16" class="spin">
+          <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+        </svg>
+        Saving…
+      } @else {
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16">
+          <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+          <polyline points="17 21 17 13 7 13 7 21"/>
+          <polyline points="7 3 7 8 15 8"/>
+        </svg>
+        {{ isEditMode ? 'Update Configuration' : 'Save Configuration' }}
+      }
     </button>
   </div>
 

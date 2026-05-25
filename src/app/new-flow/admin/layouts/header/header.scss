@@ -1,0 +1,222 @@
+// ─── Tokens (same scale as the rest of the admin UI) ─────────────────────────
+$blue:        #3b5bdb;
+$blue-light:  #edf2ff;
+$text:        #17202e;
+$muted:       #637087;
+$border:      #e3e8f2;
+$surface:     #ffffff;
+$font:        'DM Sans', 'Segoe UI', system-ui, sans-serif;
+$h:           60px;
+
+// ─── Shell ────────────────────────────────────────────────────────────────────
+.admin-header {
+  background: $surface;
+  border-bottom: 1px solid $border;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .05);
+  height: $h;
+  position: sticky;
+  top: 0;
+  width: 100%;
+  z-index: 100;
+}
+
+.header-inner {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  height: 100%;
+  margin: 0 auto;
+  max-width: 1400px;
+  padding: 0 28px;
+}
+
+// ─── Brand ────────────────────────────────────────────────────────────────────
+.header-brand {
+  align-items: center;
+  color: inherit;
+  display: flex;
+  flex-shrink: 0;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.brand-icon {
+  align-items: center;
+  background: $blue;
+  border-radius: 8px;
+  color: #fff;
+  display: flex;
+  height: 34px;
+  justify-content: center;
+  width: 34px;
+}
+
+.brand-text {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+}
+
+.brand-name {
+  color: $text;
+  font-family: $font;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -.02em;
+}
+
+.brand-divider {
+  background: $border;
+  border-radius: 2px;
+  display: inline-block;
+  height: 16px;
+  width: 1.5px;
+}
+
+.brand-portal {
+  color: $muted;
+  font-family: $font;
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: .02em;
+  text-transform: uppercase;
+}
+
+// ─── Nav ──────────────────────────────────────────────────────────────────────
+.header-nav {
+  align-items: center;
+  display: flex;
+  flex: 1;
+  gap: 2px;
+  margin-left: 24px;
+}
+
+.nav-item {
+  align-items: center;
+  border-radius: 7px;
+  color: $muted;
+  display: inline-flex;
+  font-family: $font;
+  font-size: 13.5px;
+  font-weight: 600;
+  gap: 7px;
+  padding: 7px 13px;
+  text-decoration: none;
+  transition: background .15s, color .15s;
+
+  svg { flex-shrink: 0; }
+
+  &:hover {
+    background: $blue-light;
+    color: $blue;
+  }
+
+  &--active {
+    background: $blue-light;
+    color: $blue;
+  }
+}
+
+// ─── Right-side actions ───────────────────────────────────────────────────────
+.header-actions {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  margin-left: auto;
+}
+
+.event-badge {
+  align-items: center;
+  background: #f0f4ff;
+  border: 1px solid #c7d4f8;
+  border-radius: 20px;
+  color: $blue;
+  display: inline-flex;
+  font-family: $font;
+  font-size: 12px;
+  font-weight: 700;
+  gap: 5px;
+  letter-spacing: .01em;
+  padding: 5px 11px;
+}
+
+.header-sep {
+  background: $border;
+  border-radius: 2px;
+  height: 22px;
+  width: 1px;
+}
+
+.user-chip {
+  align-items: center;
+  border-radius: 8px;
+  cursor: default;
+  display: flex;
+  gap: 9px;
+  padding: 5px 10px 5px 5px;
+  transition: background .15s;
+
+  &:hover { background: #f4f6fb; }
+}
+
+.user-avatar {
+  align-items: center;
+  background: $blue;
+  border-radius: 50%;
+  color: #fff;
+  display: flex;
+  flex-shrink: 0;
+  font-family: $font;
+  font-size: 13px;
+  font-weight: 700;
+  height: 32px;
+  justify-content: center;
+  width: 32px;
+}
+
+.user-info {
+  display: grid;
+  gap: 1px;
+}
+
+.user-name {
+  color: $text;
+  font-family: $font;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.user-role {
+  color: $muted;
+  font-family: $font;
+  font-size: 11px;
+  line-height: 1;
+}
+
+.logout-btn {
+  align-items: center;
+  background: transparent;
+  border: 1px solid $border;
+  border-radius: 7px;
+  color: $muted;
+  cursor: pointer;
+  display: flex;
+  height: 34px;
+  justify-content: center;
+  transition: background .15s, border-color .15s, color .15s;
+  width: 34px;
+
+  &:hover {
+    background: #fff1f2;
+    border-color: #fda4af;
+    color: #e11d48;
+  }
+}
+
+// ─── Responsive ───────────────────────────────────────────────────────────────
+@media (max-width: 640px) {
+  .header-inner { padding: 0 16px; }
+  .brand-portal, .user-info, .event-badge { display: none; }
+  .header-nav { margin-left: 12px; }
+}
