@@ -21,70 +21,70 @@ import { Router } from '@angular/router';
 })
 export class AddDynamics implements OnInit {
   form!: FormGroup;
-  isLoading  = false;
+  isLoading = false;
   isEditMode = false;
   editEventId: number | null = null;
 
   headerBannerFile: File | null = null;
   voucherHeaderImageFile: File | null = null;
 
-  private fb       = inject(FormBuilder);
-  private api      = inject(Api);
+  private fb = inject(FormBuilder);
+  private api = inject(Api);
   private snackBar = inject(MatSnackBar);
-  private router   = inject(Router);
+  private router = inject(Router);
 
   ngOnInit(): void {
     this.form = this.fb.group({
-      guestsRegistrationEnabled: [false],
-      memberPrice:               [null],
-      nonMemberPrice:            [null],
-      roomPricingExcludingGst:   [false],
-      gstPercentage:             [null],
-      singleSharingRoomEnabled:  [false],
-      singleSharingPrice:        [null],
-      doubleSharingRoomEnabled:  [false],
-      doubleSharingPrice:        [null],
-      tripleSharingRoomEnabled:  [false],
-      tripleSharingPrice:        [null],
-      resortName:                [''],
-      resortAddress:             [''],
-      hotelSupportContact:       [''],
-      hotelSupportEmail:         [''],
-      googleLocation:            [''],
-      standardCheckIn:           [''],
-      standardCheckOut:          [''],
-      termsEventName:            [''],
-      cotravSupportContact:      [''],
-      cotravSupportEmail:        [''],
+      guestsRegistrationEnabled: [true],
+      memberPrice: [15000],
+      nonMemberPrice: [18000],
+      roomPricingExcludingGst: [true],
+      gstPercentage: [18],
+      singleSharingRoomEnabled: [true],
+      singleSharingPrice: [9000],
+      doubleSharingRoomEnabled: [true],
+      doubleSharingPrice: [12000],
+      tripleSharingRoomEnabled: [true],
+      tripleSharingPrice: [15000],
+      resortName: ['pragati resort'],
+      resortAddress: ['sr no 150 , shewalwadi pune - 412307'],
+      hotelSupportContact: ['9876543210'],
+      hotelSupportEmail: ['pragati@hotel.in'],
+      googleLocation: ['https://maps.app.goo.gl/FJyJZfGvh2knzwKK6'],
+      standardCheckIn: ['10:00'],
+      standardCheckOut: ['10:00'],
+      termsEventName: ['newEvent'],
+      cotravSupportContact: ['0987654321'],
+      cotravSupportEmail: ['cotrav@cotrav.co'],
     });
 
     // Auto-fill from events-list Edit navigation
     const e = history.state?.event;
     if (e) {
-      this.isEditMode  = true;
+      this.isEditMode = true;
       this.editEventId = e.id;
       this.form.patchValue({
-        termsEventName:            e.name,
-        resortName:                e.resortName,
-        resortAddress:             e.resortAddress,
-        standardCheckIn:           e.checkIn,
-        standardCheckOut:          e.checkOut,
+        termsEventName: e.name,
+        resortName: e.resortName,
+        resortAddress: e.resortAddress,
+        standardCheckIn: e.checkIn,
+        standardCheckOut: e.checkOut,
         guestsRegistrationEnabled: e.registrationEnabled,
-        memberPrice:               e.memberPrice,
-        nonMemberPrice:            e.nonMemberPrice,
-        roomPricingExcludingGst:   e.gstExcluded,
-        gstPercentage:             e.gstRate,
-        singleSharingRoomEnabled:  e.singleSharing,
-        singleSharingPrice:        e.singlePrice,
-        doubleSharingRoomEnabled:  e.doubleSharing,
-        doubleSharingPrice:        e.doublePrice,
-        tripleSharingRoomEnabled:  e.tripleSharing,
-        tripleSharingPrice:        e.triplePrice,
-        hotelSupportContact:       e.hotelSupportContact,
-        hotelSupportEmail:         e.hotelSupportEmail,
-        googleLocation:            e.googleLocation,
-        cotravSupportContact:      e.cotravSupportContact,
-        cotravSupportEmail:        e.cotravSupportEmail,
+        memberPrice: e.memberPrice,
+        nonMemberPrice: e.nonMemberPrice,
+        roomPricingExcludingGst: e.gstExcluded,
+        gstPercentage: e.gstRate,
+        singleSharingRoomEnabled: e.singleSharing,
+        singleSharingPrice: e.singlePrice,
+        doubleSharingRoomEnabled: e.doubleSharing,
+        doubleSharingPrice: e.doublePrice,
+        tripleSharingRoomEnabled: e.tripleSharing,
+        tripleSharingPrice: e.triplePrice,
+        hotelSupportContact: e.hotelSupportContact,
+        hotelSupportEmail: e.hotelSupportEmail,
+        googleLocation: e.googleLocation,
+        cotravSupportContact: e.cotravSupportContact,
+        cotravSupportEmail: e.cotravSupportEmail,
       });
     }
   }
@@ -121,21 +121,25 @@ export class AddDynamics implements OnInit {
 
   saveConfiguration(): void {
     this.isLoading = true;
-    const payload  = this.buildPayload();
+    const payload = this.buildPayload();
+
 
     const request$ = this.isEditMode && this.editEventId != null
       ? this.api.updateDynamics(this.editEventId, payload)
       : this.api.saveDynamics(payload);
+    
+    console.log(Object.fromEntries(payload.entries()));   
+
 
     request$.subscribe({
-      next: () => {
+      next: (payload: any) => {
         this.isLoading = false;
         this.snackBar.open(
           this.isEditMode ? 'Configuration updated successfully!' : 'Configuration saved successfully!',
           'Close',
           { horizontalPosition: 'center', verticalPosition: 'top', duration: 3000, panelClass: ['snack-success'] }
         );
-        this.router.navigate(['/new/admin/event-list']);
+        // this.router.navigate(['/new/admin/event-list']);
       },
       error: () => {
         this.isLoading = false;
@@ -147,12 +151,12 @@ export class AddDynamics implements OnInit {
   }
 
   private buildPayload(): FormData {
-    const v  = this.form.value;
+    const v = this.form.value;
     const fd = new FormData();
 
     fd.append('guestsRegistrationEnabled', String(v.guestsRegistrationEnabled));
     if (v.guestsRegistrationEnabled) {
-      if (v.memberPrice    != null) fd.append('memberPrice',    String(v.memberPrice));
+      if (v.memberPrice != null) fd.append('memberPrice', String(v.memberPrice));
       if (v.nonMemberPrice != null) fd.append('nonMemberPrice', String(v.nonMemberPrice));
     }
 
@@ -176,19 +180,22 @@ export class AddDynamics implements OnInit {
       fd.append('tripleSharingPrice', String(v.tripleSharingPrice));
     }
 
-    fd.append('resortName',           v.resortName           ?? '');
-    fd.append('resortAddress',        v.resortAddress        ?? '');
-    fd.append('hotelSupportContact',  v.hotelSupportContact  ?? '');
-    fd.append('hotelSupportEmail',    v.hotelSupportEmail    ?? '');
-    fd.append('googleLocation',       v.googleLocation       ?? '');
-    fd.append('standardCheckIn',      v.standardCheckIn      ?? '');
-    fd.append('standardCheckOut',     v.standardCheckOut     ?? '');
-    fd.append('termsEventName',       v.termsEventName       ?? '');
+    fd.append('resortName', v.resortName ?? '');
+    fd.append('resortAddress', v.resortAddress ?? '');
+    fd.append('hotelSupportContact', v.hotelSupportContact ?? '');
+    fd.append('hotelSupportEmail', v.hotelSupportEmail ?? '');
+    fd.append('googleLocation', v.googleLocation ?? '');
+    fd.append('standardCheckIn', v.standardCheckIn ?? '');
+    fd.append('standardCheckOut', v.standardCheckOut ?? '');
+    fd.append('termsEventName', v.termsEventName ?? '');
     fd.append('cotravSupportContact', v.cotravSupportContact ?? '');
-    fd.append('cotravSupportEmail',   v.cotravSupportEmail   ?? '');
+    fd.append('cotravSupportEmail', v.cotravSupportEmail ?? '');
 
-    if (this.headerBannerFile)       fd.append('headerBanner',       this.headerBannerFile);
+    if (this.headerBannerFile) fd.append('headerBanner', this.headerBannerFile);
     if (this.voucherHeaderImageFile) fd.append('voucherHeaderImage', this.voucherHeaderImageFile);
+
+    console.log(Object.fromEntries(fd.entries()));
+    
 
     return fd;
   }
